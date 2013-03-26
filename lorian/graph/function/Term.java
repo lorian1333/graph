@@ -297,10 +297,17 @@ public class Term {
 		}
 		return false;
 	}
-	public boolean ParseTerm(String s)
+	
+	private boolean ParseFunction(String s)
 	{
-		int constantstart=-1;
+		
+		return true;
+	}
+	private boolean ParseTerm(String s)
+	{
+		int constantstart=-1, functionend = -1;
 		int state = 0; //0 = constant, 1 = x, 2 = function
+		int state2 = 0; //0 = normal, 1 = exponent
 		double constant;
 		String tmp;
 		boolean neg=false;
@@ -325,15 +332,57 @@ public class Term {
 				{
 					
 				}
-				else if(ch == '*')
-				{
-					tmp = s.substring(constantstart, index-1);
-					constant = Double.parseDouble(tmp);
-				}
-				else
+				else if(ch == '^')
 				{
 					
 				}
+				else if(ch == '*')
+				{
+					tmp = s.substring(constantstart, index);
+					constant = Double.parseDouble(tmp);
+					if(neg) constant *= -1;
+					constantstart = -1;
+					neg = false;
+					System.out.printf("Constant product: %f\n", constant);
+					coefficient *= constant;
+					
+				}
+				else if(ch == argumentChar)
+				{
+					state = 1;
+				}
+				else //function
+				{
+					tmp = s.substring(index);
+					functionend = tmp.indexOf('(');
+					tmp = s.substring(index, functionend+index);
+					System.out.printf("Function: %s\n", tmp);
+					//TODO handle this
+				}
+			}
+			else if(state == 1)
+			{
+				if(ch == '^')
+				{
+					state2 = 1;
+				}
+				else if(ch == '*')
+				{
+					
+				}
+				else if(ch == argumentChar)
+				{
+					
+				}
+				else //function
+				{
+					tmp = s.substring(index);
+					functionend = tmp.indexOf('(');
+					tmp = s.substring(index, functionend+index);
+					System.out.printf("Function: %s\n", tmp);
+					//TODO handle this
+				}
+			
 			}
 			index++;
 		}
@@ -357,9 +406,9 @@ public class Term {
 			exponent = 0;
 			return ParseConstant(s);
 		}
-		
+		System.out.println("Not constant");
 		return ParseAxN(s);
-		//return ParseTerm(s);
+		//return ParseTerm(s); //working on this :P
 		
 	}
 	public double Calc(double arg)

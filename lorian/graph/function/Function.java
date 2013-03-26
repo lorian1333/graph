@@ -48,7 +48,6 @@ public class Function {
 			//while(!(s.charAt(index)=='-' || s.charAt(index)=='+') && funcdepth == 0 && onlyplusminus == true)
 			while(true)
 			{
-				index++;
 				if(index == s.length())
 				{
 					break;
@@ -75,6 +74,7 @@ public class Function {
 					}
 					else funcdepth--;
 				}
+				index++;
 			}
 			
 			

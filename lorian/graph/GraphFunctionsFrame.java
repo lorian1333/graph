@@ -244,12 +244,13 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	{
 		
 		// improving the function parser
+		/*
 		Function f = new Function();
 		if(!f.Parse("-+-123*456*x*sin(x+4*4cos(x))*-45^-123.456*765"))
 		{
 			System.err.println("error parsing function!");
 		}
-
+		*/
 		//Creating the actual window
 		GraphFunctionsFrame.funcframe = new GraphFunctionsFrame();
 	}
