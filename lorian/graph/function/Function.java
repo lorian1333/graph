@@ -116,11 +116,13 @@ public class Function {
 	{
 		if(isEmpty) return 0;
 		
+		
 		double sum = 0;
 		for(int i = 0; i < terms.size(); i++)
 		{
 			sum += terms.get(i).Calc(arg);
 		}
 		return sum;
+		
 	}
 }

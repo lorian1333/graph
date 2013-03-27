@@ -10,6 +10,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -24,7 +25,7 @@ import javax.swing.event.ChangeListener;
 
 public class SettingsFrame extends JFrame implements ActionListener {
 	private static final long serialVersionUID = 3855842044783300106L;
-	private final String[] labels = {"Window", "Xmin:", "Xmax:", "Ymin:", "Ymax:", "Interface", "Look and Feel:" };
+	private final String[] labels = {"Window", "Xmin:", "Xmax:", "Ymin:", "Ymax:", "Grid:", "Interface", "Look and Feel:" };
 	private final String[] GUIstyles = {"System default", "Cross-platform" };
 	//WindowSettings settings;
 	public SettingsFrame(Point point)
@@ -54,7 +55,7 @@ public class SettingsFrame extends JFrame implements ActionListener {
 		this.setLocation((int) point.getX() + 450, (int) point.getY() + 200);
 		this.setTitle("Settings");
 		this.setResizable(false);
-		this.setSize(300, 300);
+		
 		initUI();
 		Restore();
 	}
@@ -71,7 +72,7 @@ public class SettingsFrame extends JFrame implements ActionListener {
 		{
 			JLabel label = new JLabel(labels[i]);
 			
-			if(i==0 || i==5)
+			if(i==0 || i==6)
 			{
 				label.setFont(label.getFont().deriveFont(13.0f).deriveFont(Font.BOLD));
 				label.setForeground(Color.BLACK);
@@ -151,6 +152,24 @@ public class SettingsFrame extends JFrame implements ActionListener {
 				spinnerCons.setX(Spring.constant(130));
 				spinnerCons.setY(Spring.constant(30 + height * i));
 			}
+			else if(i==5)
+			{
+				label.setFont(label.getFont().deriveFont(13.0f));
+				label.setForeground(Color.BLACK);
+				JCheckBox checkbox = new JCheckBox();
+				checkbox.setSelected(GraphFunctionsFrame.settings.gridOn());
+				checkbox.addActionListener(this);
+				height = (int) label.getPreferredSize().getHeight() + 10;
+				panel.add(label);
+				panel.add(checkbox);
+				
+				SpringLayout.Constraints labelCons = layout.getConstraints(label);
+				labelCons.setX(Spring.constant(30));
+				labelCons.setY(Spring.constant(30 + height * i + 2));
+				SpringLayout.Constraints checkboxCons = layout.getConstraints(checkbox);
+				checkboxCons.setX(Spring.constant(130));
+				checkboxCons.setY(Spring.constant(30 + height * i));
+			}
 			else
 			{
 				label.setFont(label.getFont().deriveFont(13.0f));
@@ -180,6 +199,8 @@ public class SettingsFrame extends JFrame implements ActionListener {
 		buttonCons.setX(Spring.constant(100));
 		buttonCons.setY(Spring.constant(40 + height * i));
 		this.add(panel);
+		this.setSize(300, i* height + 120);
+		
 	}
 	public void Restore()
 	{
@@ -212,6 +233,10 @@ public class SettingsFrame extends JFrame implements ActionListener {
 				GraphFunctionsFrame.SetJavaLookAndFeel();
 				System.out.println("Changing GUI style to cross-platform");
 			}
+		}
+		else if(e.getSource() instanceof JCheckBox)
+		{
+			GraphFunctionsFrame.settings.setGrid(((JCheckBox) e.getSource()).isSelected());
 		}
 
 		

@@ -2,9 +2,11 @@ package lorian.graph;
 
 import lorian.graph.function.*;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.util.List;
 
@@ -47,17 +49,19 @@ public class GraphFrame extends JPanel {
 			else windowerror = false;
 			this.repaint();
 	}
+	
+	
 	private void drawAxes(Graphics g) {
-		g.drawLine(YaxisX, 0, YaxisX, (int) size.getHeight());
-		g.drawLine(0, XaxisY, (int) size.getWidth(), XaxisY);
-		int pix;
 		
+		int pix;
 		for(long x=settings.getXmin()-1;x<settings.getXmax();x++)
 		{
 			if(x==0) continue;
 			pix = (int) ((x-settings.getXmin()) * (size.getWidth() / (settings.getXmax() - settings.getXmin())));
 			if(pix==0) continue;
+			g.setColor(Color.BLACK);
 			g.drawLine(pix, XaxisY - 5, pix, XaxisY + 5);
+			
 		}
 		
 		for(long y=settings.getYmin()-1;y<settings.getYmax();y++)
@@ -65,12 +69,40 @@ public class GraphFrame extends JPanel {
 			if(y==0) continue;
 			pix = (int) size.getHeight() -  (int) ((y-settings.getYmin()) * (size.getHeight() / (settings.getYmax() - settings.getYmin())));
 			if(pix==0) continue;
+			g.setColor(Color.BLACK);
 			g.drawLine(YaxisX - 5, pix, YaxisX + 5, pix);
+		
 		}
 		
-			
+		g.setColor(Color.BLACK);
+		g.drawLine(YaxisX, 0, YaxisX, (int) size.getHeight());
+		g.drawLine(0, XaxisY, (int) size.getWidth(), XaxisY);
 	}
 
+	private void drawGrid(Graphics g)
+	{
+		int pix;
+		Color gridColor = new Color(0, 186, 0xff);
+		for(long x=settings.getXmin()-1;x<settings.getXmax();x++)
+		{
+			if(x==0) continue;
+			pix = (int) ((x-settings.getXmin()) * (size.getWidth() / (settings.getXmax() - settings.getXmin())));
+			if(pix==0) continue;
+			//grid
+			g.setColor(gridColor);
+			g.drawLine(pix, 0, pix, (int) size.getHeight());
+		
+		}
+		for(long y=settings.getYmin()-1;y<settings.getYmax();y++)
+		{
+			if(y==0) continue;
+			pix = (int) size.getHeight() -  (int) ((y-settings.getYmin()) * (size.getHeight() / (settings.getYmax() - settings.getYmin())));
+			if(pix==0) continue;
+			//grid
+			g.setColor(gridColor);
+			g.drawLine(0, pix, (int) size.getWidth(), pix);
+		}
+	}
 	private void drawFunction(Function f, Graphics g) 
 	{
 		if(f.isEmpty()) return;
@@ -95,7 +127,10 @@ public class GraphFrame extends JPanel {
 			if(xpix > -1)
 			{
 				if(xpix - previous.x < size.getWidth() && ypix - previous.y < size.getHeight())
+				{
 					g.drawLine(previous.x, previous.y, xpix, ypix);
+					//DrawLine(g, f.getColor(), previous.x, previous.y, xpix, ypix);
+				}
 			}
 			previous.setLocation(xpix, ypix);
 		}
@@ -110,13 +145,15 @@ public class GraphFrame extends JPanel {
 		
 		if(windowerror) return;
 		CalculateAxes();
-		//((Graphics2D) g).setStroke(new BasicStroke(1.1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
+		if(settings.gridOn()) drawGrid(g);
+		((Graphics2D) g).setStroke(new BasicStroke(1.1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
 		for (int i = 0; i < functions.size(); i++) 
 		{
 			drawFunction(functions.get(i), g);
 		}
-		//((Graphics2D) g).setStroke(new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
+		((Graphics2D) g).setStroke(new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
 		drawAxes(g);
+		//drawGrid(g);
 	}
 
 	
