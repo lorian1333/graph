@@ -23,7 +23,21 @@ public class Function {
 		terms = new ArrayList<Term>();
 		setColor(Color.BLACK);
 	}
-	
+	public Function(char argumentChar, String s)
+	{
+		String ss = ""; 
+		ss += argumentChar;
+		this.argumentChar = ss.toLowerCase().charAt(0);
+		terms = new ArrayList<Term>();
+		setColor(Color.BLACK);
+		Parse(s);
+	}
+	public Function(String s)
+	{
+		terms = new ArrayList<Term>();
+		setColor(Color.BLACK);
+		Parse(s);
+	}
 	public boolean Parse(String s)
 	{
 		s = Util.removeWhiteSpace(s).toLowerCase();

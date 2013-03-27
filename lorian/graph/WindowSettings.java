@@ -10,7 +10,7 @@ public class WindowSettings {
 		setXmax(10);
 		setYmin(-10);
 		setYmax(10);
-		setGrid(true);
+		setGrid(false);
 	}
 	public WindowSettings(int Xmin, int Xmax, int Ymin, int Ymax, boolean grid)
 	{

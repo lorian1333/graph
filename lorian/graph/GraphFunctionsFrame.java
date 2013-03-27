@@ -27,6 +27,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import lorian.graph.function.Function;
+import lorian.graph.function.PointXY;
 import lorian.graph.function.Util;
 
 public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyListener, MouseListener {
@@ -244,15 +245,29 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	{
 		
 		// improving the function parser
+		
+		
 		/*
-		Function f = new Function();
 		if(!f.Parse("-+-123*456*x*sin(x+4*4cos(x))*-45^-123.456*765"))
 		{
 			System.err.println("error parsing function!");
 		}
 		*/
+		
+		Function f = new Function("x^2-4");
+		Function g = new Function("-x^2+3");
+
+		PointXY intersect = Util.Intersect(f, g, new PointXY(-4, 4), 10);
+		System.out.println("Intersect: " + intersect);
+		
+		intersect = Util.Intersect(f, g, new PointXY(0, 4), 10);
+		System.out.println("Intersect: " + intersect);
+		
+		
+		
+		
 		//Creating the actual window
-		GraphFunctionsFrame.funcframe = new GraphFunctionsFrame();
+		//GraphFunctionsFrame.funcframe = new GraphFunctionsFrame();
 	}
 
 	
