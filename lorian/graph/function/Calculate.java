@@ -55,7 +55,7 @@ public class Calculate {
 		return Util.round(dydx, 6);
 	}
 	
-	public static double fnInt(Function f, double LowX, double UpX)
+	public static double Integral(Function f, double LowX, double UpX)
 	{
 		long starttime = System.currentTimeMillis();
 		double dx = 0.00001;
@@ -72,7 +72,43 @@ public class Calculate {
 			}
 		}
 		double average = (lowersum + uppersum) / 2;
-		System.out.println("Passed: " + (System.currentTimeMillis() - starttime) + "ms"); 
+		System.out.println("Passed: " + (System.currentTimeMillis() - starttime) + "ms");
 		return Util.round(average, 6);
+	}
+	
+	public static PointXY Minimum(Function f, double LowX, double UpX)
+	{
+		double dx = 0.000001;
+		double lowestX = LowX - 1;
+		double lowest = 9999999;
+		double val;
+		for(double x = LowX + dx; x < UpX; x += dx)
+		{
+			val = f.Calc(x);
+			if(val < lowest)
+			{
+				lowest = val;
+				lowestX = x;
+			}
+		}
+		return new PointXY(Util.round(lowestX, 6), f.Calc(lowestX));
+	}
+	
+	public static PointXY Maximim(Function f, double LowX, double UpX)
+	{
+		double dx = 0.000001;
+		double highestX = LowX - 1;
+		double highest = -9999999;
+		double val;
+		for(double x = LowX; x < UpX; x += dx)
+		{
+			val = f.Calc(x);
+			if(val > highest)
+			{
+				highest = val;
+				highestX = x;
+			}
+		}
+		return new PointXY(Util.round(highestX, 6), f.Calc(highestX));
 	}
 }
