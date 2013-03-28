@@ -1,7 +1,5 @@
 package lorian.graph.function;
 
-import java.text.DecimalFormat;
-
 public class Calculate {
 
 	
@@ -13,7 +11,7 @@ public class Calculate {
 		double x = 0, x2 = 0;
 		 
 	
-		for(x = min.getX(); x < width;x+=0.1)
+		for(x = min.getX() + 0.001; x < width;x+=0.1)
 		{
 			currentDelta = Math.abs(g.Calc(x) - f.Calc(x));
 			if(currentDelta < 1)
@@ -43,7 +41,7 @@ public class Calculate {
 			}
 			
 		}
-		return new PointXY(x2, f.Calc(x2));
+		return new PointXY(Util.round(x2, 6), Util.round(f.Calc(x2), 6));
 	}
 	
 	public static double DyDx(Function f, double x)
@@ -57,7 +55,7 @@ public class Calculate {
 	
 	public static double Integral(Function f, double LowX, double UpX)
 	{
-		long starttime = System.currentTimeMillis();
+		//long starttime = System.currentTimeMillis();
 		double dx = 0.00001;
 		double lowersum=0, uppersum=0;
 		for(double x = LowX; x < UpX; x += dx)
@@ -72,7 +70,7 @@ public class Calculate {
 			}
 		}
 		double average = (lowersum + uppersum) / 2;
-		System.out.println("Passed: " + (System.currentTimeMillis() - starttime) + "ms");
+		//System.out.println("Passed: " + (System.currentTimeMillis() - starttime) + "ms");
 		return Util.round(average, 6);
 	}
 	
@@ -94,7 +92,7 @@ public class Calculate {
 		return new PointXY(Util.round(lowestX, 6), f.Calc(lowestX));
 	}
 	
-	public static PointXY Maximim(Function f, double LowX, double UpX)
+	public static PointXY Maximum(Function f, double LowX, double UpX)
 	{
 		double dx = 0.000001;
 		double highestX = LowX - 1;
@@ -110,5 +108,14 @@ public class Calculate {
 			}
 		}
 		return new PointXY(Util.round(highestX, 6), f.Calc(highestX));
+	}
+	
+	public static PointXY Zero(Function f, double LowX, double UpX)
+	{
+		if(UpX <= LowX) return new PointXY(-999999, -99999);
+		Function zeroline = new Function("0");
+		PointXY intersect = Intersect(f, zeroline, new PointXY(LowX, 0), (UpX - LowX));
+		intersect.setY(0);
+		return intersect;
 	}
 }
