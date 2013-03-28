@@ -252,9 +252,9 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	}
 	private static void Calctest()
 	{
-		Function f = new Function("x^3+2");
-		double opp = Calculate.fnInt(f, -10, 5);
-		System.out.println(opp);
+		Function f = new Function("-x^3+4x");
+		PointXY val = Calculate.Zero(f, 1, 10);
+		System.out.println(val);
 	}
 	
 	public static void main(String[] args)
