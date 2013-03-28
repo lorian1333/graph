@@ -27,5 +27,5 @@ public class Util {
 	    double interestedInZeroDPs = valueToRound * multipicationFactor;
 	    return Math.round(interestedInZeroDPs) / multipicationFactor;
 	}
-	
+
 }

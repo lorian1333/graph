@@ -243,7 +243,6 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 
 	private static void Parsertest()
 	{
-		
 		// improving the function parser
 		//Function f = new Function();
 		//f.Parse("-+-123*456x*sin(x+4*4cos(x))45^2*765 + 4x + 3");
@@ -252,8 +251,9 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	}
 	private static void Calctest()
 	{
-		Function f = new Function("-x^3+4x");
-		PointXY val = Calculate.Zero(f, 1, 10);
+		Function f = new Function("x^2+3");
+		//Function g = new Function("2x+4");
+		double val = Calculate.Integral(f, 0, 10);
 		System.out.println(val);
 	}
 	
@@ -262,11 +262,11 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	
 		//Parsertest();
 		
-		Calctest();
+		//Calctest();
 		
 		
 		//Creating the actual window
-		//GraphFunctionsFrame.funcframe = new GraphFunctionsFrame();
+		GraphFunctionsFrame.funcframe = new GraphFunctionsFrame();
 	}
 
 	
