@@ -26,6 +26,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import lorian.graph.function.Calculate;
 import lorian.graph.function.Function;
 import lorian.graph.function.PointXY;
 import lorian.graph.function.Util;
@@ -240,30 +241,28 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		System.out.println("Done");		
 	}
 
-	
-	public static void main(String[] args)
+	private static void Parsertest()
 	{
 		
 		// improving the function parser
+		//Function f = new Function();
+		//f.Parse("-+-123*456x*sin(x+4*4cos(x))45^2*765 + 4x + 3");
+		//f.Parse("(123.456*x*1^2)^(123x)");
+		//f.Parse("x");
+	}
+	private static void Calctest()
+	{
+		Function f = new Function("x^3+2");
+		double opp = Calculate.fnInt(f, -10, 5);
+		System.out.println(opp);
+	}
+	
+	public static void main(String[] args)
+	{
+	
+		//Parsertest();
 		
-		
-		/*
-		if(!f.Parse("-+-123*456*x*sin(x+4*4cos(x))*-45^-123.456*765"))
-		{
-			System.err.println("error parsing function!");
-		}
-		*/
-		
-		Function f = new Function("x^2-4");
-		Function g = new Function("-x^2+3");
-
-		PointXY intersect = Util.Intersect(f, g, new PointXY(-4, 4), 10);
-		System.out.println("Intersect: " + intersect);
-		
-		intersect = Util.Intersect(f, g, new PointXY(0, 4), 10);
-		System.out.println("Intersect: " + intersect);
-		
-		
+		Calctest();
 		
 		
 		//Creating the actual window

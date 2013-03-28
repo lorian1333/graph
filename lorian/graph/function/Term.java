@@ -16,15 +16,16 @@ public class Term {
 	
 	int index = 0;
 	
-	List<Double> constants;
+	List<Factor> factors;
 	
 	public Term()
 	{
-		constants = new ArrayList<Double>();
+		factors = new ArrayList<Factor>();
 	}
 	public Term(char argumentChar)
 	{
 		this.argumentChar = argumentChar;
+		factors = new ArrayList<Factor>();
 	}
 	
 	private boolean ParseConstant(String s)
@@ -284,25 +285,7 @@ public class Term {
 		parsed = true;
 		return true;
 	}
-	private boolean ContainsFunction(String s)
-	{
-		s = Util.removeWhiteSpace(s.trim());
-		for(int i=0;i<s.length(); i++)
-		{
-			char ch = s.charAt(i);
-			if(ch < '0' && ch > '9' && ch != this.argumentChar)
-			{
-				
-			}
-		}
-		return false;
-	}
-	
-	private boolean ParseFunction(String s)
-	{
-		
-		return true;
-	}
+
 	private boolean ParseTerm(String s)
 	{
 		int constantstart=-1, functionend = -1;
@@ -388,6 +371,160 @@ public class Term {
 		}
 		return true;
 	}
+
+	
+	private String GetEverythingBetweenParentheses(String s)
+	{
+		char ch;
+		int funcdepth = 0;
+		String result = "(";
+		index++;
+		while(index < s.length())
+		{
+			ch = s.charAt(index);
+			if(ch == '(')
+			{
+				funcdepth++;
+			}
+			else if(ch == ')')
+			{
+				if(funcdepth > 0 ) funcdepth--;
+				else if(funcdepth==0)
+				{
+					result += ch;
+					return result;
+				}
+			}
+			result += ch;
+			index++;
+		}
+		return result;
+	}
+	
+	private List<String> SplitIntoFactors(String s)
+	{
+		List<String> factors = new ArrayList<String>();
+		char ch;
+		String newfactor = "";
+		boolean ignoreminplus = true;
+		while(index < s.length())
+		{
+			ch = s.charAt(index);
+
+				if(!((ch >= '0' && ch <= '9') || ch == '.'))
+				{
+					if(ch=='*')
+					{
+						if(newfactor.length() > 0) factors.add(newfactor);
+						newfactor = "";
+						ignoreminplus = true;
+					}
+					else if(ch==argumentChar)
+					{
+						if(newfactor.length() > 0)
+						{
+							if(!ignoreminplus)
+							{
+								if(newfactor.length() > 0) factors.add(newfactor);
+								newfactor = "";
+								ignoreminplus = true;
+								continue;
+							}
+							else
+							{
+								boolean neg = false;
+								int i=0;
+								String tmp = "";
+								while(i < newfactor.length())
+								{
+									if(newfactor.charAt(i) == '-') neg = !neg;
+									i++;
+								}
+								if(neg) tmp += "-";
+								tmp += "1";
+								factors.add(tmp);
+								newfactor = "";
+								ignoreminplus = true;
+								continue;
+							}
+						}
+						else
+						{
+							newfactor += ch;
+							if(index+1 < s.length())
+							{
+								if(s.charAt(index+1) != '^')
+								{
+									if(newfactor.length() > 0) factors.add(newfactor);
+									newfactor = "";
+									ignoreminplus = true;
+								}
+								
+							}
+							
+							
+							
+						}
+					}
+					else if(ch=='+' || ch=='-')
+					{
+						if(!ignoreminplus)
+						{
+							
+							if(newfactor.length() > 0) factors.add(newfactor);
+							newfactor = "";
+							ignoreminplus = true;
+							continue;
+						}
+						else newfactor += ch;
+					}
+					else if(ch == '(')
+					{
+						newfactor += GetEverythingBetweenParentheses(s);
+						if(index+1 < s.length())
+						{
+							if(s.charAt(index+1) == '^')
+							{
+								index++;
+								continue;
+							}
+						}
+					
+						if(newfactor.length() > 0) factors.add(newfactor);
+						newfactor = "";
+						ignoreminplus = true;
+						
+					}
+					else if(ch == '^')
+					{
+						ignoreminplus = true;
+						newfactor += ch;
+						index++;
+						continue;
+					}
+					/*
+					else if( (ch >= 'A' && ch <= 'Z') || ( ch >= 'a' || ch <= 'z') && newproduct.length() > 0)
+					{
+						if(newproduct.length() > 0) products.add(newproduct);
+						newproduct = "";
+						ignoreminplus = true;
+						continue;
+					}
+					*/
+					else
+						newfactor += ch;
+				}
+				else
+				{
+					newfactor += ch;
+				}
+				if(ignoreminplus && newfactor.length() > 0 && !(ch == '+' || ch == '-')) ignoreminplus = false;
+			
+			index++;
+		}
+		if(newfactor.length() > 0) factors.add(newfactor);
+		return factors;
+	}
 	public boolean Parse(String s)
 	{
 		s = Util.removeWhiteSpace(s).toLowerCase();
@@ -399,14 +536,24 @@ public class Term {
 		coefficient = 0;
 		exponent = 0;
 		
-
+		
 		if(!Util.StringContains(s, argumentChar))
 		{
 			isconstant = true;
 			exponent = 0;
 			return ParseConstant(s);
 		}
-		System.out.println("Not constant");
+		
+		/*
+		List<String> factorstrs = SplitIntoFactors(s);
+		System.out.println(factorstrs);
+		for(String factorstr: factorstrs)
+		{
+			Factor factor = new Factor(this.argumentChar);
+			factor.Parse(factorstr);
+		}
+		*/
+		//return true;
 		return ParseAxN(s);
 		//return ParseTerm(s); //working on this :P
 		

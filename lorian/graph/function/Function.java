@@ -41,11 +41,7 @@ public class Function {
 	public boolean Parse(String s)
 	{
 		s = Util.removeWhiteSpace(s).toLowerCase();
-		for(int i=0;i<s.length();i++)
-		{
-			int ch = (int) s.charAt(i);
-			//System.out.println(ch);
-		}
+	
 		String termstr = "";
 		
 		
@@ -70,7 +66,7 @@ public class Function {
 				{
 					if(funcdepth==0 && !ignoreminplus) break;
 				}
-				else if(s.charAt(index)=='*' || s.charAt(index)=='^')
+				else if(s.charAt(index)=='*' || s.charAt(index)=='^' || s.charAt(index) == ')')
 				{
 					ignoreminplus = true;
 				}
@@ -93,12 +89,12 @@ public class Function {
 			
 			
 			termstr = s.substring(start, index);
-			System.out.println(termstr);
+			//System.out.println(termstr);
 			
 			if(!term.Parse(termstr)) 
 			{
 				clear();
-				//return false;
+				return false;
 			}
 			terms.add(term);
 			
