@@ -3,16 +3,18 @@ package lorian.graph.function;
 public class Factor {
 	enum Type
 	{
-		CONSTANT, ARGUMENT, PARENTHESES, FUNCTION
+		CONSTANT, ARGUMENT, PARENTHESES, FUNCTION, SPECIAL
 	}
 	Type type;
 	
 	private char argumentChar = 'x';
-	private double value;
-	
+	private double value = 0;
+	private boolean parsed = false;
 	private int index = 0;
 	
 	Function basefunc, exponentfunc;
+	Factor specialfac;
+	
 	public Factor()
 	{
 		basefunc = new Function();
@@ -118,6 +120,63 @@ public class Factor {
 		System.out.println(value);
 		return true;
 	}
+	private String ParseParanthesesBase(String s)
+	{
+		char ch;
+		int funcdepth = 0;
+		String result = "(";
+		index++;
+		while(index < s.length())
+		{
+			ch = s.charAt(index);
+			if(ch == '(')
+			{
+				funcdepth++;
+			}
+			else if(ch == ')')
+			{
+				if(funcdepth > 0 ) funcdepth--;
+				else if(funcdepth==0)
+				{
+					result += ch;
+					break;
+				}
+			}
+			result += ch;
+			index++;
+		}
+		return result.substring(1, result.length()-1);
+	}
+	private String ParseParanthesesExponent(String s)
+	{
+		index += 2;
+		return s.substring(index);
+	}
+	private boolean ParseParentheses(String s)
+	{
+		String basestr = ParseParanthesesBase(s); 
+		if(index == s.length()-1)
+		{
+			exponentfunc.Parse("1");
+			return basefunc.Parse(basestr);
+		}
+		String exponentstr = ParseParanthesesExponent(s);
+		if(!basefunc.Parse(basestr) || !exponentfunc.Parse(exponentstr)) 
+		{
+			return false;
+		}
+		else return true;
+	}
+	private boolean ParseExponentX(String s)
+	{
+		String basestr = s.substring(0, s.indexOf('^'));
+		String exponentstr = s.substring(s.indexOf('^') + 1);
+		if(!basefunc.Parse(basestr) || !exponentfunc.Parse(exponentstr)) 
+		{
+			return false;
+		}
+		else return true;
+	}
 	private boolean ParseX(String s)
 	{
 		if(!Util.StringContains(s, '^'))
@@ -130,36 +189,112 @@ public class Factor {
 		return exponentfunc.Parse(exponentstr);
 		//return true;
 	}
-	private boolean ParseParentheses(String s)
+	private boolean ParseFunction(String s)
 	{
-		exponentfunc.Parse("1");
-		return basefunc.Parse(s.substring(1, s.length() - 1));
-		//return true;
-	} 
+		System.out.println("Function: " + s);
+		return false;
+	}
+	
+	private boolean ParseOther(String s)
+	{
+		int ii = Util.StringIndexNotOf(s, "+-");
+		if(s.charAt(0) == '-' || s.charAt(0) == '+')
+		{
+			boolean neg = false;
+			for(int i = 0; i< ii; i++)
+			{
+				if(s.charAt(i) == '+' || s.charAt(i) == '-')
+				{
+					if(s.charAt(i) == '-') neg = !neg;
+				}
+				else return false;
+			}
+			if(neg) value = -1;
+			else value = 1;
+			type = Type.SPECIAL;
+			specialfac = new Factor(this.argumentChar);
+			return specialfac.Parse(s.substring(ii));
+		
+			/*
+			type = Type.PARENTHESES;
+			return ParseParentheses(s.substring(ii));
+			*/
+		}
+		else
+		{
+			type = Type.PARENTHESES;
+			value = 1;
+			return ParseExponentX(s);
+		}
+	}
 	public boolean Parse(String s)
 	{
-		
-		if(!Util.StringContains(s, argumentChar))
-		{
-			type = Type.CONSTANT;
-			return ParseConstant(s);
-		}
-		else if(s.charAt(0) == argumentChar)
+		if(s.charAt(0) == argumentChar)
 		{
 			type = Type.ARGUMENT;
 			return ParseX(s);
 		}
 		else if(s.charAt(s.length() - 1) == ')')
 		{
+			if(s.charAt(0) == '(')
+			{
+				type = Type.PARENTHESES;
+				value = 1;
+				return ParseParentheses(s);
+			}
+			else if(Util.StringContains(s, Util.LowercaseAlphabethWithout(argumentChar)))
+			{
+				type = Type.FUNCTION; 
+				return ParseFunction(s);
+			}
+			else
+			{
+				return ParseOther(s);
+			}
+		}
+		else if(s.charAt(0) == '(')
+		{
+			type = Type.PARENTHESES;
+			value = 1;
 			return ParseParentheses(s);
+		}
+		else if(!Util.StringContains(s, argumentChar))
+		{
+			type = Type.CONSTANT;
+			return ParseConstant(s);
 		}
 		else
 		{
-			return false;
+			return ParseOther(s);
 		}
 		
-			
-
+	}
+	public double Calc(double arg)
+	{
+		//if(!parsed )return 0;
+		
+		if(type == Type.CONSTANT)
+		{
+			return value;
+		}
+		else if(type == Type.ARGUMENT)
+		{
+			return Math.pow(arg, exponentfunc.Calc(arg)); 
+		}
+		else if(type == Type.PARENTHESES)
+		{
+			return value * Math.pow(basefunc.Calc(arg), exponentfunc.Calc(arg));
+		}
+		else if(type == Type.SPECIAL)
+		{
+			return value * specialfac.Calc(arg);
+		}
+		else if(type == Type.FUNCTION)
+		{
+			return 0;
+			//TODO ????
+		}
+		else return 0;
 	}
 }
 

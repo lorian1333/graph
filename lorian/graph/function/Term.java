@@ -4,18 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Term {
+	
 	private boolean parsed = false;
-	private boolean coefficientnegative = false;
-	private boolean exponentnegative = false;
-	private boolean coefficienthasfloatpart = false;
-	private boolean exponenthasfloatpart = false;
-	private boolean isconstant = false;
+	
+	private int index = 0;
 	private char argumentChar = 'x';
-	double coefficient = 0;
-	double exponent = 0;
-	
-	int index = 0;
-	
 	List<Factor> factors;
 	
 	public Term()
@@ -28,64 +21,259 @@ public class Term {
 		factors = new ArrayList<Factor>();
 	}
 	
-	private boolean ParseConstant(String s)
+	
+	
+	private String GetEverythingBetweenParentheses(String s)
 	{
-		int index = 0;
-		if(s.charAt(index)=='-')
+		char ch;
+		int funcdepth = 0;
+		String result = "(";
+		index++;
+		while(index < s.length())
 		{
-			coefficientnegative = true;
-			index++;
-		}
-		else if(s.charAt(index)=='+')
-		{
-			coefficientnegative = false;
-			index++;
-		}
-		int i=1;
-		for( ;index<s.length();index++)
-		{
-			if(!(s.charAt(index) >= '0' && s.charAt(index) <= '9'))
+			ch = s.charAt(index);
+			if(ch == '(')
 			{
-				if(s.charAt(index)==',')
+				funcdepth++;
+			}
+			else if(ch == ')')
+			{
+				if(funcdepth > 0 ) funcdepth--;
+				else if(funcdepth==0)
 				{
-					continue;
+					result += ch;
+					return result;
 				}
-				else if(s.charAt(index)=='.')
+			}
+			result += ch;
+			index++;
+		}
+		return result;
+	}
+	
+	private List<String> SplitIntoFactors(String s)
+	{
+		List<String> factors = new ArrayList<String>();
+		char ch;
+		String newfactor = "";
+		boolean ignoreminplus = true;
+		boolean inexponent = false;
+		while(index < s.length())
+		{
+			ch = s.charAt(index);
+
+				if(!((ch >= '0' && ch <= '9') || ch == '.'))
 				{
-					this.coefficienthasfloatpart = true;
-					continue;
+					if(ch=='*')
+					{
+						if(newfactor.length() > 0) factors.add(newfactor);
+						newfactor = "";
+						ignoreminplus = true;
+					}
+					else if(ch==argumentChar)
+					{
+						if(inexponent)
+						{
+							newfactor += ch;
+							
+						}
+						else if(newfactor.length() > 0)
+						{
+							if(!ignoreminplus)
+							{
+								if(newfactor.length() > 0) factors.add(newfactor);
+								newfactor = "";
+								ignoreminplus = true;
+								inexponent = false;
+								continue;
+							}
+							else
+							{
+								boolean neg = false;
+								int i=0;
+								String tmp = "";
+								while(i < newfactor.length())
+								{
+									if(newfactor.charAt(i) == '-') neg = !neg;
+									i++;
+								}
+								if(neg) tmp += "-";
+								tmp += "1";
+								factors.add(tmp);
+								newfactor = "";
+								ignoreminplus = true;
+								continue;
+							}
+						}
+						
+						else
+						{
+							newfactor += ch;
+							if(index+1 < s.length())
+							{
+								if(s.charAt(index+1) != '^')
+								{
+									if(newfactor.length() > 0) factors.add(newfactor);
+									newfactor = "";
+									ignoreminplus = true;
+								}
+								
+							}
+							
+							
+							
+						}
+					}
+					else if(Util.StringContains("" + ch, Util.LowercaseAlphabethWithout(argumentChar)))
+					{
+						if(newfactor.length() > 0) factors.add(newfactor);
+						int tmpindex = s.indexOf('(', index);
+						newfactor = s.substring(index, tmpindex);
+						index = tmpindex;
+						newfactor += GetEverythingBetweenParentheses(s);
+						if(index+1 < s.length())
+						{
+							if(s.charAt(index+1) == '^')
+							{
+								index++;
+								continue;
+							}
+						}
+					
+						if(newfactor.length() > 0) factors.add(newfactor);
+						newfactor = "";
+						ignoreminplus = true;
+						inexponent = false;
+						
+					}
+					
+					else if(ch=='+' || ch=='-')
+					{
+						if(!ignoreminplus)
+						{
+							if(newfactor.length() > 0) factors.add(newfactor);
+							newfactor = "";
+							ignoreminplus = true;
+							inexponent = false;
+							continue;
+						}
+						else newfactor += ch;
+					}
+					else if(ch == '(')
+					{
+						newfactor += GetEverythingBetweenParentheses(s);
+						if(index+1 < s.length())
+						{
+							if(s.charAt(index+1) == '^')
+							{
+								index++;
+								continue;
+							}
+						}
+					
+						if(newfactor.length() > 0) factors.add(newfactor);
+						newfactor = "";
+						ignoreminplus = true;
+						inexponent = false;
+						
+					}
+					else if(ch == '^')
+					{
+						ignoreminplus = true;
+						inexponent = true;
+						newfactor += ch;
+						index++;
+						continue;
+					}
+				
+					
+					else
+						newfactor += ch;
 				}
 				else
 				{
-					//System.err.printf("Error: Unknown char '%c' in term '%s'\n", s.charAt(index), s);
-					return false;
+					newfactor += ch;
 				}
-				
+				if(ignoreminplus && newfactor.length() > 0 && !(ch == '+' || ch == '-')) ignoreminplus = false;
+			
+			index++;
+		}
+		if(newfactor.length() > 0) factors.add(newfactor);
+		return factors;
+	}
+	
+	public boolean Parse(String s)
+	{
+		s = Util.removeWhiteSpace(s).toLowerCase();
+		boolean result = true;
+		List<String> factorstrs = SplitIntoFactors(s);
+		//System.out.println(factorstrs);
+		for(String factorstr: factorstrs)
+		{
+			Factor factor = new Factor(this.argumentChar);
+			if(!factor.Parse(factorstr)) { 
+				result = false;
+				factors.add(null);
 			}
 			else
-			{
-				if(coefficienthasfloatpart)
-				{
-					coefficient += ((s.charAt(index) - '0')) / Math.pow(10, i++);
-				}
-				else
-				{
-					coefficient *= 10;
-					coefficient += ((s.charAt(index) - '0'));
-				}
-			}
+				factors.add(factor);
 		}
-		if(coefficientnegative) coefficient *= -1;
-		
-		/*
-		if(coefficienthasfloatpart)
-			System.out.printf("Constant: %f\n", coefficient);
-		else
-			System.out.printf("Constant: %d\n", (int) coefficient);
-		*/
-		parsed = true;
-		return true;
+		parsed = result;
+		return result;
 	}
+	
+
+	public double Calc(double arg)
+	{
+		if(!parsed) return 0;
+		double product = 1;
+		for(Factor fac: factors)
+		{
+			product *= fac.Calc(arg);
+		}
+		return product;
+		
+	}
+}
+
+/*
+ *
+  private boolean coefficientnegative = false;
+	private boolean exponentnegative = false;
+	private boolean coefficienthasfloatpart = false;
+	private boolean exponenthasfloatpart = false;
+	private boolean isconstant = false;
+
+	double coefficient = 0;
+	double exponent = 0;
+	
+ 	private double OldCalc(double arg)
+	{
+		if(!parsed) return 0;
+		return (coefficient * Math.pow(arg, exponent));
+	}
+	private boolean OldParse(String s)
+	{
+		s = Util.removeWhiteSpace(s).toLowerCase();
+		coefficientnegative = false;
+		exponentnegative = false;
+		coefficienthasfloatpart = false;
+		exponenthasfloatpart = false;
+		isconstant = false;
+		coefficient = 0;
+		exponent = 0;
+		
+		
+		if(!Util.StringContains(s, argumentChar))
+		{
+			isconstant = true;
+			exponent = 0;
+			return ParseConstant(s);
+		}
+		
+		return ParseAxN(s);
+	}
+	
 	private boolean ParseAxN(String s)
 	{
 		boolean skipNext = false;
@@ -150,14 +338,7 @@ public class Term {
 						skipNext = true;
 						exponent = 1;
 						break;
-						/*
-						if(coefficienthasfloatpart)
-							System.out.printf("Coefficient: %f\n", coefficient);
-						else
-							System.out.printf("Coefficient: %d\n", (int) coefficient);
 						
-						return true;
-						*/
 					}
 					
 					if(s.charAt(index)=='^')
@@ -269,18 +450,7 @@ public class Term {
 		if(coefficientnegative) coefficient *= -1;
 		if(exponentnegative) exponent *= -1;
 		
-		/*
-		if(coefficienthasfloatpart)
-			System.out.printf("Coefficient: %f, ", coefficient);
-		else
-			System.out.printf("Coefficient: %d, ", (int) coefficient);
-
-		if(exponenthasfloatpart)
-			System.out.printf("Exponent: %f\n", exponent);
-		else
-			System.out.printf("Exponent: %d\n", (int) exponent);
-			*/
-		
+	
 	
 		parsed = true;
 		return true;
@@ -340,7 +510,7 @@ public class Term {
 					functionend = tmp.indexOf('(');
 					tmp = s.substring(index, functionend+index);
 					System.out.printf("Function: %s\n", tmp);
-					//TODO handle this
+					
 				}
 			}
 			else if(state == 1)
@@ -363,7 +533,6 @@ public class Term {
 					functionend = tmp.indexOf('(');
 					tmp = s.substring(index, functionend+index);
 					System.out.printf("Function: %s\n", tmp);
-					//TODO handle this
 				}
 			
 			}
@@ -373,224 +542,56 @@ public class Term {
 	}
 
 	
-	private String GetEverythingBetweenParentheses(String s)
+	private boolean ParseConstant(String s)
 	{
-		char ch;
-		int funcdepth = 0;
-		String result = "(";
-		index++;
-		while(index < s.length())
+		int index = 0;
+		if(s.charAt(index)=='-')
 		{
-			ch = s.charAt(index);
-			if(ch == '(')
-			{
-				funcdepth++;
-			}
-			else if(ch == ')')
-			{
-				if(funcdepth > 0 ) funcdepth--;
-				else if(funcdepth==0)
-				{
-					result += ch;
-					return result;
-				}
-			}
-			result += ch;
+			coefficientnegative = true;
 			index++;
 		}
-		return result;
-	}
-	
-	private List<String> SplitIntoFactors(String s)
-	{
-		List<String> factors = new ArrayList<String>();
-		char ch;
-		String newfactor = "";
-		boolean ignoreminplus = true;
-		while(index < s.length())
+		else if(s.charAt(index)=='+')
 		{
-			ch = s.charAt(index);
-
-				if(!((ch >= '0' && ch <= '9') || ch == '.'))
+			coefficientnegative = false;
+			index++;
+		}
+		int i=1;
+		for( ;index<s.length();index++)
+		{
+			if(!(s.charAt(index) >= '0' && s.charAt(index) <= '9'))
+			{
+				if(s.charAt(index)==',')
 				{
-					if(ch=='*')
-					{
-						if(newfactor.length() > 0) factors.add(newfactor);
-						newfactor = "";
-						ignoreminplus = true;
-					}
-					else if(ch==argumentChar)
-					{
-						if(newfactor.length() > 0)
-						{
-							if(!ignoreminplus)
-							{
-								if(newfactor.length() > 0) factors.add(newfactor);
-								newfactor = "";
-								ignoreminplus = true;
-								continue;
-							}
-							else
-							{
-								boolean neg = false;
-								int i=0;
-								String tmp = "";
-								while(i < newfactor.length())
-								{
-									if(newfactor.charAt(i) == '-') neg = !neg;
-									i++;
-								}
-								if(neg) tmp += "-";
-								tmp += "1";
-								factors.add(tmp);
-								newfactor = "";
-								ignoreminplus = true;
-								continue;
-							}
-						}
-						else
-						{
-							newfactor += ch;
-							if(index+1 < s.length())
-							{
-								if(s.charAt(index+1) != '^')
-								{
-									if(newfactor.length() > 0) factors.add(newfactor);
-									newfactor = "";
-									ignoreminplus = true;
-								}
-								
-							}
-							
-							
-							
-						}
-					}
-					else if(ch=='+' || ch=='-')
-					{
-						if(!ignoreminplus)
-						{
-							
-							if(newfactor.length() > 0) factors.add(newfactor);
-							newfactor = "";
-							ignoreminplus = true;
-							continue;
-						}
-						else newfactor += ch;
-					}
-					else if(ch == '(')
-					{
-						newfactor += GetEverythingBetweenParentheses(s);
-						if(index+1 < s.length())
-						{
-							if(s.charAt(index+1) == '^')
-							{
-								index++;
-								continue;
-							}
-						}
-					
-						if(newfactor.length() > 0) factors.add(newfactor);
-						newfactor = "";
-						ignoreminplus = true;
-						
-					}
-					else if(ch == '^')
-					{
-						ignoreminplus = true;
-						newfactor += ch;
-						index++;
-						continue;
-					}
-					/*
-					else if( (ch >= 'A' && ch <= 'Z') || ( ch >= 'a' || ch <= 'z') && newproduct.length() > 0)
-					{
-						if(newproduct.length() > 0) products.add(newproduct);
-						newproduct = "";
-						ignoreminplus = true;
-						continue;
-					}
-					*/
-					else
-						newfactor += ch;
+					continue;
+				}
+				else if(s.charAt(index)=='.')
+				{
+					this.coefficienthasfloatpart = true;
+					continue;
 				}
 				else
 				{
-					newfactor += ch;
+					//System.err.printf("Error: Unknown char '%c' in term '%s'\n", s.charAt(index), s);
+					return false;
 				}
-				if(ignoreminplus && newfactor.length() > 0 && !(ch == '+' || ch == '-')) ignoreminplus = false;
-			
-			index++;
-		}
-		if(newfactor.length() > 0) factors.add(newfactor);
-		return factors;
-	}
-	public boolean Parse(String s)
-	{
-		s = Util.removeWhiteSpace(s).toLowerCase();
-		coefficientnegative = false;
-		exponentnegative = false;
-		coefficienthasfloatpart = false;
-		exponenthasfloatpart = false;
-		isconstant = false;
-		coefficient = 0;
-		exponent = 0;
-		
-		
-		if(!Util.StringContains(s, argumentChar))
-		{
-			isconstant = true;
-			exponent = 0;
-			return ParseConstant(s);
-		}
-		
-		/*
-		List<String> factorstrs = SplitIntoFactors(s);
-		System.out.println(factorstrs);
-		for(String factorstr: factorstrs)
-		{
-			Factor factor = new Factor(this.argumentChar);
-			factor.Parse(factorstr);
-		}
-		*/
-		//return true;
-		return ParseAxN(s);
-		//return ParseTerm(s); //working on this :P
-		
-	}
-	public double Calc(double arg)
-	{
-		if(!parsed) return 0;
-		return (coefficient * Math.pow(arg, exponent));
-	}
-	@Override
-	public String toString()
-	{
-		if(!parsed) return super.toString();
-		
-		if(isconstant)
-		{
-			return String.valueOf(coefficient);
-		}
-		else
-		{
-			String s = "";
-			if(coefficient!=0)
+				
+			}
+			else
 			{
 				if(coefficienthasfloatpart)
-					s += coefficient;
-				else s += (int) coefficient;
+				{
+					coefficient += ((s.charAt(index) - '0')) / Math.pow(10, i++);
+				}
+				else
+				{
+					coefficient *= 10;
+					coefficient += ((s.charAt(index) - '0'));
+				}
 			}
-			s += argumentChar;
-			if(exponent != 1)
-			{
-				s += "^";
-				if(exponenthasfloatpart)
-					s += exponent;
-				else 
-					s += (int) exponent;
-			}
-			return s;
 		}
+		if(coefficientnegative) coefficient *= -1;
+		
+		parsed = true;
+		return true;
 	}
-}
+	*/
