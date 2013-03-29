@@ -125,30 +125,8 @@ public class Term {
 							
 						}
 					}
-					/*
-					else if(Util.StringContains("" + ch, Util.LowercaseAlphabethWithout(argumentChar) + "()+=^"))
-					{
-						if(newfactor.length() > 0) factors.add(newfactor);
-						int tmpindex = s.indexOf('(', index);
-						newfactor = s.substring(index, tmpindex);
-						index = tmpindex;
-						newfactor += GetEverythingBetweenParentheses(s);
-						if(index+1 < s.length())
-						{
-							if(s.charAt(index+1) == '^')
-							{
-								index++;
-								continue;
-							}
-						}
 					
-						if(newfactor.length() > 0) factors.add(newfactor);
-						newfactor = "";
-						ignoreminplus = true;
-						inexponent = false;
-						
-					}
-					*/
+					
 					else if(ch=='+' || ch=='-')
 					{
 						if(!ignoreminplus)
@@ -192,7 +170,29 @@ public class Term {
 						index++;
 						continue;
 					}
-				
+
+					else if(Util.StringContains("" + ch, Util.LowercaseAlphabethWithout(argumentChar) + "()+=^"))
+					{
+						if(newfactor.length() > 0) factors.add(newfactor);
+						int tmpindex = s.indexOf('(', index);
+						newfactor = s.substring(index, tmpindex);
+						index = tmpindex;
+						newfactor += GetEverythingBetweenParentheses(s);
+						if(index+1 < s.length())
+						{
+							if(s.charAt(index+1) == '^')
+							{
+								index++;
+								continue;
+							}
+						}
+					
+						if(newfactor.length() > 0) factors.add(newfactor);
+						newfactor = "";
+						ignoreminplus = true;
+						inexponent = false;
+						
+					}
 					
 					else
 						newfactor += ch;

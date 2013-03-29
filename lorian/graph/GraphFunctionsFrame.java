@@ -36,7 +36,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	public static final int MaxFunctions = 20;
 	public static final String version = "1.0";
 	private final Dimension WindowSize = new Dimension(800, 800);
-	private List<Function> functions;
+	public static List<Function> functions;
 	
 	private List<JTextField> textfields;
 	private List<JLabel> labels;
@@ -209,8 +209,12 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		initUI();
 		this.setVisible(true);
 	}
-	
-	
+	/*
+	public static double getFunction(int index)
+	{
+		
+	}
+	*/
 	private void Render()
 	{
 		System.out.println("Parsing functions...");

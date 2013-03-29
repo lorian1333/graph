@@ -40,10 +40,10 @@ public class Function {
 	}
 	public boolean Parse(String s)
 	{
+		try
+		{
 		s = Util.removeWhiteSpace(s).toLowerCase();
-	
 		String termstr = "";
-		
 		
 		int start=0,index=0;
 		
@@ -82,7 +82,10 @@ public class Function {
 					{
 						return false;
 					}
-					else funcdepth--;
+					else {
+						funcdepth--;
+						ignoreminplus = false;
+					}
 				}
 				index++;
 			}
@@ -105,6 +108,11 @@ public class Function {
 		}
 		isEmpty = false;
 		return true;
+		}
+		catch (Exception e)
+		{
+			return false;
+		}
 	}
 	public Color getColor() {
 		return color;

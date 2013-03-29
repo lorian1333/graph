@@ -18,6 +18,7 @@ public enum MathChars
 	Frac_OneFourth ('\u00BC'),
 	Frac_OneHalf ('\u00BD'),
 	Frac_ThreeFourth ('\u00BE'),
+	
 	Sup_0 ('\u2070'),
 	Sup_1 ('\u00B9'),
 	Sup_2 ('\u00B2'),
@@ -32,10 +33,13 @@ public enum MathChars
 	Sup_Minus ('\u207B'),
 	Sup_ParenthesisOpen ('\u207D'),
 	Sup_ParenthesisClose ('\u207E'),
+	
 	Root_2 ('\u221A'),
 	Root_3 ('\u221B'),
 	Root_4 ('\u221C'),
-	Pi ('\u03C0');
+	
+	Pi ('\u03C0'),
+	e ('\u0435');
 
 
 	

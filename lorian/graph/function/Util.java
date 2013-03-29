@@ -7,7 +7,7 @@ public class Util {
 		String ss = ""; 
 		for(int i=0;i<s.length();i++)
 		{
-			if(s.charAt(i) != ' ' && s.charAt(i) != '\t')
+			if(s.charAt(i) != ' ' && s.charAt(i) != '\t' && s.charAt(i) != '\n')
 				ss += s.charAt(i);
 		}
 		return ss;

@@ -1,12 +1,16 @@
 package lorian.graph.function;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Factor {
 	enum Type
 	{
 		CONSTANT, ARGUMENT, PARENTHESES, FUNCTION, SPECIAL
 	}
-	Type type;
 	
+	
+	private Type type;
 	private char argumentChar = 'x';
 	private double value = 0;
 	private boolean parsed = false;
@@ -14,6 +18,8 @@ public class Factor {
 	
 	Function basefunc, exponentfunc;
 	Factor specialfac;
+	String functionname;
+	List<String> functionargs;
 	
 	public Factor()
 	{
@@ -58,11 +64,88 @@ public class Factor {
 		return tmpvalue;
 		//TODO Make sure this works!
 	}
+	private int getFirstPower(String s)
+	{
+		char ch;
+		int funcdepth = 0;
+		index++;
+		while(index < s.length())
+		{
+			ch = s.charAt(index);
+			if(ch == '(')
+			{
+				funcdepth++;
+			}
+			else if(ch == ')')
+			{
+				if(funcdepth > 0 ) funcdepth--;
+				else if(funcdepth==0)
+				{
+					//result += ch;
+					return -1;
+				}
+			}
+			else if(ch == '^' && funcdepth == 0)
+			{
+				return index;
+			}
+			index++;
+		}
+		return -1;
+	}
+	private List<String> SplitArgs(String s)
+	{
+		char ch;
+		int funcdepth = 0;
+		List<String> args = new ArrayList<String>();
+		int i = 0;
+		String arg = "";
+		while(i < s.length())
+		{
+			ch = s.charAt(i);
+			if(ch == '(')
+			{
+				funcdepth++;
+			}
+			else if(ch == ')')
+			{
+				if(funcdepth > 0 ) funcdepth--;
+				else if(funcdepth==0)
+				{
+					return null;
+				}
+			}
+			else if(ch == ',' && funcdepth == 0)
+			{
+				if(arg.length() > 0) args.add(arg);
+				else args.add(" ");
+				arg = "";
+				i++;
+				continue;
+			}
+			arg += ch;
+			i++;
+		}
+		if(arg.length() > 0) args.add(arg);
+		return args;
+	}
 	private boolean ParseConstant(String s)
 	{
+
 		if(!Util.StringContains(s, '^'))
 		{
-			if(Util.StringContains(s, '('))
+			if(!Util.StringContains(s, "0123456789"))
+			{
+				value = 1;
+				for(int i=0;i<s.length();i++)
+				{
+					if(s.charAt(i) == '-') value *= -1;
+					else if(s.charAt(i) != '+')
+						return false;
+				}
+				return true;
+			}
+			else if(Util.StringContains(s, '('))
 			{
 				value = ParseConstantBetweenParentheses(s);
 				return true;
@@ -169,7 +252,7 @@ public class Factor {
 	}
 	private boolean ParseExponentX(String s)
 	{
-		int tmpindex = s.indexOf('^');
+		int tmpindex = getFirstPower(s);//s.indexOf('^');
 		String basestr, exponentstr;
 		if(tmpindex == -1)
 		{
@@ -193,7 +276,6 @@ public class Factor {
 		if(!Util.StringContains(s, '^'))
 		{
 			exponentfunc.Parse("1");
-			//CHILLLAAAA!!!!!
 			return true;
 		} 
 		String exponentstr = s.substring(s.indexOf('^')+1);
@@ -203,7 +285,12 @@ public class Factor {
 	private boolean ParseFunction(String s)
 	{
 		System.out.println("Function: " + s);
-		return false;
+		functionname = s.substring(0, s.indexOf('('));
+		String functionargsstr = s.substring(s.indexOf('(') + 1, s.length()-1);
+		functionargs = SplitArgs(functionargsstr);
+
+		
+		return true;
 	}
 	
 	private boolean ParseOther(String s)
@@ -240,6 +327,7 @@ public class Factor {
 	}
 	public boolean Parse(String s)
 	{
+		
 		if(s.charAt(0) == argumentChar)
 		{
 			type = Type.ARGUMENT;
@@ -302,8 +390,7 @@ public class Factor {
 		}
 		else if(type == Type.FUNCTION)
 		{
-			return 0;
-			//TODO ????
+			return MathFunctions.Calculate(functionname, functionargs, arg);
 		}
 		else return 0;
 	}
