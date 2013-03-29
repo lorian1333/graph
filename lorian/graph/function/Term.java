@@ -58,6 +58,7 @@ public class Term {
 		String newfactor = "";
 		boolean ignoreminplus = true;
 		boolean inexponent = false;
+		
 		while(index < s.length())
 		{
 			ch = s.charAt(index);
@@ -124,7 +125,8 @@ public class Term {
 							
 						}
 					}
-					else if(Util.StringContains("" + ch, Util.LowercaseAlphabethWithout(argumentChar)))
+					/*
+					else if(Util.StringContains("" + ch, Util.LowercaseAlphabethWithout(argumentChar) + "()+=^"))
 					{
 						if(newfactor.length() > 0) factors.add(newfactor);
 						int tmpindex = s.indexOf('(', index);
@@ -146,7 +148,7 @@ public class Term {
 						inexponent = false;
 						
 					}
-					
+					*/
 					else if(ch=='+' || ch=='-')
 					{
 						if(!ignoreminplus)
@@ -161,6 +163,11 @@ public class Term {
 					}
 					else if(ch == '(')
 					{
+						if(!Util.StringContains(newfactor, Util.LowercaseAlphabethWithout(argumentChar)))
+						{
+							if(newfactor.length() > 0) factors.add(newfactor);
+							newfactor = "";
+						}
 						newfactor += GetEverythingBetweenParentheses(s);
 						if(index+1 < s.length())
 						{

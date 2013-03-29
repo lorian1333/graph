@@ -169,8 +169,19 @@ public class Factor {
 	}
 	private boolean ParseExponentX(String s)
 	{
-		String basestr = s.substring(0, s.indexOf('^'));
-		String exponentstr = s.substring(s.indexOf('^') + 1);
+		int tmpindex = s.indexOf('^');
+		String basestr, exponentstr;
+		if(tmpindex == -1)
+		{
+			basestr = s;
+			exponentstr = "1";
+		}
+		else
+		{
+			basestr = s.substring(0, tmpindex);
+			exponentstr = s.substring(tmpindex + 1);
+		}
+
 		if(!basefunc.Parse(basestr) || !exponentfunc.Parse(exponentstr)) 
 		{
 			return false;
