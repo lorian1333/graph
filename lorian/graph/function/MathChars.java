@@ -14,10 +14,10 @@ public enum MathChars
 	Frac_ThreeEights ('\u215C'),
 	Frac_FiveEights ('\u215D'),
 	Frac_SevenEights ('\u215E'),
-	Frac_One ('\u215F'),
 	Frac_OneFourth ('\u00BC'),
 	Frac_OneHalf ('\u00BD'),
 	Frac_ThreeFourth ('\u00BE'),
+	Frac_One ('\u215F'),
 	
 	Sup_0 ('\u2070'),
 	Sup_1 ('\u00B9'),
@@ -39,9 +39,9 @@ public enum MathChars
 	Root_4 ('\u221C'),
 	
 	Pi ('\u03C0'),
-	e ('\u0435');
+	e ('\u0435'),
 
-
+	Integral ('\u222B');
 	
 	private char code;
 	
