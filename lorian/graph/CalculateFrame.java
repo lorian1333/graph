@@ -1,27 +1,36 @@
 package lorian.graph;
 
-import java.awt.Point;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
 
-import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import lorian.graph.function.MathChars;
 
 public class CalculateFrame extends JPanel {
 	private static final long serialVersionUID = -6709615022829676720L;
-	CalculationsData data;
-	
+	private Calculation calc;
+	private CalculationsData data;
+	private String title;
 	enum Calculation
 	{
 		VALUE, ZERO, MINIMUM, MAXIMUM, INTERSECT, DYDX, INTEGRAL;
 	}
 	
-	public CalculateFrame(Point point, Calculation calc)
+	private void initUI()
 	{
-		//this.setLocationRelativeTo(null);
-		//this.setLocation((int) point.getX() + 450, (int) point.getY() + 200);
-		String title = "Calculate: ";
-		switch(calc)
+		JLabel titlelabel = new JLabel(title);
+		titlelabel.setFont(titlelabel.getFont().deriveFont(13.0f));
+		this.add(titlelabel);
+	} 
+	public CalculateFrame(Calculation calc)
+	{
+		this.calc = calc;
+		title = "Calculate: ";
+		switch(this.calc)
 		{
 		case VALUE:
 			title += "Value";
@@ -47,11 +56,14 @@ public class CalculateFrame extends JPanel {
 		default:
 			break;
 		}
-		//this.setTitle(title);
-		//this.setResizable(false);
-		this.setSize(300, 300);
+		initUI();
+		this.setPreferredSize(new Dimension(275, 200));
 		this.setVisible(true);
 	}
 	
-	
+	@Override
+	public void paintComponent(Graphics g)
+	{
+		super.paintComponent(g);
+	}
 }

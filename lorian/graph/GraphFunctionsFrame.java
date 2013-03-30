@@ -7,6 +7,8 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -36,7 +38,7 @@ import lorian.graph.function.Util;
 
 public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyListener, MouseListener {
 	private static final long serialVersionUID = -1090268654275240501L;
-	public static final int MaxFunctions = 20;
+	public static int MaxFunctions = 20;
 	public static final String version = "1.0 Beta";
 	private final Dimension WindowSize = new Dimension(800, 800);
 	private final Dimension WindowSizeSmall = new Dimension(600, 600);
@@ -179,12 +181,13 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 			small = true;
 		else 
 			small = false;
-
+		//small = true;
 		SetSystemLookAndFeel();
 		if(small)
 		{
 			System.out.println("Setting window to smaller size");
 			gframe = new GraphFrame(functions, settings, WindowSizeSmall);
+			GraphFunctionsFrame.MaxFunctions = 18;
 		}
 		else
 			gframe = new GraphFrame(functions, settings, WindowSize);
@@ -258,9 +261,10 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		this.pack(); 
 		this.setBackground(Color.WHITE);
 		if(small)
-			this.setSize(450 + (int) WindowSizeSmall.getWidth() + 10, (int) WindowSizeSmall.getHeight());
+			this.setSize(450 + (int) WindowSizeSmall.getWidth() + 10, (int) WindowSizeSmall.getHeight() + 50);
 		else
-			this.setSize(450 + (int) WindowSize.getWidth() + 10, (int) WindowSize.getHeight());
+			this.setSize(450 + (int) WindowSize.getWidth() + 10, (int) WindowSize.getHeight() + 50);
+		
 		this.setResizable(false);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLocationRelativeTo(null);
@@ -369,41 +373,46 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 			{
 				case 0: // value
 				{
-					calcframe = new CalculateFrame(this.getLocation(), CalculateFrame.Calculation.VALUE);
+					calcframe = new CalculateFrame(CalculateFrame.Calculation.VALUE);
 					break;
 				}
 				case 1: // zero
 				{
-					calcframe = new CalculateFrame(this.getLocation(), CalculateFrame.Calculation.ZERO);
+					calcframe = new CalculateFrame(CalculateFrame.Calculation.ZERO);
 					break;
 				}
 				case 2: // minimum
 				{
-					calcframe = new CalculateFrame(this.getLocation(), CalculateFrame.Calculation.MINIMUM);
+					calcframe = new CalculateFrame(CalculateFrame.Calculation.MINIMUM);
 					break;
 				}
 				case 3: // maximum
 				{
-					calcframe = new CalculateFrame(this.getLocation(), CalculateFrame.Calculation.MAXIMUM);
+					calcframe = new CalculateFrame(CalculateFrame.Calculation.MAXIMUM);
 					break;
 				}
 				case 4: // intersect
 				{
-					calcframe = new CalculateFrame(this.getLocation(), CalculateFrame.Calculation.INTERSECT);
+					calcframe = new CalculateFrame(CalculateFrame.Calculation.INTERSECT);
 					break;
 				}
 				case 5: //  dy/dx
 				{
-					calcframe = new CalculateFrame(this.getLocation(), CalculateFrame.Calculation.DYDX);
+					calcframe = new CalculateFrame(CalculateFrame.Calculation.DYDX);
 					break;
 				}
 				case 6: // integral
 				{
-					calcframe = new CalculateFrame(this.getLocation(), CalculateFrame.Calculation.INTEGRAL);
+					calcframe = new CalculateFrame(CalculateFrame.Calculation.INTEGRAL);
 					break;
 				}
-				default:break;
+				default:
+				{
+					return;
+				}
 			}
+			gframe.setCalcPanel(calcframe);
+			gframe.setCalcPanelVisible(true);
 		}
 	}
 	

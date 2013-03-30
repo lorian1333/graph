@@ -11,6 +11,8 @@ import java.awt.Point;
 import java.util.List;
 
 import javax.swing.JPanel;
+import javax.swing.Spring;
+import javax.swing.SpringLayout;
 
 public class GraphFrame extends JPanel {
 	private static final long serialVersionUID = -741311884013992607L;
@@ -20,6 +22,9 @@ public class GraphFrame extends JPanel {
 	Dimension size;
 
 	public boolean windowerror = false;
+	private JPanel CalcPanel;
+	private boolean CalcPanelVisible = false;
+	
 	GraphFrame(List<Function> functions, WindowSettings settings, Dimension size) {
 		super();
 		this.size = size;
@@ -27,11 +32,26 @@ public class GraphFrame extends JPanel {
 		this.settings = settings;
 		this.setPreferredSize(size);
 		this.setBackground(Color.WHITE);
-		
 		this.setOpaque(false);
+		
+		InitCalcPanel();	
 		CalculateAxes();
 	}
-
+	private void InitCalcPanel()
+	{
+		CalcPanel  = new JPanel();
+		SpringLayout layout = new SpringLayout();
+		this.setLayout(layout);
+	
+		CalcPanel.setPreferredSize(new Dimension(275, 200));
+		CalcPanel.setVisible(CalcPanelVisible);
+		
+		this.add(CalcPanel);
+		
+		SpringLayout.Constraints cons = layout.getConstraints(CalcPanel);
+		cons.setX(Spring.constant((int) (size.getWidth() - CalcPanel.getPreferredSize().getWidth())));
+		cons.setY(Spring.constant((int) (size.getHeight() - CalcPanel.getPreferredSize().getHeight()))); 
+	}
 	private void CalculateAxes()
 	{
 		YaxisX = (int) (size.getWidth() * ((double) -settings.getXmin()) / ((double) (settings.getXmax() - settings.getXmin()))) - 1;
@@ -54,7 +74,7 @@ public class GraphFrame extends JPanel {
 	private void drawAxes(Graphics g) {
 		
 		int pix;
-		for(long x=settings.getXmin()-1;x<settings.getXmax();x++)
+		for(long x=settings.getXmin()+1;x<settings.getXmax();x++)
 		{
 			if(x==0) continue;
 			pix = (int) ((x-settings.getXmin()) * (size.getWidth() / (settings.getXmax() - settings.getXmin())));
@@ -64,7 +84,7 @@ public class GraphFrame extends JPanel {
 			
 		}
 		
-		for(long y=settings.getYmin()-1;y<settings.getYmax();y++)
+		for(long y=settings.getYmin()+1;y<settings.getYmax();y++)
 		{
 			if(y==0) continue;
 			pix = (int) size.getHeight() -  (int) ((y-settings.getYmin()) * (size.getHeight() / (settings.getYmax() - settings.getYmin())));
@@ -83,7 +103,7 @@ public class GraphFrame extends JPanel {
 	{
 		int pix;
 		Color gridColor = new Color(0, 186, 0xff);
-		for(long x=settings.getXmin()-1;x<settings.getXmax();x++)
+		for(long x=settings.getXmin()+1;x<settings.getXmax();x++)
 		{
 			if(x==0) continue;
 			pix = (int) ((x-settings.getXmin()) * (size.getWidth() / (settings.getXmax() - settings.getXmin())));
@@ -93,7 +113,7 @@ public class GraphFrame extends JPanel {
 			g.drawLine(pix, 0, pix, (int) size.getHeight());
 		
 		}
-		for(long y=settings.getYmin()-1;y<settings.getYmax();y++)
+		for(long y=settings.getYmin()+1;y<settings.getYmax();y++)
 		{
 			if(y==0) continue;
 			pix = (int) size.getHeight() -  (int) ((y-settings.getYmin()) * (size.getHeight() / (settings.getYmax() - settings.getYmin())));
@@ -119,7 +139,6 @@ public class GraphFrame extends JPanel {
 			y = f.Calc(x);
 			if(Double.isNaN(y)) 
 			{ 
-				//System.out.println("NaN");
 				previous.setLocation(size.getWidth() / 2, size.getHeight() / 2);
 				continue;
 			}
@@ -129,18 +148,26 @@ public class GraphFrame extends JPanel {
 				if(xpix - previous.x < size.getWidth() && ypix - previous.y < size.getHeight())
 				{
 					g.drawLine(previous.x, previous.y, xpix, ypix);
-					//DrawLine(g, f.getColor(), previous.x, previous.y, xpix, ypix);
 				}
 			}
 			previous.setLocation(xpix, ypix);
 		}
 		g.setColor(Color.BLACK);
 	}
-
+	private void drawCalcPanelBorders(Graphics g)
+	{
+		g.setColor(Color.BLACK);
+		((Graphics2D) g).setStroke(new BasicStroke(1.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
+		int xoff = (int) (this.getWidth() - CalcPanel.getWidth()) - 1, yoff = (int) (this.getHeight() - CalcPanel.getHeight()) - 2;
+		g.drawLine(xoff, yoff, xoff, this.getHeight());
+		g.drawLine(xoff, yoff, this.getWidth(), yoff);
+		
+	}
 	
 	@Override
-	public void paint(Graphics g) {
-		super.paint(g);
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		
 		g.clearRect(0, 0, (int) this.getWidth(), (int) this.getHeight());
 		
 		if(windowerror) return;
@@ -153,7 +180,8 @@ public class GraphFrame extends JPanel {
 		}
 		((Graphics2D) g).setStroke(new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
 		drawAxes(g);
-		//drawGrid(g);
+		if(CalcPanelVisible)
+			drawCalcPanelBorders(g);
 	}
 
 	
@@ -167,6 +195,22 @@ public class GraphFrame extends JPanel {
 		this.repaint();
 	}
 
+	public boolean CalcPanelIsVisible() {
+		return CalcPanelVisible;
+	}
+
+	public void setCalcPanelVisible(boolean calcPanelVisible) {
+		CalcPanelVisible = calcPanelVisible;
+		this.CalcPanel.setVisible(calcPanelVisible);
+		this.repaint();
+	}
+	public void setCalcPanel(JPanel panel)
+	{
+		CalcPanel.removeAll();
+		CalcPanel.add(panel);	
+		this.paintAll(this.getGraphics());
+		System.out.println(CalcPanel.getComponentCount());
+	}
 
 
 
