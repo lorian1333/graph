@@ -51,6 +51,20 @@ public class Term {
 		return result;
 	}
 	
+	private String exponentTimesMinusOne(String s)
+	{
+		/*
+		if(!Util.StringContains(s, '('))
+		{
+			String base = s.substring(0, s.indexOf('^'));
+			String exponent = s.substring(s.indexOf('^')+1);
+			String result = String.format("%s^(-1(%s))", base, exponent);
+			return result;
+		}
+		return "a";
+		*/
+		return String.format("(%s)^-1", s);
+	}
 	private List<String> SplitIntoFactors(String s)
 	{
 		List<String> factors = new ArrayList<String>();
@@ -58,32 +72,37 @@ public class Term {
 		String newfactor = "";
 		boolean ignoreminplus = true;
 		boolean inexponent = false;
-		
+		boolean division = false;
 		while(index < s.length())
 		{
 			ch = s.charAt(index);
 
 				if(!((ch >= '0' && ch <= '9') || ch == '.'))
 				{
-					if(ch=='*')
+					if(ch=='*' || ch == '/')
 					{
+						if(division) newfactor = exponentTimesMinusOne(newfactor);
 						if(newfactor.length() > 0) factors.add(newfactor);
 						newfactor = "";
 						ignoreminplus = true;
+						if(ch == '/') division = true;
+						else division = false;
 					}
+					
 					else if(ch==argumentChar)
 					{
 						if(inexponent)
 						{
 							newfactor += ch;
-							
 						}
 						else if(newfactor.length() > 0)
 						{
 							if(!ignoreminplus)
 							{
+								if(division) newfactor = exponentTimesMinusOne(newfactor);
 								if(newfactor.length() > 0) factors.add(newfactor);
 								newfactor = "";
+								division = false;
 								ignoreminplus = true;
 								inexponent = false;
 								continue;
@@ -100,8 +119,10 @@ public class Term {
 								}
 								if(neg) tmp += "-";
 								tmp += "1";
+								if(division) tmp = exponentTimesMinusOne(tmp);
 								factors.add(tmp);
 								newfactor = "";
+								division = false;
 								ignoreminplus = true;
 								continue;
 							}
@@ -114,7 +135,9 @@ public class Term {
 							{
 								if(s.charAt(index+1) != '^')
 								{
+									if(division) newfactor = exponentTimesMinusOne(newfactor);
 									if(newfactor.length() > 0) factors.add(newfactor);
+									division = false;
 									newfactor = "";
 									ignoreminplus = true;
 								}
@@ -131,7 +154,9 @@ public class Term {
 					{
 						if(!ignoreminplus)
 						{
+							if(division) newfactor = exponentTimesMinusOne(newfactor);
 							if(newfactor.length() > 0) factors.add(newfactor);
+							division = false;
 							newfactor = "";
 							ignoreminplus = true;
 							inexponent = false;
@@ -143,8 +168,14 @@ public class Term {
 					{
 						if(!Util.StringContains(newfactor, Util.LowercaseAlphabethWithout(argumentChar)))
 						{
-							if(newfactor.length() > 0) factors.add(newfactor);
-							newfactor = "";
+							
+							if(newfactor.length() > 0) 
+							{
+								if(division) newfactor = exponentTimesMinusOne(newfactor);
+								factors.add(newfactor);
+								division = false;
+								newfactor = "";
+							}
 						}
 						newfactor += GetEverythingBetweenParentheses(s);
 						if(index+1 < s.length())
@@ -155,8 +186,9 @@ public class Term {
 								continue;
 							}
 						}
-					
+						if(division) newfactor = exponentTimesMinusOne(newfactor);
 						if(newfactor.length() > 0) factors.add(newfactor);
+						division = false;
 						newfactor = "";
 						ignoreminplus = true;
 						inexponent = false;
@@ -173,6 +205,7 @@ public class Term {
 
 					else if(Util.StringContains("" + ch, Util.LowercaseAlphabethWithout(argumentChar) + "()+=^"))
 					{
+						if(division) newfactor = exponentTimesMinusOne(newfactor);
 						if(newfactor.length() > 0) factors.add(newfactor);
 						int tmpindex = s.indexOf('(', index);
 						newfactor = s.substring(index, tmpindex);
@@ -186,8 +219,9 @@ public class Term {
 								continue;
 							}
 						}
-					
+						if(division) newfactor = exponentTimesMinusOne(newfactor);
 						if(newfactor.length() > 0) factors.add(newfactor);
+						division = false;
 						newfactor = "";
 						ignoreminplus = true;
 						inexponent = false;
@@ -205,6 +239,7 @@ public class Term {
 			
 			index++;
 		}
+		if(division) newfactor = exponentTimesMinusOne(newfactor);
 		if(newfactor.length() > 0) factors.add(newfactor);
 		return factors;
 	}

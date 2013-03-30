@@ -62,7 +62,6 @@ public class Factor {
 		if(!tmpfunc.Parse(forparse)) return 0;
 		double tmpvalue = tmpfunc.Calc(0);
 		return tmpvalue;
-		//TODO Make sure this works!
 	}
 	private int getFirstPower(String s)
 	{
@@ -284,7 +283,6 @@ public class Factor {
 	}
 	private boolean ParseFunction(String s)
 	{
-		System.out.println("Function: " + s);
 		functionname = s.substring(0, s.indexOf('('));
 		String functionargsstr = s.substring(s.indexOf('(') + 1, s.length()-1);
 		functionargs = SplitArgs(functionargsstr);

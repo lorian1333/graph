@@ -38,11 +38,61 @@ public class Function {
 		setColor(Color.BLACK);
 		Parse(s);
 	}
+
+	private String PreProcess(String s)
+	{
+		String ss = s;
+		
+		// Constants
+		ss = Util.StringReplace(ss, MathChars.Pi.getCode(), "const(pi)");
+		ss = Util.StringReplace(ss, MathChars.e.getCode(), "const(e)");
+		
+		// Fractions
+		ss = Util.StringReplace(ss, MathChars.Frac_OneThird.getCode(), "(1/3)");
+		ss = Util.StringReplace(ss, MathChars.Frac_TwoThird.getCode(), "(2/3)");
+		ss = Util.StringReplace(ss, MathChars.Frac_OneFifth.getCode(), "(1/5)");
+		ss = Util.StringReplace(ss, MathChars.Frac_TwoFifth.getCode(), "(2/5)");
+		ss = Util.StringReplace(ss, MathChars.Frac_ThreeFifth.getCode(), "(3/5)");
+		ss = Util.StringReplace(ss, MathChars.Frac_FourFifth.getCode(), "(4/5)");
+		ss = Util.StringReplace(ss, MathChars.Frac_OneSixth.getCode(), "(1/6)");
+		ss = Util.StringReplace(ss, MathChars.Frac_FiveSixth.getCode(), "(5/6)");
+		ss = Util.StringReplace(ss, MathChars.Frac_OneEights.getCode(), "(1/8)");
+		ss = Util.StringReplace(ss, MathChars.Frac_ThreeEights.getCode(), "(3/8)");
+		ss = Util.StringReplace(ss, MathChars.Frac_FiveEights.getCode(), "(5/8)");
+		ss = Util.StringReplace(ss, MathChars.Frac_SevenEights.getCode(), "(7/8)");
+		ss = Util.StringReplace(ss, MathChars.Frac_OneFourth.getCode(), "(1/4)");
+		ss = Util.StringReplace(ss, MathChars.Frac_OneHalf.getCode(), "(1/2)");
+		ss = Util.StringReplace(ss, MathChars.Frac_ThreeFourth.getCode(), "(3/4)");
+		ss = Util.StringReplace(ss, MathChars.Frac_One.getCode(), "1/");
+		
+		
+		// Exponents
+		//TODO Make it possible to use two or more numbers
+		ss = Util.StringReplace(ss, MathChars.Sup_0.getCode(), "^0");
+		ss = Util.StringReplace(ss, MathChars.Sup_1.getCode(), "^1");
+		ss = Util.StringReplace(ss, MathChars.Sup_2.getCode(), "^2");
+		ss = Util.StringReplace(ss, MathChars.Sup_3.getCode(), "^3");
+		ss = Util.StringReplace(ss, MathChars.Sup_4.getCode(), "^4");
+		ss = Util.StringReplace(ss, MathChars.Sup_5.getCode(), "^5");
+		ss = Util.StringReplace(ss, MathChars.Sup_6.getCode(), "^6");
+		ss = Util.StringReplace(ss, MathChars.Sup_7.getCode(), "^7");
+		ss = Util.StringReplace(ss, MathChars.Sup_8.getCode(), "^8");
+		ss = Util.StringReplace(ss, MathChars.Sup_9.getCode(), "^9");
+		
+		// Roots
+		ss = Util.StringReplace(ss, MathChars.Root_2.getCode(), "sqrt");
+		ss = Util.StringReplace(ss, MathChars.Root_3.getCode(), "cbrt");
+		ss = Util.StringReplace(ss, MathChars.Root_4.getCode(), "4rt");
+		
+		return ss;
+	}
+	
 	public boolean Parse(String s)
 	{
 		try
 		{
 		s = Util.removeWhiteSpace(s).toLowerCase();
+		s = PreProcess(s);
 		String termstr = "";
 		
 		int start=0,index=0;
@@ -133,14 +183,18 @@ public class Function {
 	public double Calc(double arg)
 	{
 		if(isEmpty) return 0;
-		
-		
-		double sum = 0;
-		for(int i = 0; i < terms.size(); i++)
+		try
 		{
-			sum += terms.get(i).Calc(arg);
+			double sum = 0;
+			for(int i = 0; i < terms.size(); i++)
+			{
+				sum += terms.get(i).Calc(arg);
+			}
+			return sum;
 		}
-		return sum;
-		
+		catch (Exception e)
+		{
+			return 0;
+		}
 	}
 }
