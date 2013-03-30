@@ -29,6 +29,7 @@ public class Util {
 		}
 		return false;
 	}
+	
 	public static String LowercaseAlphabethWithout(char character)
 	{
 		String s = "";
@@ -52,11 +53,40 @@ public class Util {
 		}
 		return -1;
 	}
+	public static int StringArrayGetIndex(String[] array, String s)
+	{
+		int i=0;
+		for(String ss: array)
+		{
+			if(ss.equals(s)) return i;
+			i++;
+		}
+		return -1;
+	}
+	public static String StringReplace(String s, char oldchar, String replacestr)
+	{
+		String result = "";
+		char ch;
+		for(int i=0;i<s.length();i++)
+		{
+			ch = s.charAt(i);
+			
+			if(ch == oldchar)
+			{
+				result += replacestr;
+			}
+			else
+				result += ch;
+		}
+		return result;
+	}
 	public static double round(double valueToRound, int numberOfDecimalPlaces)
 	{
 	    double multipicationFactor = Math.pow(10, numberOfDecimalPlaces);
 	    double interestedInZeroDPs = valueToRound * multipicationFactor;
 	    return Math.round(interestedInZeroDPs) / multipicationFactor;
 	}
+	
+	
 
 }
