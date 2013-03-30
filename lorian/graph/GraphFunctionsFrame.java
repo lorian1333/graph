@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -16,32 +17,36 @@ import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.Spring;
 import javax.swing.SpringLayout;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-
 import lorian.graph.function.Calculate;
 import lorian.graph.function.Function;
-import lorian.graph.function.PointXY;
+import lorian.graph.function.MathChars;
 import lorian.graph.function.Util;
 
 public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyListener, MouseListener {
 	private static final long serialVersionUID = -1090268654275240501L;
 	public static final int MaxFunctions = 20;
-	public static final String version = "1.0";
+	public static final String version = "1.0 Beta";
 	private final Dimension WindowSize = new Dimension(800, 800);
+	private final Dimension WindowSizeSmall = new Dimension(600, 600);
 	public static List<Function> functions;
 	
 	private List<JTextField> textfields;
 	private List<JLabel> labels;
 	
-	private final String[] buttons = { "Render", "Special characters", "Settings", "Exit" };
+	private final String[] buttons = {"Render", "Special characters"}; //{ "Render", "Special characters", "Settings", "Exit" };
+	private final String[] calcMenuStrings = { "Value", "Zero", "Minimum", "Maximum", "Intersect", "dy/dx", MathChars.Integral.getCode() + "f(x)dx" };
 	private final Color[] defaultColors =  {Color.GREEN,  
 											Color.ORANGE, Color.PINK, Color.RED, Color.YELLOW };
 	
@@ -126,10 +131,64 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 			JOptionPane.showMessageDialog(null, "Invalid window settings", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
+	private void InitMenu()
+	{
+		JMenuBar menuBar;
+		JMenu fileMenu, calcMenu, helpMenu;
+		JMenuItem settingsItem, exitItem;
+		//JMenuItem calcValueItem, calcZeroItem, calcMinItem, calcMaxItem, calcIntersectItem, calcDyDxItem, calcIntItem; 
+		JMenuItem aboutItem;
+		
+		menuBar = new JMenuBar();
+		fileMenu = new JMenu("File");
+		calcMenu = new JMenu("Calculate");
+		helpMenu = new JMenu("Help");
+		menuBar.add(fileMenu);
+		menuBar.add(calcMenu);
+		menuBar.add(helpMenu);
+		
+		settingsItem = new JMenuItem("Settings");
+		settingsItem.addActionListener(this);
+		
+		exitItem = new JMenuItem("Exit");
+		exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, ActionEvent.ALT_MASK));
+		exitItem.addActionListener(this);
+		
+		fileMenu.add(settingsItem); 
+		fileMenu.addSeparator();
+		fileMenu.add(exitItem);
+		
+		for(int i=0;i<calcMenuStrings.length; i++)
+		{
+			JMenuItem item = new JMenuItem(calcMenuStrings[i]);
+			item.addActionListener(this);
+			calcMenu.add(item);
+		}
+		
+		
+		aboutItem = new JMenuItem("About");
+		aboutItem.addActionListener(this);
+		helpMenu.add(aboutItem);
+		
+		this.setJMenuBar(menuBar);
+	}
 	private void initUI()
 	{
+		boolean small;
+		if(Toolkit.getDefaultToolkit().getScreenSize().getHeight() <= 900) 
+			small = true;
+		else 
+			small = false;
+
 		SetSystemLookAndFeel();
-		gframe = new GraphFrame(functions, settings, WindowSize);
+		if(small)
+		{
+			System.out.println("Setting window to smaller size");
+			gframe = new GraphFrame(functions, settings, WindowSizeSmall);
+		}
+		else
+			gframe = new GraphFrame(functions, settings, WindowSize);
+		
 		JPanel panel = new JPanel();
 		SpringLayout layout = new SpringLayout();
 		panel.setLayout(layout);
@@ -144,7 +203,9 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 			label.setForeground(Color.BLACK);
 			label.addMouseListener(this);
 			JTextField textField = new JTextField();
-			textField.setPreferredSize(new Dimension( 395, (int) textField.getPreferredSize().getHeight())); 
+			//textField.setText("" + MathChars.Pi.getCode());
+			
+			textField.setPreferredSize(new Dimension( 395, (int) textField.getPreferredSize().getHeight() + 5)); 
 			textField.setFont(textField.getFont().deriveFont(15.0f));
 			textField.setForeground(Color.BLACK);
 			textField.addKeyListener(this);
@@ -190,11 +251,16 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		this.add(new JSeparator(JSeparator.VERTICAL));		
 
 		this.add((JPanel) gframe, BorderLayout.EAST);
-	
+		
+		InitMenu();
+		
 		Render();
 		this.pack(); 
-		this.setBackground(Color.WHITE);	
-		this.setSize(450 + (int) WindowSize.getWidth() + 10, (int) WindowSize.getHeight());
+		this.setBackground(Color.WHITE);
+		if(small)
+			this.setSize(450 + (int) WindowSizeSmall.getWidth() + 10, (int) WindowSizeSmall.getHeight());
+		else
+			this.setSize(450 + (int) WindowSize.getWidth() + 10, (int) WindowSize.getHeight());
 		this.setResizable(false);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLocationRelativeTo(null);
@@ -209,12 +275,8 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		initUI();
 		this.setVisible(true);
 	}
-	/*
-	public static double getFunction(int index)
-	{
-		
-	}
-	*/
+
+	
 	private void Render()
 	{
 		System.out.println("Parsing functions...");
@@ -245,23 +307,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		System.out.println("Done");		
 	}
 
-	private static void Parsertest()
-	{
-		// improving the function parser
-		Function f = new Function();
-		//f.Parse("-+-123*456x*sin(x+4*4cos(x))45^2*765 + 4x + 3");
-		//f.Parse("(123.456*x*1^2)^x");
-		f.Parse("x^2");
-		System.out.println(f.Calc(2));
-	}
-	private static void Calctest()
-	{
-		Function f = new Function("x^2+3");
-		//Function g = new Function("2x+4");
-		double val = Calculate.Integral(f, 0, 10);
-		System.out.println(val);
-	}
-	
+
 	public static void main(String[] args)
 	{
 	
@@ -269,11 +315,25 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		
 		//Calctest();
 		
-		
 		//Creating the actual window
 		GraphFunctionsFrame.funcframe = new GraphFunctionsFrame();
 	}
-
+	private static void Parsertest()
+	{
+		// improving the function parser
+		Function f = new Function();
+		//f.Parse("-+-123*456x*sin(x+4*4cos(x))45^2*765 + 4x + 3");
+		//f.Parse("(123.456*x*1^2)^x");
+		f.Parse("1/x^2");
+		System.out.println(f.Calc(2));
+	}
+	private static void Calctest()
+	{
+		Function f = new Function("x^2");
+		double val = Calculate.DyDx(f, 10);
+		System.out.println(val);
+	}
+	
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -289,7 +349,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 			else 
 				charframe.Restore();
 		}
-		else if (buttonname.equalsIgnoreCase(buttons[2])) //settings
+		else if (buttonname.equalsIgnoreCase("settings")) 
 		{
 			if(settingsframe == null)
 			{
@@ -298,11 +358,53 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 			else
 				settingsframe.Restore();
 		}
-		else if (buttonname.equalsIgnoreCase(buttons[3])) //exit
+		else if (buttonname.equalsIgnoreCase("exit")) 
 		{
 			System.exit(0);
 		}	
-		
+		else if(Util.StringArrayGetIndex(calcMenuStrings, buttonname) != -1)
+		{
+			CalculateFrame calcframe;
+			switch(Util.StringArrayGetIndex(calcMenuStrings, buttonname))
+			{
+				case 0: // value
+				{
+					calcframe = new CalculateFrame(this.getLocation(), CalculateFrame.Calculation.VALUE);
+					break;
+				}
+				case 1: // zero
+				{
+					calcframe = new CalculateFrame(this.getLocation(), CalculateFrame.Calculation.ZERO);
+					break;
+				}
+				case 2: // minimum
+				{
+					calcframe = new CalculateFrame(this.getLocation(), CalculateFrame.Calculation.MINIMUM);
+					break;
+				}
+				case 3: // maximum
+				{
+					calcframe = new CalculateFrame(this.getLocation(), CalculateFrame.Calculation.MAXIMUM);
+					break;
+				}
+				case 4: // intersect
+				{
+					calcframe = new CalculateFrame(this.getLocation(), CalculateFrame.Calculation.INTERSECT);
+					break;
+				}
+				case 5: //  dy/dx
+				{
+					calcframe = new CalculateFrame(this.getLocation(), CalculateFrame.Calculation.DYDX);
+					break;
+				}
+				case 6: // integral
+				{
+					calcframe = new CalculateFrame(this.getLocation(), CalculateFrame.Calculation.INTEGRAL);
+					break;
+				}
+				default:break;
+			}
+		}
 	}
 	
 	@Override
