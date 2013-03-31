@@ -41,7 +41,8 @@ public enum MathChars
 	Pi ('\u03C0'),
 	e ('\u0435'),
 
-	Integral ('\u222B');
+	Integral ('\u222B'),
+	Infinity ('\u221E');
 	
 	private char code;
 	
