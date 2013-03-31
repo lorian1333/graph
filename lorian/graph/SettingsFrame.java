@@ -96,7 +96,7 @@ public class SettingsFrame extends JFrame implements ActionListener {
 				switch(i-1)
 				{
 				case 0:
-					smodel = new SpinnerNumberModel(GraphFunctionsFrame.settings.getXmin(), -1000000000, 1000000000, 1);
+					smodel = new SpinnerNumberModel(GraphFunctionsFrame.settings.getXmin(), Long.MIN_VALUE, Long.MAX_VALUE, 1);
 					smodel.addChangeListener(new ChangeListener(){
 						public void stateChanged(ChangeEvent e) {
 							SpinnerModel model = (SpinnerModel) e.getSource();
@@ -105,7 +105,7 @@ public class SettingsFrame extends JFrame implements ActionListener {
 					});
 					break;
 				case 1:
-					smodel = new SpinnerNumberModel(GraphFunctionsFrame.settings.getXmax(), -1000000000, 1000000000, 1);
+					smodel = new SpinnerNumberModel(GraphFunctionsFrame.settings.getXmax(), Long.MIN_VALUE, Long.MAX_VALUE, 1);
 					smodel.addChangeListener(new ChangeListener(){
 						public void stateChanged(ChangeEvent e) {
 							SpinnerModel model = (SpinnerModel) e.getSource();
@@ -114,7 +114,7 @@ public class SettingsFrame extends JFrame implements ActionListener {
 					});
 					break;
 				case 2:
-					smodel = new SpinnerNumberModel(GraphFunctionsFrame.settings.getYmin(), -1000000000, 1000000000, 1);
+					smodel = new SpinnerNumberModel(GraphFunctionsFrame.settings.getYmin(), Long.MIN_VALUE, Long.MAX_VALUE, 1);
 					smodel.addChangeListener(new ChangeListener(){
 						public void stateChanged(ChangeEvent e) {
 							SpinnerModel model = (SpinnerModel) e.getSource();
@@ -123,7 +123,7 @@ public class SettingsFrame extends JFrame implements ActionListener {
 					});
 					break;
 				case 3:
-					smodel = new SpinnerNumberModel(GraphFunctionsFrame.settings.getYmax(), -1000000000, 1000000000, 1);
+					smodel = new SpinnerNumberModel(GraphFunctionsFrame.settings.getYmax(),Long.MIN_VALUE, Long.MAX_VALUE, 1);
 					smodel.addChangeListener(new ChangeListener(){
 						public void stateChanged(ChangeEvent e) {
 							SpinnerModel model = (SpinnerModel) e.getSource();
@@ -132,7 +132,7 @@ public class SettingsFrame extends JFrame implements ActionListener {
 					});
 					break;
 				default:
-					smodel = new SpinnerNumberModel(0, -1000000000, 1000000000, 1);
+					smodel = new SpinnerNumberModel(0, Long.MIN_VALUE, Long.MAX_VALUE, 1);
 					break;
 				}
 				
