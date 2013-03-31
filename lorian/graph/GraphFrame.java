@@ -49,7 +49,8 @@ public class GraphFrame extends JPanel {
 		this.add(CalcPanel);
 		
 		SpringLayout.Constraints cons = layout.getConstraints(CalcPanel);
-		cons.setX(Spring.constant((int) (size.getWidth() - CalcPanel.getPreferredSize().getWidth())));
+		//cons.setX(Spring.constant((int) (size.getWidth() - CalcPanel.getPreferredSize().getWidth())));
+		cons.setX(Spring.constant(0));
 		cons.setY(Spring.constant((int) (size.getHeight() - CalcPanel.getPreferredSize().getHeight()))); 
 	}
 	private void CalculateAxes()
@@ -158,9 +159,10 @@ public class GraphFrame extends JPanel {
 	{
 		g.setColor(Color.BLACK);
 		((Graphics2D) g).setStroke(new BasicStroke(1.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
-		int xoff = (int) (this.getWidth() - CalcPanel.getWidth()) - 1, yoff = (int) (this.getHeight() - CalcPanel.getHeight()) - 2;
+		//int xoff = (int) (this.getWidth() - CalcPanel.getWidth()) - 1, yoff = (int) (this.getHeight() - CalcPanel.getHeight()) - 2;
+		int xoff = CalcPanel.getWidth() +1, yoff = (int) (this.getHeight() - CalcPanel.getHeight()) - 2;
 		g.drawLine(xoff, yoff, xoff, this.getHeight());
-		g.drawLine(xoff, yoff, this.getWidth(), yoff);
+		g.drawLine(0, yoff, xoff, yoff);
 		
 	}
 	
@@ -209,7 +211,6 @@ public class GraphFrame extends JPanel {
 		CalcPanel.removeAll();
 		CalcPanel.add(panel);	
 		this.paintAll(this.getGraphics());
-		System.out.println(CalcPanel.getComponentCount());
 	}
 
 

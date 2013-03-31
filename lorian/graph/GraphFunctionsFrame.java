@@ -53,11 +53,12 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 											Color.ORANGE, Color.PINK, Color.RED, Color.YELLOW };
 	
 	private static GraphFunctionsFrame funcframe;
-	private static GraphFrame gframe;
+	public static GraphFrame gframe; 
+	private CalculateFrame calcframe;
 	private static SettingsFrame settingsframe;
 	private static SpecialCharsFrame charframe;
 	public static WindowSettings settings;
-	
+
 	
 	private Color ChooseColor(Component component, String title, Color initialColor)
 	{
@@ -308,6 +309,10 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 			System.out.println("Added function Y" + (i+1) + " with color " + c.getRed() + "," + c.getGreen() + "," + c.getBlue());
 		}
 		gframe.Update(functions);
+		if(calcframe != null)
+		{
+			calcframe.Update();
+		}
 		System.out.println("Done");		
 	}
 
@@ -368,7 +373,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		}	
 		else if(Util.StringArrayGetIndex(calcMenuStrings, buttonname) != -1)
 		{
-			CalculateFrame calcframe;
+
 			switch(Util.StringArrayGetIndex(calcMenuStrings, buttonname))
 			{
 				case 0: // value
