@@ -80,6 +80,13 @@ public class Util {
 		}
 		return result;
 	}
+	public static String GetString(double d)
+	{
+		if(Double.isInfinite(d)) return "" + MathChars.Infinity.getCode();
+		else if(Double.isNaN(d)) return "NaN";
+		else if(d == Math.rint(d)) return "" +  (int) d;
+		else return "" + d;
+	}
 	public static double round(double valueToRound, int numberOfDecimalPlaces)
 	{
 	    double multipicationFactor = Math.pow(10, numberOfDecimalPlaces);
