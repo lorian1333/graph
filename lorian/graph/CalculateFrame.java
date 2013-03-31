@@ -44,9 +44,7 @@ public class CalculateFrame extends JPanel implements ActionListener{
 	{
 		layout = new SpringLayout();
 		this.setLayout(layout);
-		
-		
-		
+
 		JLabel titlelabel = new JLabel(title, JLabel.CENTER);
 		titlelabel.setFont(titlelabel.getFont().deriveFont(13.0f).deriveFont(Font.BOLD));
 		this.add(titlelabel);
@@ -88,8 +86,8 @@ public class CalculateFrame extends JPanel implements ActionListener{
 		this.add(calcButton);
 		
 		SpringLayout.Constraints calcButtonCons = layout.getConstraints(calcButton);
-		calcButtonCons.setX(Spring.sum(Spring.constant(10), calcButtonCons.getConstraint(SpringLayout.WEST)));
-		calcButtonCons.setY(Spring.sum(Spring.constant(height), calcButtonCons.getConstraint(SpringLayout.SOUTH)));
+		calcButtonCons.setX(Spring.constant(80));
+		calcButtonCons.setY(Spring.constant(height));
 		height += calcButton.getPreferredSize().getHeight() + 15;
 		
 		resultLabel = new JLabel("Result");
@@ -98,51 +96,54 @@ public class CalculateFrame extends JPanel implements ActionListener{
 		this.add(resultLabel);
 		
 		SpringLayout.Constraints resultCons = layout.getConstraints(resultLabel);
-		resultCons.setX(Spring.sum(Spring.constant(10), resultCons.getConstraint(SpringLayout.WEST)));
-		resultCons.setY(Spring.sum(Spring.constant(height), resultCons.getConstraint(SpringLayout.SOUTH)));
+		resultCons.setX(Spring.constant(80));
+		resultCons.setY(Spring.constant(height));
 	}
 	private void initValueUI()
 	{
 		initGeneralUI();
 		
-		// Function
-		JPanel funcPanel = new JPanel();
-		
+		// Function		
 		JLabel functionLabel = new JLabel("Function: ");
 		functionLabel.setFont(functionLabel.getFont().deriveFont(13.0f));
 		funcComboBox = new JComboBox<String>(GetActiveFunctions());
 		funcComboBox.setName("function1");
 		funcComboBox.addActionListener(this);
 		
-		funcPanel.add(functionLabel);
-		funcPanel.add(funcComboBox);
+
+		this.add(functionLabel);
+		this.add(funcComboBox);
+
+		SpringLayout.Constraints labelCons = layout.getConstraints(functionLabel);
+		labelCons.setX(Spring.constant(60));
+		labelCons.setY(Spring.constant(height));
 		
-		SpringLayout.Constraints funcPanelCons = layout.getConstraints(funcPanel);
-		funcPanelCons.setX(Spring.sum(Spring.constant(10), funcPanelCons.getConstraint(SpringLayout.WEST)));
-		funcPanelCons.setY(Spring.constant(height));
-		height += funcPanel.getPreferredSize().getHeight();
-		this.add(funcPanel);
+		SpringLayout.Constraints comboboxCons = layout.getConstraints(funcComboBox);
+		comboboxCons.setX(Spring.constant(120));
+		comboboxCons.setY(Spring.constant(height));
 		
-		// X = 
-		JPanel xPanel = new JPanel();
-		JLabel xLabel = new JLabel("X = ");
+		height += functionLabel.getPreferredSize().getHeight() + 10;
+		
+		// X
+		JLabel xLabel = new JLabel("X:");
 		xLabel.setFont(functionLabel.getFont().deriveFont(13.0f));
 		SpinnerNumberModel sModel = new SpinnerNumberModel(1.0,  Long.MIN_VALUE, Long.MAX_VALUE, 1.0); 
 		x1 = new JSpinner(sModel);
-		x1.setPreferredSize(new Dimension(100, (int) x1.getPreferredSize().getHeight()));
+		x1.setPreferredSize(new Dimension(60, (int) x1.getPreferredSize().getHeight()));
 
-		xPanel.add(xLabel); 
-		xPanel.add(x1);
+		this.add(xLabel);
+		this.add(x1);
 		
-		SpringLayout.Constraints xPanelCons = layout.getConstraints(xPanel);
-		xPanelCons.setX(Spring.sum(Spring.constant(10), xPanelCons.getConstraint(SpringLayout.WEST)));
-		xPanelCons.setY(Spring.constant(height));
-		height += xPanel.getPreferredSize().getHeight();
+		labelCons = layout.getConstraints(xLabel);
+		labelCons.setX(Spring.constant(60));
+		labelCons.setY(Spring.constant(height));
+		SpringLayout.Constraints spinnerCons = layout.getConstraints(x1);
+		spinnerCons.setX(Spring.constant(120));
+		spinnerCons.setY(Spring.constant(height));
 		
-		this.add(xPanel);
+		height += xLabel.getPreferredSize().getHeight() + 15;
 		
-		// Calculate button
-		
+		// Calculate button	
 		AddCalculateButton(height);
 		
 	}
