@@ -85,7 +85,7 @@ public class Util {
 		if(Double.isInfinite(d)) return "" + MathChars.Infinity.getCode();
 		else if(Double.isNaN(d)) return "NaN";
 		else if(d == Math.rint(d)) return "" +  (int) d;
-		else return "" + d;
+		else return "" + round(d, 6);
 	}
 	public static double round(double valueToRound, int numberOfDecimalPlaces)
 	{
