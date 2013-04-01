@@ -341,7 +341,14 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 			System.out.println("Adding VisualPoint at index " + (vpoints.size() - 1));
 		this.repaint();
 	}
-	
+	public PointXY GetMovableVisualPointLocationByLabel(String label)
+	{
+		for(VisualPoint vp: vpoints)
+		{
+			if(vp.getLabel().equals(label)) return vp.getPoint();
+		}
+		return null;
+	}
 	private int GetMovableVisualPointIndex(int PointIndex)
 	{
 		int icount = 0;
@@ -369,7 +376,7 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 		//System.out.println(deltax);
 		//return;
 		
-		double add = (deltax / size.getWidth()) * (settings.getXmax() - settings.getXmin()) * -1 * 0.2;
+		double add = (deltax / size.getWidth()) * (settings.getXmax() - settings.getXmin()) * -1 * 0.5;
 
 		VisualPoint vp = this.vpoints.get(MovingVPointIndex);
 		Point p = this.vmovablepoints.get(MovingPointIndex);
@@ -377,7 +384,6 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 		{
 			if(vp.getFunctionIndex() < functions.size())
 			{
-				System.out.println("adfasdafsdasd");
 				Function f = this.functions.get(vp.getFunctionIndex());
 				vp.setPoint(new PointXY(vp.getPoint().getX() + add, f.Calc(vp.getPoint().getX() + add)));
 				int y =  (int) size.getHeight() - (int) (((vp.getPoint().getY()  - settings.getYmin()) / (settings.getYmax() - settings.getYmin()) * size.getHeight())) - 13;
@@ -420,8 +426,7 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 			MouseStart = e.getPoint();	
 			return;
 		}
-		
-		
+			
 	}
 	
 	@Override

@@ -281,10 +281,10 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		settings = new WindowSettings();
 		initUI();
 		//Tests
-		gframe.AddVisualPoint(new VisualPoint(new PointXY(-2, 4), 0, true, true, "Lower Limit"));
-		gframe.AddVisualPoint(new VisualPoint(new PointXY(2, 4), 0, true, true, "Upper Limit"));
+		//gframe.AddVisualPoint(new VisualPoint(new PointXY(-2, 4), 0, true, true, "Lower Limit"));
+		//gframe.AddVisualPoint(new VisualPoint(new PointXY(2, 4), 0, true, true, "Upper Limit"));	
+		//gframe.SetVisualPointsVisible(true);
 		
-		gframe.SetVisualPointsVisible(true);
 		this.setVisible(true);
 	}
 
