@@ -21,12 +21,14 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.Spring;
 import javax.swing.SpringLayout;
 
+import lorian.graph.function.Function;
 import lorian.graph.function.MathChars;
 import lorian.graph.function.PointXY;
 import lorian.graph.function.Util;
 import lorian.graph.function.VisualPoint;
+import lorian.graph.function.VisualPointLocationChangeListener;
 
-public class CalculateFrame extends JPanel implements ActionListener{
+public class CalculateFrame extends JPanel implements ActionListener, VisualPointLocationChangeListener {
 	private static final long serialVersionUID = -6709615022829676720L;
 	private Calculation calc;
 	//private CalculationsData data;
@@ -37,6 +39,8 @@ public class CalculateFrame extends JPanel implements ActionListener{
 	private JComboBox<String> funcComboBox, funcComboBox2;
 	private JSpinner x1, x2;
 	private JLabel resultLabel;
+	
+	private VisualPoint lowx, upx;
 	enum Calculation
 	{
 		VALUE, ZERO, MINIMUM, MAXIMUM, INTERSECT, DYDX, INTEGRAL;
@@ -102,6 +106,29 @@ public class CalculateFrame extends JPanel implements ActionListener{
 		resultCons.setX(Spring.constant(80));
 		resultCons.setY(Spring.constant(height));
 	}
+	private void initMovablePoints()
+	{
+		int funcindex;
+		try
+		{
+			funcindex = Integer.parseInt(((String) funcComboBox.getSelectedItem()).substring(1)) - 1;
+		}
+		catch (Exception e)
+		{
+			return;
+		}
+		
+		Function f = GraphFunctionsFrame.functions.get(funcindex);
+		
+		lowx = new VisualPoint(new PointXY(-2, f.Calc(-2)), funcindex, true, false, "Lower limit");
+		upx = new VisualPoint(new PointXY(2, f.Calc(2)), funcindex, true, false, "Upper limit");
+		lowx.addLocationChangedListener(this);
+		upx.addLocationChangedListener(this);
+		GraphFunctionsFrame.gframe.ClearVisualPoints();
+		GraphFunctionsFrame.gframe.AddVisualPoint(lowx);
+		GraphFunctionsFrame.gframe.AddVisualPoint(upx);
+		GraphFunctionsFrame.gframe.SetVisualPointsVisible(true);
+	}
 	private void initValueUI()
 	{
 		initGeneralUI();
@@ -152,11 +179,15 @@ public class CalculateFrame extends JPanel implements ActionListener{
 	}
 	private void initZeroUI()
 	{
-		
+		initGeneralUI();
+		AddCalculateButton(height);
+		initMovablePoints();
 	}
 	private void initMinOrMaxUI()
 	{
-		
+		initGeneralUI();
+		AddCalculateButton(height);
+		initMovablePoints();
 	}
 	private void initIntersectUI()
 	{
@@ -236,7 +267,7 @@ public class CalculateFrame extends JPanel implements ActionListener{
 			resultLabel.setText(resultstr);
 			GraphFunctionsFrame.gframe.ClearVisualPoints();
 			GraphFunctionsFrame.gframe.SetVisualPointsVisible(true);
-			GraphFunctionsFrame.gframe.AddVisualPoint(new VisualPoint(new PointXY(x1val, result), false));
+			GraphFunctionsFrame.gframe.AddVisualPoint(new VisualPoint(new PointXY(x1val, result), func1index, false, true));
 			resultLabel.setVisible(true);
 			break;
 		case ZERO:
@@ -288,23 +319,45 @@ public class CalculateFrame extends JPanel implements ActionListener{
 			if(source.getName().equalsIgnoreCase("function1"))
 			{
 				resultLabel.setVisible(false);
-				GraphFunctionsFrame.gframe.SetVisualPointsVisible(false);
+				GraphFunctionsFrame.gframe.ClearVisualPoints();
+				initMovablePoints();
 			}
 		}
 		
 		
 	}
-
+	
+	@Override
+	public void OnLocationChange(VisualPoint p) {
+		if(p.getLabel().equalsIgnoreCase("lower limit"))
+		{
+			if(p.getPoint().getX() >= upx.getPoint().getX())
+			{
+				p.setPoint(new PointXY(upx.getPoint().getX(), p.getPoint().getY()), false); 
+			}
+			
+		}
+		else if(p.getLabel().equalsIgnoreCase("upper limit"))
+		{
+			if(p.getPoint().getX() <= lowx.getPoint().getX())
+			{
+				p.setPoint(new PointXY(lowx.getPoint().getX(), p.getPoint().getY()), false); 
+			}
+			
+		}
+		
+	}
 	
 	public void Update()
 	{
-		funcComboBox.setModel(new JComboBox<String>(GetActiveFunctions()).getModel());
+		if(funcComboBox != null) funcComboBox.setModel(new JComboBox<String>(GetActiveFunctions()).getModel());
 		if(funcComboBox2 != null) {
 			funcComboBox2.setModel(new JComboBox<String>(GetActiveFunctions()).getModel());
 			funcComboBox2.setSelectedIndex(1);
 		}
 		resultLabel.setVisible(false);
 		GraphFunctionsFrame.gframe.SetVisualPointsVisible(false);
+		initMovablePoints();
 		
 		/*
 		switch(this.calc)
@@ -328,5 +381,6 @@ public class CalculateFrame extends JPanel implements ActionListener{
 		}
 		*/
 	}
+	
 	
 }
