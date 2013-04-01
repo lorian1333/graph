@@ -34,7 +34,9 @@ import javax.swing.UIManager;
 import lorian.graph.function.Calculate;
 import lorian.graph.function.Function;
 import lorian.graph.function.MathChars;
+import lorian.graph.function.PointXY;
 import lorian.graph.function.Util;
+import lorian.graph.function.VisualPoint;
 
 public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyListener, MouseListener {
 	private static final long serialVersionUID = -1090268654275240501L;
@@ -278,6 +280,11 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		functions = new ArrayList<Function>();
 		settings = new WindowSettings();
 		initUI();
+		//Tests
+		//gframe.AddVisualPoint(new VisualPoint(new PointXY(0, 0), false));
+		//gframe.AddVisualPoint(new VisualPoint(new PointXY(9, 1), true));
+		//gframe.AddVisualPoint(new VisualPoint(new PointXY(8, -3), true));
+		//gframe.SetVisualPointsVisible(true);
 		this.setVisible(true);
 	}
 

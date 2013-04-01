@@ -22,7 +22,9 @@ import javax.swing.Spring;
 import javax.swing.SpringLayout;
 
 import lorian.graph.function.MathChars;
+import lorian.graph.function.PointXY;
 import lorian.graph.function.Util;
+import lorian.graph.function.VisualPoint;
 
 public class CalculateFrame extends JPanel implements ActionListener{
 	private static final long serialVersionUID = -6709615022829676720L;
@@ -93,6 +95,7 @@ public class CalculateFrame extends JPanel implements ActionListener{
 		resultLabel = new JLabel("Result");
 		resultLabel.setFont(resultLabel.getFont().deriveFont(13.0f));
 		resultLabel.setVisible(false);
+		GraphFunctionsFrame.gframe.SetVisualPointsVisible(false);
 		this.add(resultLabel);
 		
 		SpringLayout.Constraints resultCons = layout.getConstraints(resultLabel);
@@ -129,7 +132,7 @@ public class CalculateFrame extends JPanel implements ActionListener{
 		xLabel.setFont(functionLabel.getFont().deriveFont(13.0f));
 		SpinnerNumberModel sModel = new SpinnerNumberModel(1.0,  Long.MIN_VALUE, Long.MAX_VALUE, 1.0); 
 		x1 = new JSpinner(sModel);
-		x1.setPreferredSize(new Dimension(60, (int) x1.getPreferredSize().getHeight()));
+		x1.setPreferredSize(new Dimension(80, (int) x1.getPreferredSize().getHeight()));
 
 		this.add(xLabel);
 		this.add(x1);
@@ -231,6 +234,9 @@ public class CalculateFrame extends JPanel implements ActionListener{
 			double result = GraphFunctionsFrame.functions.get(func1index).Calc(x1val);
 			String resultstr = String.format("X = %s, Y = %s", Util.GetString(x1val), Util.GetString(result));
 			resultLabel.setText(resultstr);
+			GraphFunctionsFrame.gframe.ClearVisualPoints();
+			GraphFunctionsFrame.gframe.SetVisualPointsVisible(true);
+			GraphFunctionsFrame.gframe.AddVisualPoint(new VisualPoint(new PointXY(x1val, result), false));
 			resultLabel.setVisible(true);
 			break;
 		case ZERO:
@@ -268,8 +274,9 @@ public class CalculateFrame extends JPanel implements ActionListener{
 			else if(source.getName().equalsIgnoreCase("close"))
 			{
 				this.setVisible(false);
-				GraphFunctionsFrame.gframe.setCalcPanelVisible(false);
 				resultLabel.setVisible(false);
+				GraphFunctionsFrame.gframe.setCalcPanelVisible(false);
+				GraphFunctionsFrame.gframe.SetVisualPointsVisible(false);
 			}
 		}
 		
@@ -281,6 +288,7 @@ public class CalculateFrame extends JPanel implements ActionListener{
 			if(source.getName().equalsIgnoreCase("function1"))
 			{
 				resultLabel.setVisible(false);
+				GraphFunctionsFrame.gframe.SetVisualPointsVisible(false);
 			}
 		}
 		
@@ -296,6 +304,7 @@ public class CalculateFrame extends JPanel implements ActionListener{
 			funcComboBox2.setSelectedIndex(1);
 		}
 		resultLabel.setVisible(false);
+		GraphFunctionsFrame.gframe.SetVisualPointsVisible(false);
 		
 		/*
 		switch(this.calc)
