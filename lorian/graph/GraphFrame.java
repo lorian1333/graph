@@ -7,9 +7,13 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Point;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.Spring;
 import javax.swing.SpringLayout;
@@ -17,6 +21,9 @@ import javax.swing.SpringLayout;
 public class GraphFrame extends JPanel {
 	private static final long serialVersionUID = -741311884013992607L;
 	private List<Function> functions;
+	private List<VisualPoint> vpoints;
+	private boolean vpointsVisible = false;
+	private Image pointimg, movablepointimg;
 	private WindowSettings settings;
 	private int YaxisX, XaxisY;
 	Dimension size;
@@ -33,7 +40,24 @@ public class GraphFrame extends JPanel {
 		this.setPreferredSize(size);
 		this.setBackground(Color.WHITE);
 		this.setOpaque(false);
-		
+		vpoints = new ArrayList<VisualPoint>();
+		try
+		{
+			pointimg = ImageIO.read(getClass().getResource("/res/point.png")).getScaledInstance(25, 25, 0);
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		try
+		{
+			movablepointimg = ImageIO.read(getClass().getResource("/res/movablepoint.png")).getScaledInstance(25, 25, 0);
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+
 		InitCalcPanel();	
 		CalculateAxes();
 	}
@@ -165,7 +189,20 @@ public class GraphFrame extends JPanel {
 		g.drawLine(0, yoff, xoff, yoff);
 		
 	}
-	
+	private void drawVisualPoints(Graphics g)
+	{
+		int x,y;
+		for(VisualPoint p: vpoints)
+		{
+			x = (int) (((p.getPoint().getX()  - settings.getXmin()) / (settings.getXmax() - settings.getXmin()) * size.getWidth())) - 13;
+			y =  (int) size.getHeight() - (int) (((p.getPoint().getY()  - settings.getYmin()) / (settings.getYmax() - settings.getYmin()) * size.getHeight())) - 13;
+			
+			if(p.isMovable())
+				g.drawImage(movablepointimg, x, y, null);
+			else
+				g.drawImage(pointimg, x, y, null); 
+		}
+	}
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
@@ -182,8 +219,15 @@ public class GraphFrame extends JPanel {
 		}
 		((Graphics2D) g).setStroke(new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
 		drawAxes(g);
+		
+		if(vpointsVisible)
+		{
+			drawVisualPoints(g);
+		}
+		
 		if(CalcPanelVisible)
 			drawCalcPanelBorders(g);
+		
 	}
 
 	
@@ -212,8 +256,27 @@ public class GraphFrame extends JPanel {
 		CalcPanel.add(panel);	
 		this.paintAll(this.getGraphics());
 	}
-
-
+	public void SetVisualPointsVisible(boolean visible)
+	{
+		this.vpointsVisible = visible;
+		if(visible == false)
+			ClearVisualPoints();
+		
+		this.repaint();
+	}
+	public void ClearVisualPoints()
+	{
+		vpoints.clear();
+	}
+	public boolean VisualPointsAreVisible()
+	{
+		return this.vpointsVisible;
+	}
+	public void AddVisualPoint(VisualPoint p)
+	{
+		vpoints.add(p);
+		this.repaint();
+	}
 
 
 }
