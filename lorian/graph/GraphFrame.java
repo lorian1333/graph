@@ -174,24 +174,39 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 		double step = ((double) (settings.getXmax() - settings.getXmin())) / size.getWidth();
 		
 		Point previous = new Point();
-		
+		boolean WaitForRealNumber = false;
 		for(xpix = -1, x = settings.getXmin(); xpix < (int) size.getWidth(); xpix++, x+=step)
 		{
 			
 			y = f.Calc(x);
 			if(Double.isNaN(y)) 
 			{ 
-				previous.setLocation(size.getWidth() / 2, size.getHeight() / 2);
+				previous = null;
+				if(!WaitForRealNumber)
+				{
+					WaitForRealNumber = true;
+				}
+				else
+				{
+					
+				}
 				continue;
 			}
+			else if(WaitForRealNumber) WaitForRealNumber = false;
+			
 			ypix = (int) ((settings.getYmax() - y) * (size.getHeight() / (settings.getYmax() - settings.getYmin())));
 			if(xpix > -1)
 			{
-				if(xpix - previous.x < size.getWidth() && ypix - previous.y < size.getHeight())
+				if(previous == null)
+				{
+					g.drawRect(xpix, ypix, 1, 1);
+				}
+				else if(xpix - previous.x < size.getWidth() && ypix - previous.y < size.getHeight())
 				{
 					g.drawLine(previous.x, previous.y, xpix, ypix);
 				}
 			}
+			if(previous == null) previous = new Point();
 			previous.setLocation(xpix, ypix);
 		}
 		g.setColor(Color.BLACK);
