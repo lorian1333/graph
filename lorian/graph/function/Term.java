@@ -166,7 +166,7 @@ public class Term {
 					}
 					else if(ch == '(')
 					{
-						if(!Util.StringContains(newfactor, Util.LowercaseAlphabethWithout(argumentChar)))
+						if(!Util.StringContains(newfactor, Util.LowercaseAlphabethWithout(argumentChar)) && !Util.StringContains(newfactor, "^"))
 						{
 							
 							if(newfactor.length() > 0) 
