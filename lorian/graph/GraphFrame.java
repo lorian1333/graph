@@ -181,6 +181,14 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 			y = f.Calc(x);
 			if(Double.isNaN(y)) 
 			{ 
+				double tmpX = Calculate.FindLastXBeforeNaN(f, x - step);
+				if(!Double.isNaN(tmpX))
+				{
+					double tmpY =  f.Calc(tmpX);
+					ypix = (int) ((settings.getYmax() - tmpY) * (size.getHeight() / (settings.getYmax() - settings.getYmin())));
+					g.drawLine(previous.x, previous.y, xpix, ypix);
+				}
+				
 				previous = null;
 				if(!WaitForRealNumber)
 				{
