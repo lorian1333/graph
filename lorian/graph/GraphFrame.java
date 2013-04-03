@@ -11,6 +11,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Label;
 import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -39,10 +40,11 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 	private WindowSettings settings;
 	private int YaxisX, XaxisY;
 	Dimension size;
-
+	
 	public boolean windowerror = false;
 	private JPanel CalcPanel;
 	private boolean CalcPanelVisible = false;
+	private boolean clearOnlyCorner = false;
 	
 	GraphFrame(List<Function> functions, WindowSettings settings, Dimension size) {
 		super();
@@ -194,10 +196,6 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 				{
 					WaitForRealNumber = true;
 				}
-				else
-				{
-					
-				}
 				continue;
 			}
 			else if(WaitForRealNumber) WaitForRealNumber = false;
@@ -282,18 +280,27 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 	}
 	@Override
 	public void paintComponent(Graphics g) {
-		super.paintComponent(g);
-		
-		g.clearRect(0, 0, (int) this.getWidth(), (int) this.getHeight());
-		
+		super.paintComponent(g); 
+		((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		System.out.println("aaaaa");
+		if(clearOnlyCorner)
+		{
+			g.clearRect(0, this.CalcPanel.getHeight(), (int) this.getWidth(), this.CalcPanel.getWidth());
+		}
+		else
+		{
+			g.clearRect(0, 0, (int) this.getWidth(), (int) this.getHeight());
+		}
 		if(windowerror) return;
 		CalculateAxes();
 		if(settings.gridOn()) drawGrid(g);
-		((Graphics2D) g).setStroke(new BasicStroke(1.1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
+		
+		((Graphics2D) g).setStroke(new BasicStroke(1.3f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
 		for (int i = 0; i < functions.size(); i++) 
 		{
 			drawFunction(functions.get(i), g);
 		}
+		((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 		((Graphics2D) g).setStroke(new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
 		drawAxes(g);
 		
@@ -325,13 +332,17 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 	public void setCalcPanelVisible(boolean calcPanelVisible) {
 		CalcPanelVisible = calcPanelVisible;
 		this.CalcPanel.setVisible(calcPanelVisible);
+		clearOnlyCorner = true;
 		this.repaint();
+		clearOnlyCorner = false;
 	}
 	public void setCalcPanel(JPanel panel)
 	{
 		CalcPanel.removeAll();
 		CalcPanel.add(panel);	
+		clearOnlyCorner = true;
 		this.paintAll(this.getGraphics());
+		clearOnlyCorner = false;
 	}
 	public void SetVisualPointsVisible(boolean visible)
 	{
