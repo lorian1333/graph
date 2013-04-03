@@ -63,6 +63,7 @@ public class Term {
 		}
 		return "a";
 		*/
+		if(s.trim().length() == 0) return "";
 		return String.format("(%s)^-1", s);
 	}
 	private List<String> SplitIntoFactors(String s)
@@ -168,7 +169,6 @@ public class Term {
 					{
 						if(!Util.StringContains(newfactor, Util.LowercaseAlphabethWithout(argumentChar)) && !Util.StringContains(newfactor, "^"))
 						{
-							
 							if(newfactor.length() > 0) 
 							{
 								if(division) newfactor = exponentTimesMinusOne(newfactor);
@@ -203,7 +203,7 @@ public class Term {
 						continue;
 					}
 
-					else if(Util.StringContains("" + ch, Util.LowercaseAlphabethWithout(argumentChar) + "()+=^"))
+					else if(Util.StringContains("" + ch, Util.LowercaseAlphabethWithout(argumentChar) + "()+-^"))
 					{
 						if(division) newfactor = exponentTimesMinusOne(newfactor);
 						if(newfactor.length() > 0) factors.add(newfactor);
