@@ -53,6 +53,7 @@ public class Util {
 		}
 		return -1;
 	}
+
 	public static int StringArrayGetIndex(String[] array, String s)
 	{
 		int i=0;

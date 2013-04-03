@@ -53,16 +53,6 @@ public class Term {
 	
 	private String exponentTimesMinusOne(String s)
 	{
-		/*
-		if(!Util.StringContains(s, '('))
-		{
-			String base = s.substring(0, s.indexOf('^'));
-			String exponent = s.substring(s.indexOf('^')+1);
-			String result = String.format("%s^(-1(%s))", base, exponent);
-			return result;
-		}
-		return "a";
-		*/
 		if(s.trim().length() == 0) return "";
 		return String.format("(%s)^-1", s);
 	}
