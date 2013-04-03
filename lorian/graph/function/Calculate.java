@@ -143,7 +143,6 @@ public class Calculate {
 	}
 	public static double FindLastXBeforeNaN(Function f, double Xstart)
 	{
-		long start = System.currentTimeMillis();
 		double dx = 0.0001;
 		if(Double.isNaN(f.Calc(Xstart))) return Double.NaN;
 		
@@ -160,7 +159,6 @@ public class Calculate {
 		{
 			if(Double.isNaN(f.Calc(x)))
 			{
-				System.out.println("Took: " + (System.currentTimeMillis() - start) + "ms" );
 				return (x - dx);
 			}
 		}
