@@ -141,4 +141,30 @@ public class Calculate {
 		average = Util.round(average, 6);
 		return returnRounded(average);
 	}
+	public static double FindLastXBeforeNaN(Function f, double Xstart)
+	{
+		long start = System.currentTimeMillis();
+		double dx = 0.0001;
+		if(Double.isNaN(f.Calc(Xstart))) return Double.NaN;
+		
+		double Xtmp = 0;
+		for(double x = Xstart; x < Xstart + 50 ; x += 0.001)
+		{
+			if(Double.isNaN(f.Calc(x))) {
+				Xtmp = x - 0.001;
+				break;
+			}
+		}
+		//for(double x = Xstart; x < Xstart + 50 ; x += dx)
+		for(double x = Xtmp; x < Xtmp + 1; x += dx)
+		{
+			if(Double.isNaN(f.Calc(x)))
+			{
+				System.out.println("Took: " + (System.currentTimeMillis() - start) + "ms" );
+				return (x - dx);
+			}
+		}
+		
+		return Double.NaN;
+	}
 }
