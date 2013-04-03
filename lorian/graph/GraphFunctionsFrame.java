@@ -345,8 +345,10 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	}
 	private static void Calctest()
 	{
-		Function f = new Function("x^2");
-		double val = Calculate.DyDx(f, 10);
+		//Function f = new Function("x^2");
+		
+		Function deriv = new Function("deriv(x^2+0)");
+		double val = Calculate.DyDx(deriv, 0.500000000000075);
 		System.out.println(val);
 	}
 	

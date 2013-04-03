@@ -266,8 +266,12 @@ public class CalculateFrame extends JPanel implements ActionListener, VisualPoin
 			String resultstr = String.format("X = %s, Y = %s", Util.GetString(x1val), Util.GetString(result));
 			resultLabel.setText(resultstr);
 			GraphFunctionsFrame.gframe.ClearVisualPoints();
-			GraphFunctionsFrame.gframe.SetVisualPointsVisible(true);
-			GraphFunctionsFrame.gframe.AddVisualPoint(new VisualPoint(new PointXY(x1val, result), func1index, false, true));
+			if(!Double.isInfinite(result) && !Double.isNaN(result))
+			{
+				GraphFunctionsFrame.gframe.SetVisualPointsVisible(true);
+				GraphFunctionsFrame.gframe.AddVisualPoint(new VisualPoint(new PointXY(x1val, result), func1index, false, true));
+			}
+			
 			resultLabel.setVisible(true);
 			break;
 		case ZERO:

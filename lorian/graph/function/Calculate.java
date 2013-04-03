@@ -6,7 +6,7 @@ public class Calculate {
 	private static double returnRounded(double d)
 	{
 		double r = Util.round(d, 0);
-		if(Math.abs(r - d) < 0.001)
+		if(Math.abs(r - d) < 0.00000001)
 			return r;
 		else 
 			return d;
@@ -95,14 +95,33 @@ public class Calculate {
 		}
 		return new PointXY(Util.round(x2, 6), Util.round(f.Calc(x2), 6));
 	}	
+
 	public static double DyDx(Function f, double x)
 	{
-		//0.0000001
-		double dx = 0.000000001;
-		double dydx = (f.Calc(x+dx) - f.Calc(x)) / dx;
+	
+		//double dx = 0.000000001;
+		double dx   = 0.000001;
 		
-		return returnRounded(Util.round(dydx, 6));
+		double dydx;
+		double dy = (f.Calc(x+dx) - f.Calc(x));
+		
+		dydx = dy / dx;
+		
+		//return returnRounded(Util.round(dydx, 6));
+		return Util.round(dydx, 6);
+		
+	
 	}	
+	public static double DyDx(Function f, double x, double dx)
+	{
+		double dydx;
+		double dy = (f.Calc(x+dx) - f.Calc(x));
+		
+		dydx = dy / dx;
+		return dydx;
+	
+	}
+	
 	public static double Integral(Function f, double LowX, double UpX)
 	{
 		double dx = 0.00001;

@@ -5,6 +5,7 @@ import java.util.List;
 import lorian.graph.GraphFunctionsFrame;
 
 public class MathFunctions {
+
 	public static double Calculate(String functionname, List<String> args, double value)
 	{	
 		Function f = new Function(); 
@@ -103,7 +104,7 @@ public class MathFunctions {
 		else if(functionname.equalsIgnoreCase("dydx") || functionname.equalsIgnoreCase("deriv"))
 		{
 			String otherfunction = args.get(0);
-			if(otherfunction.contains("dydx")|| otherfunction.contains("deriv")) return 0;
+			//if(otherfunction.contains("dydx")|| otherfunction.contains("deriv")) return Double.NaN;
 			
 			if(otherfunction.charAt(0) != 'y' || otherfunction.endsWith(")")) 
 			{

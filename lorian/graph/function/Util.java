@@ -89,9 +89,11 @@ public class Util {
 	}
 	public static double round(double valueToRound, int numberOfDecimalPlaces)
 	{
+		//return valueToRound;
 	    double multipicationFactor = Math.pow(10, numberOfDecimalPlaces);
 	    double interestedInZeroDPs = valueToRound * multipicationFactor;
 	    return Math.round(interestedInZeroDPs) / multipicationFactor;
+	    
 	}
 	
 	
