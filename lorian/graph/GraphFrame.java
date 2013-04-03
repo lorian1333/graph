@@ -201,7 +201,7 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 				{
 					g.drawRect(xpix, ypix, 1, 1);
 				}
-				else if(xpix - previous.x < size.getWidth() && ypix - previous.y < size.getHeight())
+				else if(Math.abs(xpix - previous.x) < size.getWidth() && Math.abs(ypix - previous.y) < size.getHeight())
 				{
 					g.drawLine(previous.x, previous.y, xpix, ypix);
 				}
@@ -337,6 +337,7 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 	{
 		vpoints.clear();
 		vmovablepoints.clear();
+		this.repaint();
 	}
 	public boolean VisualPointsAreVisible()
 	{
