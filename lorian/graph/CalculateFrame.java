@@ -376,8 +376,30 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 			resultLabel.setVisible(true);
 			break;
 		case MINIMUM:
+			PointXY min = lorian.graph.function.Calculate.Minimum(GraphFunctionsFrame.functions.get(func1index), x1val, x2val);
+			resultstr = String.format("X = %s, Y = %s", Util.GetString(min.getX()), Util.GetString(min.getY()));
+			resultLabel.setText(resultstr);
+			GraphFunctionsFrame.gframe.ClearVisualPoints();
+			if(!Double.isInfinite(min.getY()) && !Double.isNaN(min.getY()))
+			{
+				GraphFunctionsFrame.gframe.SetVisualPointsVisible(true);
+				GraphFunctionsFrame.gframe.AddVisualPoint(new VisualPoint(min, func1index, false, true));
+			}
+			
+			resultLabel.setVisible(true);
 			break;
 		case MAXIMUM:
+			PointXY max = lorian.graph.function.Calculate.Maximum(GraphFunctionsFrame.functions.get(func1index), x1val, x2val);
+			resultstr = String.format("X = %s, Y = %s", Util.GetString(max .getX()), Util.GetString(max .getY()));
+			resultLabel.setText(resultstr);
+			GraphFunctionsFrame.gframe.ClearVisualPoints();
+			if(!Double.isInfinite(max .getY()) && !Double.isNaN(max .getY()))
+			{
+				GraphFunctionsFrame.gframe.SetVisualPointsVisible(true);
+				GraphFunctionsFrame.gframe.AddVisualPoint(new VisualPoint(max , func1index, false, true));
+			}
+			
+			resultLabel.setVisible(true);
 			break;
 		case INTERSECT:
 			break;
@@ -430,6 +452,7 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 				resultLabel.setVisible(false);
 				GraphFunctionsFrame.gframe.setCalcPanelVisible(false);
 				GraphFunctionsFrame.gframe.SetVisualPointsVisible(false);
+				GraphFunctionsFrame.gframe.SetFillFunction(false);
 			}
 		}
 		
