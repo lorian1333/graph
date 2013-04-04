@@ -6,7 +6,7 @@ public class Calculate {
 	private static double returnRounded(double d)
 	{
 		double r = Util.round(d, 0);
-		if(Math.abs(r - d) < 0.00000001)
+		if(Math.abs(r - d) < 0.0001)
 			return r;
 		else 
 			return d;
@@ -125,6 +125,7 @@ public class Calculate {
 	public static double Integral(Function f, double LowX, double UpX)
 	{
 		double dx = 0.00001;
+		//double dx =   0.000001;
 		double lowersum=0, uppersum=0;
 		for(double x = LowX; x < UpX; x += dx)
 		{
