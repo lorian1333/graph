@@ -33,7 +33,6 @@ import lorian.graph.function.VisualPointLocationChangeListener;
 public class CalculateFrame extends JPanel implements ActionListener, ChangeListener, VisualPointLocationChangeListener {
 	private static final long serialVersionUID = -6709615022829676720L;
 	private Calculation calc;
-	//private CalculationsData data;
 	private String title;
 	private SpringLayout layout;
 	private int height = 5;
@@ -43,6 +42,8 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 	private JLabel resultLabel;
 	
 	private VisualPoint lowx, upx;
+	
+	private boolean calculated = false;
 	enum Calculation
 	{
 		VALUE, ZERO, MINIMUM, MAXIMUM, INTERSECT, DYDX, INTEGRAL;
@@ -241,7 +242,7 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 		
 	}
 	
-	private void initZeroUI()
+	private void initLowUpXUI()
 	{
 		initGeneralUI();
 		funcComboBox = initFunctionCombobox("function1", "Function: ", 135); 
@@ -249,11 +250,13 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 		AddCalculateButton(height);
 		initMovablePoints(-2, 2);
 	}
+	private void initZeroUI()
+	{
+		initLowUpXUI();
+	}
 	private void initMinOrMaxUI()
 	{
-		initGeneralUI();
-		AddCalculateButton(height);
-		initMovablePoints(-2, 2);
+		initLowUpXUI();
 	}
 	private void initIntersectUI()
 	{
@@ -264,13 +267,23 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 		initMovablePoints(-2, 2);
 		
 	}
-	private void initDyDxUI()
-	{
-		
-	}
 	private void initIntegralUI()
 	{
-		
+		initLowUpXUI();
+		GraphFunctionsFrame.gframe.SetFillFunction(true);
+		int funcindex;
+		try
+		{
+			funcindex = Integer.parseInt(((String) funcComboBox.getSelectedItem()).substring(1)) - 1;
+		}
+		catch (Exception e)
+		{
+			System.out.println("Error parsing function index");
+			return;
+		}
+		GraphFunctionsFrame.gframe.SetFillFunctionIndex(funcindex);
+		GraphFunctionsFrame.gframe.SetFillLowerLimit(-2);
+		GraphFunctionsFrame.gframe.SetFillUpperLimit(2);
 	}
 	
 	private String[] GetActiveFunctions()
@@ -382,10 +395,18 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 			resultLabel.setVisible(true);
 			break;
 		case INTEGRAL:
+			double integral = lorian.graph.function.Calculate.Integral(GraphFunctionsFrame.functions.get(func1index), x1val, x2val);
+			resultstr = String.format("%cf(x)dx: %s", MathChars.Integral.getCode(), Util.GetString(integral));
+			resultLabel.setText(resultstr);
+			GraphFunctionsFrame.gframe.ClearVisualPoints();
+			GraphFunctionsFrame.gframe.SetVisualPointsVisible(false);
+			resultLabel.setVisible(true);
+		
 			break;
 		default:
 			break;
 		}
+		calculated = true;
 	}
 	
 	@Override
@@ -420,9 +441,26 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 			if(source.getName().equalsIgnoreCase("function1"))
 			{
 				resultLabel.setVisible(false);
+				
 				GraphFunctionsFrame.gframe.ClearVisualPoints();
 				if(this.calc != Calculation.VALUE && this.calc != Calculation.DYDX)
 					initMovablePoints((Double) x1.getValue(), (Double)  x2.getValue());
+				
+				if(this.calc == Calculation.INTEGRAL)
+				{
+					int funcindex;
+					try
+					{
+						funcindex = Integer.parseInt(((String) funcComboBox.getSelectedItem()).substring(1)) - 1;
+					}
+					catch (Exception ex)
+					{
+						System.out.println("Error parsing function index");
+						return;
+					}
+					
+					GraphFunctionsFrame.gframe.SetFillFunctionIndex(funcindex);
+				}
 			}
 		}
 		
@@ -441,7 +479,7 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 			{
 				x1.setValue(p.getPoint().getX());
 			}
-			
+			GraphFunctionsFrame.gframe.SetFillLowerLimit(p.getPoint().getX());
 		}
 		else if(p.getLabel().equalsIgnoreCase("upper limit"))
 		{
@@ -453,6 +491,7 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 			{
 				x2.setValue(p.getPoint().getX());
 			}
+			GraphFunctionsFrame.gframe.SetFillUpperLimit(p.getPoint().getX());
 		
 			
 		}
@@ -496,7 +535,14 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 	@Override
 	public void stateChanged(ChangeEvent e) {
 		JSpinner source = (JSpinner) e.getSource();
-		
+		if(calculated)
+		{
+			resultLabel.setVisible(false);
+			GraphFunctionsFrame.gframe.ClearVisualPoints();
+			if(this.calc != Calculation.VALUE && this.calc != Calculation.DYDX)
+				initMovablePoints((Double) x1.getValue(), (Double)  x2.getValue());
+			
+		}
 		int funcindex = this.lowx.getFunctionIndex();
 		/*
 		try
