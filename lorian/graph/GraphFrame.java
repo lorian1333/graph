@@ -6,6 +6,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -256,22 +257,28 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 				g.drawImage(pointimg, x, y, null);
 			}
 			
-			
-			g.setFont(g.getFont().deriveFont(13.0f));
-			
 			y += 15;
 			x += 25;
+			
+			String text;
 			if(p.coordinatesOn())
 			{
 				if(p.getLabel().length() > 0)
-					g.drawString(p.getLabel() + " " + getRightCoordinateString(p), x, y);
+					text = p.getLabel() + " " + getRightCoordinateString(p);
 				else
-					g.drawString(getRightCoordinateString(p), x, y);
+					text = getRightCoordinateString(p);
 			}
 			else
 			{
-				g.drawString(p.getLabel(), x, y); 
+				text = p.getLabel();
 			}
+			
+			g.setFont(g.getFont().deriveFont(13.0f));
+			FontMetrics metrics = g.getFontMetrics(g.getFont()); 
+			g.setColor(new Color(0xff, 0xff, 0xff, 200)); 
+			g.fillRect(x, y - metrics.getHeight(), Util.getStringWidth(metrics, text), metrics.getHeight() + 2);
+			g.setColor(Color.BLACK);
+			g.drawString(text, x, y); 
 			
 			i++;
 				
@@ -384,13 +391,19 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 	}
 	public void SetMovableVisualPointLocationByLabel(String label, PointXY newlocation)
 	{
+		int i=0;
 		for(VisualPoint vp: vpoints)
 		{
 			if(vp.getLabel().equals(label))
 			{
 				vp.setPoint(newlocation);
-				break;
+				int x = (int) (((vp.getPoint().getX()  - settings.getXmin()) / (settings.getXmax() - settings.getXmin()) * size.getWidth())) - 13;
+				int y =  (int) size.getHeight() - (int) (((vp.getPoint().getY()  - settings.getYmin()) / (settings.getYmax() - settings.getYmin()) * size.getHeight())) - 13;
+				int pointindex = GetMovableVisualPointIndex(i);
+				vmovablepoints.set(pointindex, new Point(x, y));
+				break; 
 			}
+			i++;
 		}
 		this.repaint();
 	}
