@@ -221,11 +221,17 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 					((Graphics2D) g).setStroke(new BasicStroke(1.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL));
 					if(y > 0)
 					{
-						g.drawLine(xpix, ypix-1, xpix, this.XaxisY);
+						if(ypix < 0)
+							g.drawLine(xpix, 0, xpix, this.XaxisY);
+						else
+							g.drawLine(xpix, ypix-1, xpix, this.XaxisY);
 					}
 					else if(y < 0)
 					{
-						g.drawLine(xpix, ypix+1, xpix, this.XaxisY);
+						if(ypix > size.getHeight())
+							g.drawLine(xpix, (int) size.getHeight(), xpix, this.XaxisY);
+						else
+							g.drawLine(xpix, ypix+1, xpix, this.XaxisY);
 					}
 					((Graphics2D) g).setStroke(new BasicStroke(1.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
 					g.setColor(f.getColor());
