@@ -286,7 +286,6 @@ public class Factor {
 		functionname = s.substring(0, s.indexOf('('));
 		String functionargsstr = s.substring(s.indexOf('(') + 1, s.length()-1);
 		functionargs = SplitArgs(functionargsstr);
-		if(Double.isNaN(MathFunctions.Calculate(functionname, functionargs, 0))) return false;
 		return true;
 	}
 	
