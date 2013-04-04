@@ -1,5 +1,7 @@
 package lorian.graph.function;
 
+import java.awt.FontMetrics;
+
 public class Util {
 	public static String removeWhiteSpace(String s)
 	{
@@ -29,7 +31,15 @@ public class Util {
 		}
 		return false;
 	}
-	
+	public static int getStringWidth(FontMetrics f, String s)
+	{
+		int width = 0;
+		for(int i=0;i<s.length();i++)
+		{
+			width += f.getWidths()[s.charAt(i)];
+		}
+		return width;
+	}
 	public static String LowercaseAlphabethWithout(char character)
 	{
 		String s = "";
