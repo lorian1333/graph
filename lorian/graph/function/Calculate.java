@@ -16,7 +16,7 @@ public class Calculate {
 	{
 		if(UpX <= LowX) return new PointXY(-999999, -99999);
 		Function zeroline = new Function("0");
-		PointXY intersect = Intersect(f, zeroline, new PointXY(LowX, 0), (UpX - LowX));
+		PointXY intersect = Intersect(f, zeroline, LowX, UpX);
 		intersect.setX(returnRounded(intersect.getX()));
 		intersect.setY(0);
 		return intersect;
@@ -55,7 +55,7 @@ public class Calculate {
 		}
 		return new PointXY(returnRounded(Util.round(highestX, 6)), returnRounded(f.Calc(highestX)));
 	}
-	public static PointXY Intersect(Function f, Function g, PointXY min, double width)
+	public static PointXY Intersect(Function f, Function g, double LowX, double UpX)
 	{
 		double smallestDelta = 1000000000;
 		double currentDelta;
@@ -63,7 +63,7 @@ public class Calculate {
 		double x = 0, x2 = 0;
 		 
 	
-		for(x = min.getX() + 0.001; x < width;x+=0.1)
+		for(x = LowX + 0.001; x < UpX;x+=0.1)
 		{
 			currentDelta = Math.abs(g.Calc(x) - f.Calc(x));
 			if(currentDelta < 1)
@@ -96,6 +96,7 @@ public class Calculate {
 		return new PointXY(Util.round(x2, 6), Util.round(f.Calc(x2), 6));
 	}	
 
+	
 	public static double DyDx(Function f, double x)
 	{
 		if(Double.isNaN(x)) return Double.NaN;
@@ -107,10 +108,8 @@ public class Calculate {
 		
 		dydx = dy / dx;
 		
-		//return returnRounded(Util.round(dydx, 6));
-		return Util.round(dydx, 6);
-		
-	
+		return returnRounded(Util.round(dydx, 6));
+		//return Util.round(dydx, 6);
 	}	
 	public static double DyDx(Function f, double x, double dx)
 	{
