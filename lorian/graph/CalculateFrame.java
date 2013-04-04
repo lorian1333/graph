@@ -6,6 +6,8 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -85,7 +87,7 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 		
 		height += titlelabel.getPreferredSize().getHeight() + 10;
 	}  
-	private void AddCalculateButton(int height)
+	private void AddCalculateButton()
 	{
 
 		JButton calcButton = new JButton("Calculate");
@@ -238,7 +240,7 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 		height += xLabel.getPreferredSize().getHeight() + 15;
 		
 		// Calculate button	
-		AddCalculateButton(height);
+		AddCalculateButton();
 		
 	}
 	
@@ -247,7 +249,7 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 		initGeneralUI();
 		funcComboBox = initFunctionCombobox("function1", "Function: ", 135); 
 		initLowUpX(135);
-		AddCalculateButton(height);
+		AddCalculateButton();
 		initMovablePoints(-2, 2);
 	}
 	private void initZeroUI()
@@ -263,7 +265,8 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 		initGeneralUI();
 		funcComboBox = initFunctionCombobox("function1", "Function 1:", -1);
 		funcComboBox2 = initFunctionCombobox("function2", "Function 2:", -1);
-		AddCalculateButton(height);
+		initLowUpX(-1);
+		AddCalculateButton();
 		initMovablePoints(-2, 2);
 		
 	}
@@ -341,10 +344,12 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 	{
 		if(this.funcComboBox.getItemCount() == 0 || x1 == null) return;
 		int func1index = Integer.parseInt(((String) funcComboBox.getSelectedItem()).substring(1)) - 1;
+		int func2index = -1;
 		double x1val = (Double) x1.getValue();
 		double x2val = Double.NaN;
 		if(x2 != null)
 			x2val = (Double) x2.getValue();
+		if(funcComboBox2 != null) func2index = Integer.parseInt(((String) funcComboBox2.getSelectedItem()).substring(1)) - 1;
 		
 		String resultstr;
 		switch(this.calc)
@@ -402,6 +407,18 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 			resultLabel.setVisible(true);
 			break;
 		case INTERSECT:
+			if(func1index == func2index) return;
+			PointXY intersectpoint = lorian.graph.function.Calculate.Intersect(GraphFunctionsFrame.functions.get(func1index), GraphFunctionsFrame.functions.get(func2index), x1val, x2val);
+			resultstr = String.format("X = %s, Y = %s", Util.GetString(intersectpoint .getX()), Util.GetString(intersectpoint .getY()));
+			resultLabel.setText(resultstr);
+			GraphFunctionsFrame.gframe.ClearVisualPoints();
+			if(!Double.isInfinite(intersectpoint .getY()) && !Double.isNaN(intersectpoint .getY()))
+			{
+				GraphFunctionsFrame.gframe.SetVisualPointsVisible(true);
+				GraphFunctionsFrame.gframe.AddVisualPoint(new VisualPoint(intersectpoint , func1index, false, true));
+			}
+			
+			resultLabel.setVisible(true);
 			break;
 		case DYDX:
 			double dydx = lorian.graph.function.Calculate.DyDx(GraphFunctionsFrame.functions.get(func1index), x1val);
@@ -527,6 +544,8 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 		if(funcComboBox2 != null) {
 			funcComboBox2.setModel(new JComboBox<String>(GetActiveFunctions()).getModel());
 			funcComboBox2.setSelectedIndex(1);
+			if(funcComboBox.getSelectedIndex() == funcComboBox2.getSelectedIndex() && funcComboBox.getItemCount() > 1)
+				funcComboBox2.setSelectedIndex(funcComboBox2.getSelectedIndex());
 		}
 		resultLabel.setVisible(false);
 		GraphFunctionsFrame.gframe.SetVisualPointsVisible(false);
@@ -566,18 +585,10 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 				initMovablePoints((Double) x1.getValue(), (Double)  x2.getValue());
 			
 		}
+		if(lowx == null || upx == null) return;
+		
 		int funcindex = this.lowx.getFunctionIndex();
-		/*
-		try
-		{
-			funcindex = Integer.parseInt(((String) funcComboBox.getSelectedItem()).substring(1)) - 1;
-		}
-		catch (Exception ex)
-		{
-			System.out.println("Error parsing function index");
-			return;
-		}
-		*/
+		
 		Function f = GraphFunctionsFrame.functions.get(funcindex);
 		
 		if(source.getName().equalsIgnoreCase("lowX"))
@@ -601,6 +612,7 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 		}
 		
 	}
+	
 	
 	
 }
