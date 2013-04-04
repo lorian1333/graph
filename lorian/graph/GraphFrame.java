@@ -47,6 +47,9 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 	private boolean CalcPanelVisible = false;
 	private boolean clearOnlyCorner = false;
 	
+	private int FillFunctionIndex = -1;
+	private double FillLowX = 0, FillUpX = 0;
+	
 	GraphFrame(List<Function> functions, WindowSettings settings, Dimension size) {
 		super();
 		this.size = size;
@@ -168,7 +171,7 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 			g.drawLine(0, pix, (int) size.getWidth(), pix);
 		}
 	}
-	private void drawFunction(Function f, Graphics g) 
+	private void drawFunction(Function f, boolean fill, Graphics g) 
 	{
 		if(f.isEmpty()) return;
 		g.setColor(f.getColor());
@@ -210,6 +213,22 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 				else if(Math.abs(xpix - previous.x) < size.getWidth() && Math.abs(ypix - previous.y) < size.getHeight())
 				{
 					g.drawLine(previous.x, previous.y, xpix, ypix);
+				}
+				
+				if(fill && x >= FillLowX && x <= FillUpX)
+				{
+					g.setColor(Util.lighter(f.getColor()));
+					((Graphics2D) g).setStroke(new BasicStroke(1.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL));
+					if(y > 0)
+					{
+						g.drawLine(xpix, ypix-1, xpix, this.XaxisY);
+					}
+					else if(y < 0)
+					{
+						g.drawLine(xpix, ypix+1, xpix, this.XaxisY);
+					}
+					((Graphics2D) g).setStroke(new BasicStroke(1.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
+					g.setColor(f.getColor());
 				}
 			}
 			if(previous == null) previous = new Point();
@@ -288,7 +307,6 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g); 
 		
-
 		if(!clearOnlyCorner)
 		{
 			((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -301,7 +319,7 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 			((Graphics2D) g).setStroke(new BasicStroke(1.3f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
 			for (int i = 0; i < functions.size(); i++) 
 			{
-				drawFunction(functions.get(i), g);
+				drawFunction(functions.get(i), (i == this.FillFunctionIndex), g);
 			}
 			((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 			((Graphics2D) g).setStroke(new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
@@ -319,6 +337,22 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 		}
 	}
 
+	public void SetFillFunctionIndex(int index)
+	{
+		this.FillFunctionIndex = index;
+	}
+	public void SetFillLowerLimit(double lowx)
+	{
+		this.FillLowX = lowx;
+	}
+	public void SetFillUpperLimit(double upx)
+	{
+		this.FillUpX = upx;
+	}
+	public void SetFillFunction(boolean on)
+	{
+		if(!on) this.FillFunctionIndex = -1; 
+	}
 	
 	public void Update(List<Function> functions) {
 		this.functions = functions;
