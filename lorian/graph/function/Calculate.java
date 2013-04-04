@@ -98,7 +98,7 @@ public class Calculate {
 
 	public static double DyDx(Function f, double x)
 	{
-	
+		if(Double.isNaN(x)) return Double.NaN;
 		//double dx = 0.000000001;
 		double dx   = 0.000001;
 		
@@ -114,6 +114,7 @@ public class Calculate {
 	}	
 	public static double DyDx(Function f, double x, double dx)
 	{
+		if(Double.isNaN(x) || Double.isNaN(dx)) return Double.NaN;
 		double dydx;
 		double dy = (f.Calc(x+dx) - f.Calc(x));
 		
@@ -127,15 +128,18 @@ public class Calculate {
 		double dx = 0.00001;
 		//double dx =   0.000001;
 		double lowersum=0, uppersum=0;
+		double val;
 		for(double x = LowX; x < UpX; x += dx)
 		{
+			val = f.Calc(x);
+			if(Double.isNaN(val)) return Double.NaN;
 			if(x != LowX)
 			{
-				uppersum += f.Calc(x) * dx;
+				uppersum += val * dx;
 			}
 			if(x != (UpX - dx))
 			{
-				lowersum += f.Calc(x) * dx;
+				lowersum += val * dx;
 			}
 		}
 		double average = (lowersum + uppersum) / 2;
