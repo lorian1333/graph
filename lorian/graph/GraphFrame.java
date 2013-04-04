@@ -238,7 +238,7 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 	{
 		int x,y;
 		int i=0;
-		
+		System.out.println("drawVisualPoints");
 		for(VisualPoint p: vpoints)
 		{
 			x = (int) (((p.getPoint().getX()  - settings.getXmin()) / (settings.getXmax() - settings.getXmin()) * size.getWidth())) - 13;
@@ -282,36 +282,39 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g); 
 		((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		System.out.println("aaaaa");
+
 		if(clearOnlyCorner)
 		{
-			g.clearRect(0, this.CalcPanel.getHeight(), (int) this.getWidth(), this.CalcPanel.getWidth());
+			//g.clearRect(0, this.CalcPanel.getHeight(), (int) this.getWidth(), this.CalcPanel.getWidth());
+			System.out.println("aaaaa");
 		}
 		else
 		{
-			g.clearRect(0, 0, (int) this.getWidth(), (int) this.getHeight());
+		g.clearRect(0, 0, (int) this.getWidth(), (int) this.getHeight());
+		
+			if(windowerror) return;
+			CalculateAxes();
+			if(settings.gridOn()) drawGrid(g);
+			
+			((Graphics2D) g).setStroke(new BasicStroke(1.3f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
+			for (int i = 0; i < functions.size(); i++) 
+			{
+				drawFunction(functions.get(i), g);
+			}
+			((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+			((Graphics2D) g).setStroke(new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
+			drawAxes(g);
+			
+			if(vpointsVisible)
+			{
+				drawVisualPoints(g);
+			}
+			
+			if(CalcPanelVisible)
+				drawCalcPanelBorders(g);
+		
+		
 		}
-		if(windowerror) return;
-		CalculateAxes();
-		if(settings.gridOn()) drawGrid(g);
-		
-		((Graphics2D) g).setStroke(new BasicStroke(1.3f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
-		for (int i = 0; i < functions.size(); i++) 
-		{
-			drawFunction(functions.get(i), g);
-		}
-		((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-		((Graphics2D) g).setStroke(new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
-		drawAxes(g);
-		
-		if(vpointsVisible)
-		{
-			drawVisualPoints(g);
-		}
-		
-		if(CalcPanelVisible)
-			drawCalcPanelBorders(g);
-		
 	}
 
 	
