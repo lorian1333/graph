@@ -213,7 +213,7 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 	
 	
 	
-	private void initValueUI()
+	private void initValueOrDyDxUI()
 	{
 		initGeneralUI();
 		funcComboBox = initFunctionCombobox("function1", "Function: ", -1); 
@@ -291,7 +291,7 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 		{
 		case VALUE:
 			title += "Value";
-			initValueUI();
+			initValueOrDyDxUI();
 			break;
 		case ZERO:
 			title += "Zero";
@@ -311,7 +311,7 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 			break;
 		case DYDX:
 			title += "dy/dx";
-			initDyDxUI();
+			initValueOrDyDxUI();
 			break;
 		case INTEGRAL:
 			title += (MathChars.Integral.getCode() + "f(x)dx");
@@ -329,7 +329,10 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 		if(this.funcComboBox.getItemCount() == 0 || x1 == null) return;
 		int func1index = Integer.parseInt(((String) funcComboBox.getSelectedItem()).substring(1)) - 1;
 		double x1val = (Double) x1.getValue();
-		double x2val = (Double) x2.getValue();
+		double x2val = Double.NaN;
+		if(x2 != null)
+			x2val = (Double) x2.getValue();
+		
 		String resultstr;
 		switch(this.calc)
 		{
@@ -366,6 +369,17 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 		case INTERSECT:
 			break;
 		case DYDX:
+			double dydx = lorian.graph.function.Calculate.DyDx(GraphFunctionsFrame.functions.get(func1index), x1val);
+			resultstr = String.format("dy/dx: %s", Util.GetString(dydx));
+			resultLabel.setText(resultstr);
+			GraphFunctionsFrame.gframe.ClearVisualPoints();
+			if(!Double.isInfinite(dydx) && !Double.isNaN(dydx))
+			{ 
+				GraphFunctionsFrame.gframe.SetVisualPointsVisible(true);
+				GraphFunctionsFrame.gframe.AddVisualPoint(new VisualPoint(new PointXY(x1val, GraphFunctionsFrame.functions.get(func1index).Calc(x1val)), func1index, false, true, resultstr));
+			}
+			
+			resultLabel.setVisible(true);
 			break;
 		case INTEGRAL:
 			break;
