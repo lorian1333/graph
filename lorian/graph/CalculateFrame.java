@@ -395,7 +395,7 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 			resultLabel.setVisible(true);
 			break;
 		case INTEGRAL:
-			double integral = lorian.graph.function.Calculate.Integral(GraphFunctionsFrame.functions.get(func1index), x1val, x2val);
+			double integral = Util.round(lorian.graph.function.Calculate.Integral(GraphFunctionsFrame.functions.get(func1index), x1val, x2val), 6);
 			resultstr = String.format("%cf(x)dx: %s", MathChars.Integral.getCode(), Util.GetString(integral));
 			resultLabel.setText(resultstr);
 			GraphFunctionsFrame.gframe.ClearVisualPoints();
