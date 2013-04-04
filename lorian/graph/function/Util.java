@@ -1,5 +1,6 @@
 package lorian.graph.function;
 
+import java.awt.Color;
 import java.awt.FontMetrics;
 
 public class Util {
@@ -105,6 +106,12 @@ public class Util {
 	    double interestedInZeroDPs = valueToRound * multipicationFactor;
 	    return Math.round(interestedInZeroDPs) / multipicationFactor;
 	    
+	}
+	public static Color lighter(Color c)
+	{
+		double org = 0.6;
+		double white = 0.4;
+		return new Color((int) (c.getRed() * org + 0xff * white), (int) (c.getGreen() * org + 0xff * white), (int) (c.getBlue() * org + 0xff * white));
 	}
 	
 	
