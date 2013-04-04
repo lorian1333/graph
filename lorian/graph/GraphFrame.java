@@ -179,7 +179,6 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 		boolean WaitForRealNumber = false;
 		for(xpix = -1, x = settings.getXmin(); xpix < (int) size.getWidth(); xpix++, x+=step)
 		{
-			
 			y = f.Calc(x);
 			if(Double.isNaN(y)) 
 			{ 
@@ -238,7 +237,7 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 	{
 		int x,y;
 		int i=0;
-		System.out.println("drawVisualPoints");
+		
 		for(VisualPoint p: vpoints)
 		{
 			x = (int) (((p.getPoint().getX()  - settings.getXmin()) / (settings.getXmax() - settings.getXmin()) * size.getWidth())) - 13;
@@ -281,16 +280,12 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g); 
-		((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		
 
-		if(clearOnlyCorner)
+		if(!clearOnlyCorner)
 		{
-			//g.clearRect(0, this.CalcPanel.getHeight(), (int) this.getWidth(), this.CalcPanel.getWidth());
-			System.out.println("aaaaa");
-		}
-		else
-		{
-		g.clearRect(0, 0, (int) this.getWidth(), (int) this.getHeight());
+			((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g.clearRect(0, 0, (int) this.getWidth(), (int) this.getHeight());
 		
 			if(windowerror) return;
 			CalculateAxes();
