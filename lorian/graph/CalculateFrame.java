@@ -329,12 +329,13 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 		if(this.funcComboBox.getItemCount() == 0 || x1 == null) return;
 		int func1index = Integer.parseInt(((String) funcComboBox.getSelectedItem()).substring(1)) - 1;
 		double x1val = (Double) x1.getValue();
-		
+		double x2val = (Double) x2.getValue();
+		String resultstr;
 		switch(this.calc)
 		{
 		case VALUE:
 			double result = GraphFunctionsFrame.functions.get(func1index).Calc(x1val);
-			String resultstr = String.format("X = %s, Y = %s", Util.GetString(x1val), Util.GetString(result));
+			resultstr = String.format("X = %s, Y = %s", Util.GetString(x1val), Util.GetString(result));
 			resultLabel.setText(resultstr);
 			GraphFunctionsFrame.gframe.ClearVisualPoints();
 			if(!Double.isInfinite(result) && !Double.isNaN(result))
@@ -346,6 +347,17 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 			resultLabel.setVisible(true);
 			break;
 		case ZERO:
+			PointXY zeropoint = lorian.graph.function.Calculate.Zero(GraphFunctionsFrame.functions.get(func1index), x1val, x2val);
+			resultstr = String.format("X = %s, Y = %s", Util.GetString(zeropoint.getX()), Util.GetString(zeropoint.getY()));
+			resultLabel.setText(resultstr);
+			GraphFunctionsFrame.gframe.ClearVisualPoints();
+			if(!Double.isInfinite(zeropoint.getY()) && !Double.isNaN(zeropoint.getY()))
+			{
+				GraphFunctionsFrame.gframe.SetVisualPointsVisible(true);
+				GraphFunctionsFrame.gframe.AddVisualPoint(new VisualPoint(zeropoint, func1index, false, true));
+			}
+			
+			resultLabel.setVisible(true);
 			break;
 		case MINIMUM:
 			break;
