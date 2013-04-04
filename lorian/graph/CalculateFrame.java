@@ -265,6 +265,7 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 		initGeneralUI();
 		funcComboBox = initFunctionCombobox("function1", "Function 1:", -1);
 		funcComboBox2 = initFunctionCombobox("function2", "Function 2:", -1);
+		if(funcComboBox2.getItemCount() > 1) funcComboBox2.setSelectedIndex(1);
 		initLowUpX(-1);
 		AddCalculateButton();
 		initMovablePoints(-2, 2);
