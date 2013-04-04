@@ -346,6 +346,7 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 	public void SetFillFunctionIndex(int index)
 	{
 		this.FillFunctionIndex = index;
+		this.repaint();
 	}
 	public void SetFillLowerLimit(double lowx)
 	{
@@ -357,7 +358,7 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 	}
 	public void SetFillFunction(boolean on)
 	{
-		if(!on) this.FillFunctionIndex = -1; 
+		if(!on) SetFillFunctionIndex(-1);
 	}
 	
 	public void Update(List<Function> functions) {
@@ -412,7 +413,6 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 		vpoints.add(p);
 		if(p.isMovable())
 		{
-			System.out.println("Adding movable VisualPoint at index " + (vpoints.size() - 1));
 			int x = (int) (((p.getPoint().getX()  - settings.getXmin()) / (settings.getXmax() - settings.getXmin()) * size.getWidth())) - 13;
 			int y =  (int) size.getHeight() - (int) (((p.getPoint().getY()  - settings.getYmin()) / (settings.getYmax() - settings.getYmin()) * size.getHeight())) - 13;
 			vmovablepoints.add(new Point(x, y));
