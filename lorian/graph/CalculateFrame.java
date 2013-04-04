@@ -84,8 +84,7 @@ public class CalculateFrame extends JPanel implements ActionListener, VisualPoin
 	}  
 	private void AddCalculateButton(int height)
 	{
-		
-		
+
 		JButton calcButton = new JButton("Calculate");
 		calcButton.addActionListener(this);
 		calcButton.setName("calculate");
@@ -115,6 +114,7 @@ public class CalculateFrame extends JPanel implements ActionListener, VisualPoin
 		}
 		catch (Exception e)
 		{
+			System.out.println("Error parsing function index");
 			return;
 		}
 		
@@ -129,34 +129,46 @@ public class CalculateFrame extends JPanel implements ActionListener, VisualPoin
 		GraphFunctionsFrame.gframe.AddVisualPoint(upx);
 		GraphFunctionsFrame.gframe.SetVisualPointsVisible(true);
 	}
-	private void initValueUI()
-	{
-		initGeneralUI();
-		
-		// Function		
-		JLabel functionLabel = new JLabel("Function: ");
+	private JComboBox<String> initFunctionCombobox(String comboboxName, String labelText)
+	{	
+		JComboBox<String> ComboBox = new JComboBox<String>(GetActiveFunctions());
+		JLabel functionLabel = new JLabel(labelText);
 		functionLabel.setFont(functionLabel.getFont().deriveFont(13.0f));
-		funcComboBox = new JComboBox<String>(GetActiveFunctions());
-		funcComboBox.setName("function1");
-		funcComboBox.addActionListener(this);
-		
+		ComboBox = new JComboBox<String>(GetActiveFunctions());
+		ComboBox.setName(comboboxName);
+		ComboBox.addActionListener(this);
+			
 
 		this.add(functionLabel);
-		this.add(funcComboBox);
-
+		this.add(ComboBox);
+		
 		SpringLayout.Constraints labelCons = layout.getConstraints(functionLabel);
 		labelCons.setX(Spring.constant(60));
 		labelCons.setY(Spring.constant(height));
-		
-		SpringLayout.Constraints comboboxCons = layout.getConstraints(funcComboBox);
-		comboboxCons.setX(Spring.constant(120));
+			
+		SpringLayout.Constraints comboboxCons = layout.getConstraints(ComboBox);
+		//comboboxCons.setX(Spring.constant(120));
+		comboboxCons.setX(Spring.sum(labelCons.getConstraint(SpringLayout.EAST), Spring.constant(10))); 
 		comboboxCons.setY(Spring.constant(height));
-		
+				
 		height += functionLabel.getPreferredSize().getHeight() + 10;
+		return  ComboBox;
+	}
+	private void initLowUpX()
+	{
 		
+	}
+	
+	
+	
+	
+	private void initValueUI()
+	{
+		initGeneralUI();
+		funcComboBox = initFunctionCombobox("function1", "Function: "); 
 		// X
 		JLabel xLabel = new JLabel("X:");
-		xLabel.setFont(functionLabel.getFont().deriveFont(13.0f));
+		xLabel.setFont(xLabel.getFont().deriveFont(13.0f));
 		SpinnerNumberModel sModel = new SpinnerNumberModel(1.0,  Long.MIN_VALUE, Long.MAX_VALUE, 1.0); 
 		x1 = new JSpinner(sModel);
 		x1.setPreferredSize(new Dimension(80, (int) x1.getPreferredSize().getHeight()));
@@ -164,11 +176,11 @@ public class CalculateFrame extends JPanel implements ActionListener, VisualPoin
 		this.add(xLabel);
 		this.add(x1);
 		
-		labelCons = layout.getConstraints(xLabel);
+		SpringLayout.Constraints labelCons = layout.getConstraints(xLabel);
 		labelCons.setX(Spring.constant(60));
 		labelCons.setY(Spring.constant(height));
 		SpringLayout.Constraints spinnerCons = layout.getConstraints(x1);
-		spinnerCons.setX(Spring.constant(120));
+		spinnerCons.setX(Spring.constant(126));
 		spinnerCons.setY(Spring.constant(height));
 		
 		height += xLabel.getPreferredSize().getHeight() + 15;
@@ -177,9 +189,12 @@ public class CalculateFrame extends JPanel implements ActionListener, VisualPoin
 		AddCalculateButton(height);
 		
 	}
+	
 	private void initZeroUI()
 	{
 		initGeneralUI();
+		funcComboBox = initFunctionCombobox("function1", "Function: "); 
+		initLowUpX();
 		AddCalculateButton(height);
 		initMovablePoints();
 	}
@@ -191,6 +206,11 @@ public class CalculateFrame extends JPanel implements ActionListener, VisualPoin
 	}
 	private void initIntersectUI()
 	{
+		initGeneralUI();
+		funcComboBox = initFunctionCombobox("function1", "Function 1:");
+		funcComboBox2 = initFunctionCombobox("function2", "Function 2:");
+		AddCalculateButton(height);
+		initMovablePoints();
 		
 	}
 	private void initDyDxUI()
@@ -324,7 +344,8 @@ public class CalculateFrame extends JPanel implements ActionListener, VisualPoin
 			{
 				resultLabel.setVisible(false);
 				GraphFunctionsFrame.gframe.ClearVisualPoints();
-				initMovablePoints();
+				if(this.calc != Calculation.VALUE && this.calc != Calculation.DYDX)
+					initMovablePoints();
 			}
 		}
 		
@@ -361,7 +382,8 @@ public class CalculateFrame extends JPanel implements ActionListener, VisualPoin
 		}
 		resultLabel.setVisible(false);
 		GraphFunctionsFrame.gframe.SetVisualPointsVisible(false);
-		initMovablePoints();
+		if(this.calc != Calculation.VALUE && this.calc != Calculation.DYDX)
+			initMovablePoints();
 		
 		/*
 		switch(this.calc)
