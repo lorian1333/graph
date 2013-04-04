@@ -382,6 +382,18 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 		}
 		return null;
 	}
+	public void SetMovableVisualPointLocationByLabel(String label, PointXY newlocation)
+	{
+		for(VisualPoint vp: vpoints)
+		{
+			if(vp.getLabel().equals(label))
+			{
+				vp.setPoint(newlocation);
+				break;
+			}
+		}
+		this.repaint();
+	}
 	private int GetMovableVisualPointIndex(int PointIndex)
 	{
 		int icount = 0;

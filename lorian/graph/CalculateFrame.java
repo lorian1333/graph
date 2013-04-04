@@ -20,6 +20,8 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.Spring;
 import javax.swing.SpringLayout;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import lorian.graph.function.Function;
 import lorian.graph.function.MathChars;
@@ -28,7 +30,7 @@ import lorian.graph.function.Util;
 import lorian.graph.function.VisualPoint;
 import lorian.graph.function.VisualPointLocationChangeListener;
 
-public class CalculateFrame extends JPanel implements ActionListener, VisualPointLocationChangeListener {
+public class CalculateFrame extends JPanel implements ActionListener, ChangeListener, VisualPointLocationChangeListener {
 	private static final long serialVersionUID = -6709615022829676720L;
 	private Calculation calc;
 	//private CalculationsData data;
@@ -105,7 +107,7 @@ public class CalculateFrame extends JPanel implements ActionListener, VisualPoin
 		resultCons.setX(Spring.constant(80));
 		resultCons.setY(Spring.constant(height));
 	}
-	private void initMovablePoints()
+	private void initMovablePoints(double lowxval, double upxval)
 	{
 		int funcindex;
 		try
@@ -120,8 +122,8 @@ public class CalculateFrame extends JPanel implements ActionListener, VisualPoin
 		
 		Function f = GraphFunctionsFrame.functions.get(funcindex);
 		
-		lowx = new VisualPoint(new PointXY(-2, f.Calc(-2)), funcindex, true, false, "Lower limit");
-		upx = new VisualPoint(new PointXY(2, f.Calc(2)), funcindex, true, false, "Upper limit");
+		lowx = new VisualPoint(new PointXY(lowxval, f.Calc(lowxval)), funcindex, true, false, "Lower limit");
+		upx = new VisualPoint(new PointXY(upxval, f.Calc(upxval)), funcindex, true, false, "Upper limit");
 		lowx.addLocationChangedListener(this);
 		upx.addLocationChangedListener(this);
 		GraphFunctionsFrame.gframe.ClearVisualPoints();
@@ -129,7 +131,7 @@ public class CalculateFrame extends JPanel implements ActionListener, VisualPoin
 		GraphFunctionsFrame.gframe.AddVisualPoint(upx);
 		GraphFunctionsFrame.gframe.SetVisualPointsVisible(true);
 	}
-	private JComboBox<String> initFunctionCombobox(String comboboxName, String labelText)
+	private JComboBox<String> initFunctionCombobox(String comboboxName, String labelText, int x)
 	{	
 		JComboBox<String> ComboBox = new JComboBox<String>(GetActiveFunctions());
 		JLabel functionLabel = new JLabel(labelText);
@@ -147,16 +149,65 @@ public class CalculateFrame extends JPanel implements ActionListener, VisualPoin
 		labelCons.setY(Spring.constant(height));
 			
 		SpringLayout.Constraints comboboxCons = layout.getConstraints(ComboBox);
-		//comboboxCons.setX(Spring.constant(120));
-		comboboxCons.setX(Spring.sum(labelCons.getConstraint(SpringLayout.EAST), Spring.constant(10))); 
+		if(x == -1)
+			comboboxCons.setX(Spring.sum(labelCons.getConstraint(SpringLayout.EAST), Spring.constant(10)));
+		else
+			comboboxCons.setX(Spring.constant(x));
+		
 		comboboxCons.setY(Spring.constant(height));
 				
 		height += functionLabel.getPreferredSize().getHeight() + 10;
 		return  ComboBox;
 	}
-	private void initLowUpX()
+	private void initLowUpX(int x)
 	{
+		JLabel xLowLabel = new JLabel("Lower limit:");
+		xLowLabel.setFont(xLowLabel.getFont().deriveFont(13.0f));
+		SpinnerNumberModel sModel = new SpinnerNumberModel(-2.0,  Long.MIN_VALUE, Long.MAX_VALUE, 1.0); 
+		x1 = new JSpinner(sModel);
+		x1.addChangeListener(this);
+		x1.setName("lowX");
+		x1.setPreferredSize(new Dimension(80, (int) x1.getPreferredSize().getHeight()));
+
+		this.add(xLowLabel);
+		this.add(x1);
 		
+		SpringLayout.Constraints labelCons = layout.getConstraints(xLowLabel);
+		labelCons.setX(Spring.constant(60));
+		labelCons.setY(Spring.constant(height));
+		SpringLayout.Constraints spinnerCons = layout.getConstraints(x1);
+		if(x == -1)
+			spinnerCons.setX(Spring.sum(labelCons.getConstraint(SpringLayout.EAST), Spring.constant(10)));
+		else 
+			spinnerCons.setX(Spring.constant(x));
+		spinnerCons.setY(Spring.constant(height));
+		
+		height += xLowLabel.getPreferredSize().getHeight() + 10;
+		
+		
+		
+		JLabel xUpLabel = new JLabel("Upper limit:");
+		xUpLabel.setFont(xUpLabel.getFont().deriveFont(13.0f));
+		sModel = new SpinnerNumberModel(2.0,  Long.MIN_VALUE, Long.MAX_VALUE, 1.0); 
+		x2 = new JSpinner(sModel);
+		x2.addChangeListener(this);
+		x2.setName("upX");
+		x2.setPreferredSize(new Dimension(80, (int) x1.getPreferredSize().getHeight()));
+
+		this.add(xUpLabel);
+		this.add(x2);
+		
+		labelCons = layout.getConstraints(xUpLabel);
+		labelCons.setX(Spring.constant(60));
+		labelCons.setY(Spring.constant(height));
+		spinnerCons = layout.getConstraints(x2);
+		if(x == -1)
+			spinnerCons.setX(Spring.sum(labelCons.getConstraint(SpringLayout.EAST), Spring.constant(10)));
+		else 
+			spinnerCons.setX(Spring.constant(x));
+		spinnerCons.setY(Spring.constant(height));
+		
+		height += xUpLabel.getPreferredSize().getHeight() + 15;
 	}
 	
 	
@@ -165,7 +216,7 @@ public class CalculateFrame extends JPanel implements ActionListener, VisualPoin
 	private void initValueUI()
 	{
 		initGeneralUI();
-		funcComboBox = initFunctionCombobox("function1", "Function: "); 
+		funcComboBox = initFunctionCombobox("function1", "Function: ", -1); 
 		// X
 		JLabel xLabel = new JLabel("X:");
 		xLabel.setFont(xLabel.getFont().deriveFont(13.0f));
@@ -193,24 +244,24 @@ public class CalculateFrame extends JPanel implements ActionListener, VisualPoin
 	private void initZeroUI()
 	{
 		initGeneralUI();
-		funcComboBox = initFunctionCombobox("function1", "Function: "); 
-		initLowUpX();
+		funcComboBox = initFunctionCombobox("function1", "Function: ", 135); 
+		initLowUpX(135);
 		AddCalculateButton(height);
-		initMovablePoints();
+		initMovablePoints(-2, 2);
 	}
 	private void initMinOrMaxUI()
 	{
 		initGeneralUI();
 		AddCalculateButton(height);
-		initMovablePoints();
+		initMovablePoints(-2, 2);
 	}
 	private void initIntersectUI()
 	{
 		initGeneralUI();
-		funcComboBox = initFunctionCombobox("function1", "Function 1:");
-		funcComboBox2 = initFunctionCombobox("function2", "Function 2:");
+		funcComboBox = initFunctionCombobox("function1", "Function 1:", -1);
+		funcComboBox2 = initFunctionCombobox("function2", "Function 2:", -1);
 		AddCalculateButton(height);
-		initMovablePoints();
+		initMovablePoints(-2, 2);
 		
 	}
 	private void initDyDxUI()
@@ -345,7 +396,7 @@ public class CalculateFrame extends JPanel implements ActionListener, VisualPoin
 				resultLabel.setVisible(false);
 				GraphFunctionsFrame.gframe.ClearVisualPoints();
 				if(this.calc != Calculation.VALUE && this.calc != Calculation.DYDX)
-					initMovablePoints();
+					initMovablePoints((Double) x1.getValue(), (Double)  x2.getValue());
 			}
 		}
 		
@@ -360,6 +411,10 @@ public class CalculateFrame extends JPanel implements ActionListener, VisualPoin
 			{
 				p.setPoint(new PointXY(upx.getPoint().getX(), p.getPoint().getY()), false); 
 			}
+			else
+			{
+				x1.setValue(p.getPoint().getX());
+			}
 			
 		}
 		else if(p.getLabel().equalsIgnoreCase("upper limit"))
@@ -368,6 +423,11 @@ public class CalculateFrame extends JPanel implements ActionListener, VisualPoin
 			{
 				p.setPoint(new PointXY(lowx.getPoint().getX(), p.getPoint().getY()), false); 
 			}
+			else
+			{
+				x2.setValue(p.getPoint().getX());
+			}
+		
 			
 		}
 		
@@ -383,7 +443,7 @@ public class CalculateFrame extends JPanel implements ActionListener, VisualPoin
 		resultLabel.setVisible(false);
 		GraphFunctionsFrame.gframe.SetVisualPointsVisible(false);
 		if(this.calc != Calculation.VALUE && this.calc != Calculation.DYDX)
-			initMovablePoints();
+			initMovablePoints((Double) x1.getValue(), (Double)  x2.getValue());
 		
 		/*
 		switch(this.calc)
@@ -406,6 +466,45 @@ public class CalculateFrame extends JPanel implements ActionListener, VisualPoin
 			break;
 		}
 		*/
+	}
+	@Override
+	public void stateChanged(ChangeEvent e) {
+		JSpinner source = (JSpinner) e.getSource();
+		
+		int funcindex = this.lowx.getFunctionIndex();
+		/*
+		try
+		{
+			funcindex = Integer.parseInt(((String) funcComboBox.getSelectedItem()).substring(1)) - 1;
+		}
+		catch (Exception ex)
+		{
+			System.out.println("Error parsing function index");
+			return;
+		}
+		*/
+		Function f = GraphFunctionsFrame.functions.get(funcindex);
+		
+		if(source.getName().equalsIgnoreCase("lowX"))
+		{
+			if((Double) source.getValue() > (Double) x2.getValue())
+			{
+				source.setValue(x2.getValue());
+			}
+			else
+				GraphFunctionsFrame.gframe.SetMovableVisualPointLocationByLabel("Lower limit", new PointXY((Double) source.getValue(), f.Calc((Double) source.getValue())));
+		}
+		else if(source.getName().equalsIgnoreCase("upX"))
+		{
+			if((Double) source.getValue() < (Double) x1.getValue())
+			{
+				source.setValue(x1.getValue());
+			}
+			else
+				GraphFunctionsFrame.gframe.SetMovableVisualPointLocationByLabel("Upper limit", new PointXY((Double) source.getValue(), f.Calc((Double) source.getValue())));
+			
+		}
+		
 	}
 	
 	
