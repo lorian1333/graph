@@ -61,8 +61,9 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 		this.add(titlelabel);
 		
 		SpringLayout.Constraints titleCons = layout.getConstraints(titlelabel);
-		titleCons.setX(Spring.sum(Spring.constant(40), titleCons.getConstraint(SpringLayout.HORIZONTAL_CENTER)));
-		titleCons.setY(Spring.constant(height));
+		//titleCons.setX(Spring.sum(Spring.constant(40), titleCons.getConstraint(SpringLayout.HORIZONTAL_CENTER)));
+		titleCons.setX(Spring.constant(80));
+		titleCons.setY(Spring.constant(height)); 
 		
 		
 		JButton closeButton = new JButton();

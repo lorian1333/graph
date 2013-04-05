@@ -215,9 +215,10 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 					g.drawLine(previous.x, previous.y, xpix, ypix);
 				}
 				
-				if(fill && x >= FillLowX && x <= FillUpX)
+				if(fill && x >= FillLowX - 0.01 && x <= FillUpX + 0.01)
 				{
-					g.setColor(Util.lighter(f.getColor()));
+					g.setColor(Util.lighter(f.getColor(), true) );
+					Color c = Color.BLACK; 
 					((Graphics2D) g).setStroke(new BasicStroke(1.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL));
 					if(y > 0)
 					{
