@@ -99,7 +99,10 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 		SpringLayout.Constraints calcButtonCons = layout.getConstraints(calcButton);
 		calcButtonCons.setX(Spring.constant(80));
 		calcButtonCons.setY(Spring.constant(height));
-		height += calcButton.getPreferredSize().getHeight() + 15;
+		if(this.calc != Calculation.INTERSECT)
+			height += calcButton.getPreferredSize().getHeight() + 15;
+		else
+			height += calcButton.getPreferredSize().getHeight() + 3; 
 		
 		resultLabel = new JLabel("Result");
 		resultLabel.setFont(resultLabel.getFont().deriveFont(13.0f));

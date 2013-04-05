@@ -10,7 +10,6 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Label;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
@@ -21,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.Spring;
 import javax.swing.SpringLayout;
@@ -89,8 +87,8 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 		CalcPanel  = new JPanel();
 		SpringLayout layout = new SpringLayout();
 		this.setLayout(layout);
-	
-		CalcPanel.setPreferredSize(new Dimension(275, 200));
+		
+		CalcPanel.setPreferredSize(new Dimension(275, 215));
 		CalcPanel.setVisible(CalcPanelVisible);
 		
 		this.add(CalcPanel);
@@ -98,7 +96,7 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 		SpringLayout.Constraints cons = layout.getConstraints(CalcPanel);
 		//cons.setX(Spring.constant((int) (size.getWidth() - CalcPanel.getPreferredSize().getWidth())));
 		cons.setX(Spring.constant(0));
-		cons.setY(Spring.constant((int) (size.getHeight() - CalcPanel.getPreferredSize().getHeight()))); 
+		cons.setY(Spring.constant((int) (size.getHeight() - CalcPanel.getPreferredSize().getHeight()) + 10)); 
 	}
 	private void CalculateAxes()
 	{
@@ -218,7 +216,6 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 				if(fill && x >= FillLowX - 0.01 && x <= FillUpX + 0.01)
 				{
 					g.setColor(Util.lighter(f.getColor(), true) );
-					Color c = Color.BLACK; 
 					((Graphics2D) g).setStroke(new BasicStroke(1.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL));
 					if(y > 0)
 					{
@@ -248,7 +245,7 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 		g.setColor(Color.BLACK);
 		((Graphics2D) g).setStroke(new BasicStroke(1.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
 		//int xoff = (int) (this.getWidth() - CalcPanel.getWidth()) - 1, yoff = (int) (this.getHeight() - CalcPanel.getHeight()) - 2;
-		int xoff = CalcPanel.getWidth() +1, yoff = (int) (this.getHeight() - CalcPanel.getHeight()) - 2;
+		int xoff = CalcPanel.getWidth() +1, yoff = (int) (this.getHeight() - CalcPanel.getHeight()) - 2 + 10;
 		g.drawLine(xoff, yoff, xoff, this.getHeight());
 		g.drawLine(0, yoff, xoff, yoff);
 		
