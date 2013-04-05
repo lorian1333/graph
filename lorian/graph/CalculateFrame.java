@@ -304,6 +304,9 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 	{
 		this.calc = calc;
 		title = "Calculate: ";
+		if(this.calc != Calculation.INTEGRAL)
+			GraphFunctionsFrame.gframe.SetFillFunction(false);
+		
 		switch(this.calc)
 		{
 		case VALUE:

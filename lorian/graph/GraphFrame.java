@@ -417,8 +417,7 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 			int y =  (int) size.getHeight() - (int) (((p.getPoint().getY()  - settings.getYmin()) / (settings.getYmax() - settings.getYmin()) * size.getHeight())) - 13;
 			vmovablepoints.add(new Point(x, y));
 		}
-		else
-			System.out.println("Adding VisualPoint at index " + (vpoints.size() - 1));
+		
 		this.repaint();
 	}
 	public PointXY GetMovableVisualPointLocationByLabel(String label)
