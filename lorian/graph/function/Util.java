@@ -107,11 +107,13 @@ public class Util {
 	    return Math.round(interestedInZeroDPs) / multipicationFactor;
 	    
 	}
-	public static Color lighter(Color c)
+	public static Color lighter(Color c, boolean transparant)
 	{
 		double org = 0.6;
 		double white = 0.4;
-		return new Color((int) (c.getRed() * org + 0xff * white), (int) (c.getGreen() * org + 0xff * white), (int) (c.getBlue() * org + 0xff * white));
+		if(!transparant)
+			return new Color((int) (c.getRed() * org + 0xff * white), (int) (c.getGreen() * org + 0xff * white), (int) (c.getBlue() * org + 0xff * white));
+		else return new Color((int) (c.getRed() * org + 0xff * white), (int) (c.getGreen() * org + 0xff * white), (int) (c.getBlue() * org + 0xff * white), (int) (0.8 * 0xff));
 	}
 	
 	
