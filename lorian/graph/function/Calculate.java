@@ -17,8 +17,8 @@ public class Calculate {
 		if(UpX <= LowX) return new PointXY(-999999, -99999);
 		Function zeroline = new Function("0");
 		PointXY intersect = Intersect(f, zeroline, LowX, UpX);
-		intersect.setX(returnRounded(intersect.getX()));
-		intersect.setY(0);
+		if(Util.round(intersect.getY(), 4) != 0) intersect = new PointXY(Double.NaN, Double.NaN);
+		else intersect.setY(0);
 		return intersect;
 	}
 	public static PointXY Minimum(Function f, double LowX, double UpX)
@@ -93,7 +93,10 @@ public class Calculate {
 			}
 			
 		}
-		return new PointXY(Util.round(x2, 6), Util.round(f.Calc(x2), 6));
+		if(smallestDelta < 0.1)
+			return new PointXY(Util.round(x2, 6), Util.round(f.Calc(x2), 6));
+		else 
+			return new PointXY(Double.NaN, Double.NaN);
 	}	
 
 	
