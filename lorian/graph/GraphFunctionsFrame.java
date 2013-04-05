@@ -49,10 +49,10 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	private List<JTextField> textfields;
 	private List<JLabel> labels;
 	
-	private final String[] buttons = {"Render", "Special characters"}; //{ "Render", "Special characters", "Settings", "Exit" };
+	private final String[] buttons = {"Draw", "Special characters"}; 
 	private final String[] calcMenuStrings = { "Value", "Zero", "Minimum", "Maximum", "Intersect", "dy/dx", MathChars.Integral.getCode() + "f(x)dx" };
 	private final Color[] defaultColors = { new Color(37, 119, 255), new Color(224,0,0).brighter(), new Color(211,0,224).brighter(), new Color(0,158,224).brighter(), new Color(0,255,90), new Color(221,224,0).brighter(), new Color(224,84,0).brighter() };  
-		//{Color.GREEN, Color.ORANGE, Color.PINK, Color.RED, Color.YELLOW };
+
 	
 	private static GraphFunctionsFrame funcframe;
 	public static GraphFrame gframe; 
