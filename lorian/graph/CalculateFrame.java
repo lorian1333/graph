@@ -405,7 +405,7 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 				GraphFunctionsFrame.gframe.AddVisualPoint(new VisualPoint(min, func1index, false, true));
 			}
 			
-			resultLabel.setVisible(true);
+			resultLabel.setVisible(true); 
 			break;
 		case MAXIMUM:
 			PointXY max = lorian.graph.function.Calculate.Maximum(GraphFunctionsFrame.functions.get(func1index), x1val, x2val);
@@ -421,7 +421,12 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 			resultLabel.setVisible(true);
 			break;
 		case INTERSECT:
-			if(func1index == func2index) return;
+			if(func1index == func2index)
+			{
+				resultLabel.setText("Cannot intersect same function!");
+				resultLabel.setVisible(true);
+				return;
+			}
 			PointXY intersectpoint = lorian.graph.function.Calculate.Intersect(GraphFunctionsFrame.functions.get(func1index), GraphFunctionsFrame.functions.get(func2index), x1val, x2val);
 			if(Double.isNaN(intersectpoint.getX()))
 				resultstr = "Could not calculate intersection";
