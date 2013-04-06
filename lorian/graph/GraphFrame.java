@@ -323,7 +323,8 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 			((Graphics2D) g).setStroke(new BasicStroke(1.3f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
 			for (int i = 0; i < functions.size(); i++) 
 			{
-				drawFunction(functions.get(i), (i == this.FillFunctionIndex), g);
+				if(functions.get(i).drawOn())
+					drawFunction(functions.get(i), (i == this.FillFunctionIndex), g);
 			}
 			((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 			((Graphics2D) g).setStroke(new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));

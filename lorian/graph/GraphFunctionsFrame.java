@@ -222,6 +222,8 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 			JCheckBox checkBox = new JCheckBox();
 			checkBox.setSelected(true);
 			checkBox.setFocusable(false);
+			checkBox.addActionListener(this);
+			checkBox.setName("c" + i);
 			
 			JLabel label = new JLabel("Y" + (i+1) + " = ");
 			label.setFont(label.getFont().deriveFont(13.0f));
@@ -356,6 +358,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 			Function f = new Function();
 			ParseResultIcon parseresult = parseresults.get(i);
 			if(text.isEmpty()) {
+				f.setDraw(false);
 				functions.add(f);
 				//System.out.println("Y" + (i+1) + " is empty. Skipping.");
 				parseresult.setState(ParseResultIcon.State.EMPTY);
@@ -366,6 +369,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 			{
 				System.out.println("Error: Unable to parse function Y" + (i+1));
 				f.clear();
+				f.setDraw(false);
 				functions.add(f);
 				parseresult.setState(ParseResultIcon.State.ERROR);
 				parseresults.set(i, parseresult);
@@ -374,6 +378,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 			}
 			Color c = labels.get(i).getBackground();
 			f.setColor(c);
+			f.setDraw(checkboxes.get(i).isSelected());
 			functions.add(f);
 			parseresult.setState(ParseResultIcon.State.OK);
 			parseresults.set(i, parseresult);
@@ -420,78 +425,88 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		String buttonname = e.getActionCommand();
-		if(buttonname.equalsIgnoreCase(buttons[0])) //render
+		if(e.getSource() instanceof JButton || e.getSource() instanceof JMenuItem)
 		{
+			String buttonname = e.getActionCommand();
+			
+			if(buttonname.equalsIgnoreCase(buttons[0])) //render
+			{
+				Render();
+			}
+			else if(buttonname.equalsIgnoreCase(buttons[1])) //Special chars
+			{
+				if(charframe == null)
+					charframe = new SpecialCharsFrame(this.getLocation());
+				else 
+					charframe.Restore();
+			}
+			else if (buttonname.equalsIgnoreCase("settings")) 
+			{
+				if(settingsframe == null)
+				{
+					settingsframe = new SettingsFrame(this.getLocation());
+				}
+				else
+					settingsframe.Restore();
+			}
+			else if (buttonname.equalsIgnoreCase("exit")) 
+			{
+				System.exit(0);
+			}	
+			else if(Util.StringArrayGetIndex(calcMenuStrings, buttonname) != -1)
+			{
+	
+				switch(Util.StringArrayGetIndex(calcMenuStrings, buttonname))
+				{
+					case 0: // value
+					{
+						calcframe = new CalculateFrame(CalculateFrame.Calculation.VALUE);
+						break;
+					}
+					case 1: // zero
+					{
+						calcframe = new CalculateFrame(CalculateFrame.Calculation.ZERO);
+						break;
+					}
+					case 2: // minimum
+					{
+						calcframe = new CalculateFrame(CalculateFrame.Calculation.MINIMUM);
+						break;
+					}
+					case 3: // maximum
+					{
+						calcframe = new CalculateFrame(CalculateFrame.Calculation.MAXIMUM);
+						break;
+					}
+					case 4: // intersect
+					{
+						calcframe = new CalculateFrame(CalculateFrame.Calculation.INTERSECT);
+						break;
+					}
+					case 5: //  dy/dx
+					{
+						calcframe = new CalculateFrame(CalculateFrame.Calculation.DYDX);
+						break;
+					}
+					case 6: // integral
+					{
+						calcframe = new CalculateFrame(CalculateFrame.Calculation.INTEGRAL);
+						break;
+					}
+					default:
+					{
+						return;
+					}
+				}
+				gframe.setCalcPanel(calcframe);
+				gframe.setCalcPanelVisible(true);
+			}
+		}
+		else if(e.getSource() instanceof JCheckBox)
+		{
+			//JCheckBox source = (JCheckBox) e.getSource();
+			//System.out.println(source.getName() + ":" + source.isSelected());
 			Render();
-		}
-		else if(buttonname.equalsIgnoreCase(buttons[1])) //Special chars
-		{
-			if(charframe == null)
-				charframe = new SpecialCharsFrame(this.getLocation());
-			else 
-				charframe.Restore();
-		}
-		else if (buttonname.equalsIgnoreCase("settings")) 
-		{
-			if(settingsframe == null)
-			{
-				settingsframe = new SettingsFrame(this.getLocation());
-			}
-			else
-				settingsframe.Restore();
-		}
-		else if (buttonname.equalsIgnoreCase("exit")) 
-		{
-			System.exit(0);
-		}	
-		else if(Util.StringArrayGetIndex(calcMenuStrings, buttonname) != -1)
-		{
-
-			switch(Util.StringArrayGetIndex(calcMenuStrings, buttonname))
-			{
-				case 0: // value
-				{
-					calcframe = new CalculateFrame(CalculateFrame.Calculation.VALUE);
-					break;
-				}
-				case 1: // zero
-				{
-					calcframe = new CalculateFrame(CalculateFrame.Calculation.ZERO);
-					break;
-				}
-				case 2: // minimum
-				{
-					calcframe = new CalculateFrame(CalculateFrame.Calculation.MINIMUM);
-					break;
-				}
-				case 3: // maximum
-				{
-					calcframe = new CalculateFrame(CalculateFrame.Calculation.MAXIMUM);
-					break;
-				}
-				case 4: // intersect
-				{
-					calcframe = new CalculateFrame(CalculateFrame.Calculation.INTERSECT);
-					break;
-				}
-				case 5: //  dy/dx
-				{
-					calcframe = new CalculateFrame(CalculateFrame.Calculation.DYDX);
-					break;
-				}
-				case 6: // integral
-				{
-					calcframe = new CalculateFrame(CalculateFrame.Calculation.INTEGRAL);
-					break;
-				}
-				default:
-				{
-					return;
-				}
-			}
-			gframe.setCalcPanel(calcframe);
-			gframe.setCalcPanelVisible(true);
 		}
 	}
 	

@@ -9,7 +9,7 @@ public class Function {
 	private List<Term> terms;
 	private Color color;
 	private boolean isEmpty = true;
-	
+	private boolean draw = true;
 	public Function()
 	{
 		terms = new ArrayList<Term>();
@@ -38,7 +38,7 @@ public class Function {
 		setColor(Color.BLACK);
 		Parse(s);
 	}
-
+	
 	private String PreProcess(String s)
 	{
 		String ss = s;
@@ -196,5 +196,12 @@ public class Function {
 		{
 			return 0;
 		}
+	}
+	
+	public boolean drawOn() {
+		return draw;
+	}
+	public void setDraw(boolean draw) {
+		this.draw = draw;
 	}
 }
