@@ -1,11 +1,24 @@
 package lorian.graph.function;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import lorian.graph.GraphFunctionsFrame;
 
 public class MathFunctions {
 
+	public static boolean functionExists(String functionname)
+	{
+		// Exceptions where the test below does not apply
+		if(functionname.equalsIgnoreCase("log") || functionname.equalsIgnoreCase("const")) return true;
+		
+		List<String> args = new ArrayList<String>();
+		args.add("1");
+		args.add("1");
+		
+		if(Double.isNaN(Calculate(functionname, args, 1))) return false;
+		else return true;
+	}
 	public static double Calculate(String functionname, List<String> args, double value)
 	{	
 		Function f = new Function(); 
