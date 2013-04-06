@@ -221,6 +221,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 			
 			JCheckBox checkBox = new JCheckBox();
 			checkBox.setSelected(true);
+			checkBox.setFocusable(false);
 			
 			JLabel label = new JLabel("Y" + (i+1) + " = ");
 			label.setFont(label.getFont().deriveFont(13.0f));
