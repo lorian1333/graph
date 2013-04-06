@@ -14,12 +14,29 @@ public class Calculate {
 	
 	public static PointXY Zero(Function f, double LowX, double UpX)
 	{
-		if(UpX <= LowX) return new PointXY(-999999, -99999);
+		if(UpX <= LowX) return new PointXY(Double.NaN, Double.NaN);
+		/*
 		Function zeroline = new Function("0");
 		PointXY intersect = Intersect(f, zeroline, LowX, UpX);
 		if(Util.round(intersect.getY(), 4) != 0) intersect = new PointXY(Double.NaN, Double.NaN);
 		else intersect.setY(0);
 		return intersect;
+		*/
+		double step = 10 / 10000000.0;
+		double closest = 1, closestX = LowX - 1;
+		for(double x = LowX + 0.001; x < UpX; x += step)
+		{
+			if(f.Calc(x)==0) return new PointXY(x, 0);
+			else if(Math.abs(f.Calc(x)) < Math.abs(closest))
+			{
+				closest = Math.abs(f.Calc(x));
+				closestX = x;
+			}
+		}
+		if(closestX == LowX-1)
+			return new PointXY(Double.NaN, Double.NaN);
+		else
+			return new PointXY(returnRounded(Util.round(closestX, 6)), 0);
 	}
 	public static PointXY Minimum(Function f, double LowX, double UpX)
 	{
