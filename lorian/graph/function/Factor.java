@@ -199,7 +199,6 @@ public class Factor {
 			exponent = Double.parseDouble(forparse);
 		}
 		value = Math.pow(value, exponent);
-		System.out.println(value);
 		return true;
 	}
 	private String ParseParanthesesBase(String s)
@@ -328,7 +327,10 @@ public class Factor {
 		if(s.charAt(0) == argumentChar)
 		{
 			type = Type.ARGUMENT;
-			return ParseX(s);
+			parsed = ParseX(s);
+			return parsed;
+		
+					
 		}
 		else if(s.charAt(s.length() - 1) == ')')
 		{
@@ -336,38 +338,42 @@ public class Factor {
 			{
 				type = Type.PARENTHESES;
 				value = 1;
-				return ParseParentheses(s);
+				parsed = ParseParentheses(s);
 			}
 			else if(Util.StringContains(s, Util.LowercaseAlphabethWithout(argumentChar)))
 			{
 				type = Type.FUNCTION; 
-				return ParseFunction(s);
+				parsed = ParseFunction(s);
 			}
 			else
 			{
-				return ParseOther(s);
+				parsed = ParseOther(s);
 			}
+			return parsed;
 		}
 		else if(s.charAt(0) == '(')
 		{
 			type = Type.PARENTHESES;
 			value = 1;
-			return ParseParentheses(s);
+			parsed =  ParseParentheses(s);
+			return parsed;
 		}
 		else if(!Util.StringContains(s, argumentChar))
 		{
 			type = Type.CONSTANT;
-			return ParseConstant(s);
+			parsed = ParseConstant(s);
+			return parsed;
 		}
 		else
 		{
-			return ParseOther(s);
+			parsed = ParseOther(s);
+			return parsed;
 		}
 		
 	}
 	public double Calc(double arg)
 	{
-		//if(!parsed )return 0;
+		if(!parsed )return Double.NaN;
 		
 		if(type == Type.CONSTANT)
 		{

@@ -4,25 +4,16 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.image.BufferedImage;
-import java.awt.image.ImageObserver;
-import java.awt.image.ImageProducer;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
@@ -40,12 +31,9 @@ import javax.swing.Spring;
 import javax.swing.SpringLayout;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import lorian.graph.function.Calculate;
 import lorian.graph.function.Function;
 import lorian.graph.function.MathChars;
-import lorian.graph.function.PointXY;
 import lorian.graph.function.Util;
-import lorian.graph.function.VisualPoint;
 
 public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyListener, MouseListener {
 	private static final long serialVersionUID = -1090268654275240501L;
@@ -404,6 +392,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		//Creating the actual window
 		GraphFunctionsFrame.funcframe = new GraphFunctionsFrame();
 	}
+	/*
 	private static void Parsertest()
 	{
 		// improving the function parser
@@ -421,7 +410,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		double val = Calculate.DyDx(deriv, 0.500000000000075);
 		System.out.println(val);
 	}
-	
+	*/
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
