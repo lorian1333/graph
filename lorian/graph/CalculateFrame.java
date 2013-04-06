@@ -567,7 +567,6 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 		if(funcComboBox != null)
 		{
 			funcComboBox.setModel(new JComboBox<String>(GetActiveFunctions()).getModel());
-			funcComboBox.setSelectedIndex(0);
 		}
 		if(funcComboBox2 != null) {
 			funcComboBox2.setModel(new JComboBox<String>(GetActiveFunctions()).getModel());
@@ -582,8 +581,10 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 		}
 		resultLabel.setVisible(false);
 		GraphFunctionsFrame.gframe.SetVisualPointsVisible(false);
-		if(this.calc != Calculation.VALUE && this.calc != Calculation.DYDX)
+		if(this.calc != Calculation.VALUE && this.calc != Calculation.DYDX && funcComboBox.getItemCount() > 0)
 			initMovablePoints((Double) x1.getValue(), (Double)  x2.getValue());
+
+			
 		
 		if(this.calc == Calculation.INTEGRAL)
 		{
