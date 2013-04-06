@@ -555,13 +555,23 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 	
 	public void Update()
 	{
-		if(funcComboBox != null) funcComboBox.setModel(new JComboBox<String>(GetActiveFunctions()).getModel());
+		
+		if(funcComboBox != null)
+		{
+			funcComboBox.setModel(new JComboBox<String>(GetActiveFunctions()).getModel());
+			funcComboBox.setSelectedIndex(0);
+		}
 		if(funcComboBox2 != null) {
+			System.out.println("aaaaaaaaaaaaa");
 			funcComboBox2.setModel(new JComboBox<String>(GetActiveFunctions()).getModel());
-			if(funcComboBox2.getItemCount() > 2)
+			if(funcComboBox2.getItemCount() > 1)
+			{				
 				funcComboBox2.setSelectedIndex(1);
+			}
+			
 			if(funcComboBox.getSelectedIndex() == funcComboBox2.getSelectedIndex() && funcComboBox.getItemCount() > 1)
 				funcComboBox2.setSelectedIndex(funcComboBox2.getSelectedIndex());
+				
 		}
 		resultLabel.setVisible(false);
 		GraphFunctionsFrame.gframe.SetVisualPointsVisible(false);
