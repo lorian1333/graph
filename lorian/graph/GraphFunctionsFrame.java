@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,9 +15,16 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
+import java.awt.image.ImageProducer;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -48,8 +57,10 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	
 	private List<JTextField> textfields;
 	private List<JLabel> labels;
+	private List<JCheckBox> checkboxes;
+	private List<ParseResultIcon> parseresults;
 	
-	private final String[] buttons = {"Draw", "Special characters"}; 
+	private final String[] buttons = { "Draw", "Special characters"}; 
 	private final String[] calcMenuStrings = { "Value", "Zero", "Minimum", "Maximum", "Intersect", "dy/dx", MathChars.Integral.getCode() + "f(x)dx" };
 	private final Color[] defaultColors = { new Color(37, 119, 255), new Color(224,0,0).brighter(), new Color(211,0,224).brighter(), new Color(0,158,224).brighter(), new Color(0,255,90), new Color(221,224,0).brighter(), new Color(224,84,0).brighter() };  
 
@@ -185,6 +196,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		else 
 			small = false;
 		//small = true;
+		
 		SetSystemLookAndFeel();
 		if(small)
 		{
@@ -200,18 +212,28 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		panel.setLayout(layout);
 		
 		int height = 0;
+		
 		for(int i=0;i<MaxFunctions; i++)
 		{
+			JPanel funcpanel = new JPanel();
+			SpringLayout funcpanellayout = new SpringLayout();
+			funcpanel.setLayout(funcpanellayout);
+			
+			JCheckBox checkBox = new JCheckBox();
+			checkBox.setSelected(true);
+			
 			JLabel label = new JLabel("Y" + (i+1) + " = ");
 			label.setFont(label.getFont().deriveFont(13.0f));
 			label.setOpaque(true);
 			label.setBackground(defaultColors[i % defaultColors.length]);
 			label.setForeground(Color.BLACK);
 			label.addMouseListener(this);
+			
+			
 			JTextField textField = new JTextField();
 			//textField.setText("" + MathChars.Pi.getCode());
 			
-			textField.setPreferredSize(new Dimension( 395, (int) textField.getPreferredSize().getHeight() + 5)); 
+			textField.setPreferredSize(new Dimension(350, (int) textField.getPreferredSize().getHeight() + 5)); 
 			textField.setFont(textField.getFont().deriveFont(15.0f));
 			textField.setForeground(Color.BLACK);
 			textField.addKeyListener(this);
@@ -220,8 +242,32 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 			//textField.setContentType("text/html");
 			//textField.setText("<HTML>x<sup>2</sup></HTML> ");
 			//textField.setPreferredSize(new Dimension( 55 * (int) textField.getPreferredSize().getWidth(), (int) textField.getPreferredSize().getHeight()));
-				
+			ParseResultIcon icon = new ParseResultIcon();
+			icon.setState(ParseResultIcon.State.EMPTY);
+			
+			
 			height = ((int) textField.getPreferredSize().getHeight() + 5);
+			funcpanel.setPreferredSize(new Dimension(450, height));
+			
+			funcpanel.add(checkBox);
+			funcpanel.add(label);
+			funcpanel.add(textField);
+			funcpanel.add(icon);
+			
+			SpringLayout.Constraints labelCons = funcpanellayout.getConstraints(label);
+			labelCons.setX(Spring.constant(25));
+			labelCons.setY(Spring.constant(3));
+			SpringLayout.Constraints textFieldCons = funcpanellayout.getConstraints(textField);
+			textFieldCons.setX(Spring.constant(70));
+			SpringLayout.Constraints iconCons = funcpanellayout.getConstraints(icon);
+			iconCons.setX(Spring.constant(423));
+			
+			panel.add(funcpanel);
+			SpringLayout.Constraints funcPanelCons = layout.getConstraints(funcpanel);
+			funcPanelCons.setX(Spring.constant(0));
+			funcPanelCons.setY(Spring.constant(8 + height * i));
+			
+			/*
 			panel.add(label);
 			panel.add(textField);
 			
@@ -232,9 +278,15 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 				        .getConstraints(textField);
 			textFieldCons.setX(Spring.constant(50));
 			textFieldCons.setY(Spring.constant(5 + height  * i));
-			
+			*/
+			checkboxes.add(checkBox);
 			textfields.add(textField);
 			labels.add(label);
+			parseresults.add(icon);
+			
+			//funcpanel.requestFocusInWindow();
+
+			
 			
 		}
 		JPanel buttonpanel = new JPanel();
@@ -262,6 +314,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		
 		Render();
 		this.pack(); 
+		textfields.get(0).requestFocusInWindow();
 		this.setBackground(Color.WHITE);
 		if(small)
 			this.setSize(450 + (int) WindowSizeSmall.getWidth() + 10, (int) WindowSizeSmall.getHeight() + 50);
@@ -277,8 +330,11 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		super("Graph v" + version);
 		textfields = new ArrayList<JTextField>();
 		labels = new ArrayList<JLabel>();
+		checkboxes = new ArrayList<JCheckBox>();
+		parseresults = new ArrayList<ParseResultIcon>();
 		functions = new ArrayList<Function>();
 		settings = new WindowSettings();
+		
 		initUI();
 		//Tests
 		//gframe.AddVisualPoint(new VisualPoint(new PointXY(-2, 4), 0, true, true, "Lower Limit"));
@@ -297,9 +353,12 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		{
 			String text = Util.removeWhiteSpace(textfields.get(i).getText().trim());
 			Function f = new Function();
+			ParseResultIcon parseresult = parseresults.get(i);
 			if(text.isEmpty()) {
 				functions.add(f);
 				//System.out.println("Y" + (i+1) + " is empty. Skipping.");
+				parseresult.setState(ParseResultIcon.State.EMPTY);
+				parseresults.set(i, parseresult);
 				continue;
 			}
 			if(!f.Parse(text))
@@ -307,15 +366,20 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 				System.out.println("Error: Unable to parse function Y" + (i+1));
 				f.clear();
 				functions.add(f);
+				parseresult.setState(ParseResultIcon.State.ERROR);
+				parseresults.set(i, parseresult);
 				continue;
 				
 			}
 			Color c = labels.get(i).getBackground();
 			f.setColor(c);
 			functions.add(f);
+			parseresult.setState(ParseResultIcon.State.OK);
+			parseresults.set(i, parseresult);
 			System.out.println("Added function Y" + (i+1) + " with color " + c.getRed() + "," + c.getGreen() + "," + c.getBlue());
 		}
 		gframe.Update(functions);
+		this.repaint();
 		if(calcframe != null)
 		{
 			calcframe.Update();
