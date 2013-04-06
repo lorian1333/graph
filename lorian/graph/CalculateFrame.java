@@ -568,27 +568,26 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 		if(this.calc != Calculation.VALUE && this.calc != Calculation.DYDX)
 			initMovablePoints((Double) x1.getValue(), (Double)  x2.getValue());
 		
-		/*
-		switch(this.calc)
+		if(this.calc == Calculation.INTEGRAL)
 		{
-		case VALUE:
-			break;
-		case ZERO:
-			break;
-		case MINIMUM:
-			break;
-		case MAXIMUM:
-			break;
-		case INTERSECT:
-			break;
-		case DYDX:
-			break;
-		case INTEGRAL:
-			break;
-		default:
-			break;
+			if(funcComboBox.getItemCount() > 0)		
+			{
+				int funcindex;
+				try
+				{
+					funcindex = Integer.parseInt(((String) funcComboBox.getSelectedItem()).substring(1)) - 1;
+					GraphFunctionsFrame.gframe.SetFillFunctionIndex(funcindex);
+				}
+				catch (Exception e)
+				{
+					System.out.println("Error parsing function index");
+				}
+			}
+		
 		}
-		*/
+			
+		
+		
 	}
 	@Override
 	public void stateChanged(ChangeEvent e) {
