@@ -543,7 +543,8 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		((CalculateFrame) this.CalcPanel.getComponent(0)).Update();
+		if(CalcPanelVisible)
+			((CalculateFrame) this.CalcPanel.getComponent(0)).Update();
 	}
 	@Override
 	public void mouseEntered(MouseEvent e) {

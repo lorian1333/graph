@@ -116,6 +116,7 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 	}
 	private void initMovablePoints(double lowxval, double upxval)
 	{
+		if(funcComboBox.getItemCount() == 0) return;
 		int funcindex;
 		try
 		{
@@ -280,16 +281,20 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 		initLowUpXUI();
 		GraphFunctionsFrame.gframe.SetFillFunction(true);
 		int funcindex;
-		try
+		if(funcComboBox.getItemCount() > 0)		
 		{
-			funcindex = Integer.parseInt(((String) funcComboBox.getSelectedItem()).substring(1)) - 1;
+			try
+			{
+				funcindex = Integer.parseInt(((String) funcComboBox.getSelectedItem()).substring(1)) - 1;
+			}
+			catch (Exception e)
+			{
+				System.out.println("Error parsing function index");
+				return;
+			}
+			GraphFunctionsFrame.gframe.SetFillFunctionIndex(funcindex);
 		}
-		catch (Exception e)
-		{
-			System.out.println("Error parsing function index");
-			return;
-		}
-		GraphFunctionsFrame.gframe.SetFillFunctionIndex(funcindex);
+	
 		GraphFunctionsFrame.gframe.SetFillLowerLimit(-2);
 		GraphFunctionsFrame.gframe.SetFillUpperLimit(2);
 	}
@@ -496,6 +501,8 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 				
 				if(this.calc == Calculation.INTEGRAL)
 				{
+					if(funcComboBox.getItemCount() == 0) return;
+					
 					int funcindex;
 					try
 					{
@@ -551,7 +558,8 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 		if(funcComboBox != null) funcComboBox.setModel(new JComboBox<String>(GetActiveFunctions()).getModel());
 		if(funcComboBox2 != null) {
 			funcComboBox2.setModel(new JComboBox<String>(GetActiveFunctions()).getModel());
-			funcComboBox2.setSelectedIndex(1);
+			if(funcComboBox2.getItemCount() > 2)
+				funcComboBox2.setSelectedIndex(1);
 			if(funcComboBox.getSelectedIndex() == funcComboBox2.getSelectedIndex() && funcComboBox.getItemCount() > 1)
 				funcComboBox2.setSelectedIndex(funcComboBox2.getSelectedIndex());
 		}
