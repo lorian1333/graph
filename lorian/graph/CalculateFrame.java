@@ -382,7 +382,10 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 			break;
 		case ZERO:
 			PointXY zeropoint = lorian.graph.function.Calculate.Zero(GraphFunctionsFrame.functions.get(func1index), x1val, x2val);
-			resultstr = String.format("X = %s, Y = %s", Util.GetString(zeropoint.getX()), Util.GetString(zeropoint.getY()));
+			if(Double.isNaN(zeropoint.getX()))
+				resultstr = "Could not calculate zero";
+			else
+				resultstr = String.format("Zero: X = %s, Y = %s", Util.GetString(zeropoint.getX()), Util.GetString(zeropoint.getY()));
 			resultLabel.setText(resultstr);
 			GraphFunctionsFrame.gframe.ClearVisualPoints();
 			if(!Double.isInfinite(zeropoint.getY()) && !Double.isNaN(zeropoint.getY()))
@@ -395,7 +398,7 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 			break;
 		case MINIMUM:
 			PointXY min = lorian.graph.function.Calculate.Minimum(GraphFunctionsFrame.functions.get(func1index), x1val, x2val);
-			resultstr = String.format("X = %s, Y = %s", Util.GetString(min.getX()), Util.GetString(min.getY()));
+			resultstr = String.format("Minimum: X = %s, Y = %s", Util.GetString(min.getX()), Util.GetString(min.getY()));
 			resultLabel.setText(resultstr);
 			GraphFunctionsFrame.gframe.ClearVisualPoints();
 			if(!Double.isInfinite(min.getY()) && !Double.isNaN(min.getY()))
@@ -408,7 +411,7 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 			break;
 		case MAXIMUM:
 			PointXY max = lorian.graph.function.Calculate.Maximum(GraphFunctionsFrame.functions.get(func1index), x1val, x2val);
-			resultstr = String.format("X = %s, Y = %s", Util.GetString(max .getX()), Util.GetString(max .getY()));
+			resultstr = String.format("Maximum: X = %s, Y = %s", Util.GetString(max .getX()), Util.GetString(max .getY()));
 			resultLabel.setText(resultstr);
 			GraphFunctionsFrame.gframe.ClearVisualPoints();
 			if(!Double.isInfinite(max .getY()) && !Double.isNaN(max .getY()))
@@ -422,7 +425,10 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 		case INTERSECT:
 			if(func1index == func2index) return;
 			PointXY intersectpoint = lorian.graph.function.Calculate.Intersect(GraphFunctionsFrame.functions.get(func1index), GraphFunctionsFrame.functions.get(func2index), x1val, x2val);
-			resultstr = String.format("X = %s, Y = %s", Util.GetString(intersectpoint .getX()), Util.GetString(intersectpoint .getY()));
+			if(Double.isNaN(intersectpoint.getX()))
+				resultstr = "Could not calculate intersection";
+			else
+				resultstr = String.format("Intersection: X = %s, Y = %s", Util.GetString(intersectpoint .getX()), Util.GetString(intersectpoint .getY()));
 			resultLabel.setText(resultstr);
 			GraphFunctionsFrame.gframe.ClearVisualPoints();
 			if(!Double.isInfinite(intersectpoint .getY()) && !Double.isNaN(intersectpoint .getY()))
@@ -481,6 +487,8 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 				this.setVisible(false);
 				resultLabel.setVisible(false);
 				GraphFunctionsFrame.gframe.setCalcPanelVisible(false);
+				GraphFunctionsFrame.gframe.SetVisualPointsVisible(false);
+				GraphFunctionsFrame.gframe.ClearVisualPoints();
 				GraphFunctionsFrame.gframe.SetVisualPointsVisible(false);
 				GraphFunctionsFrame.gframe.SetFillFunction(false);
 			}
@@ -562,7 +570,6 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 			funcComboBox.setSelectedIndex(0);
 		}
 		if(funcComboBox2 != null) {
-			System.out.println("aaaaaaaaaaaaa");
 			funcComboBox2.setModel(new JComboBox<String>(GetActiveFunctions()).getModel());
 			if(funcComboBox2.getItemCount() > 1)
 			{				

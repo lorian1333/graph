@@ -15,13 +15,6 @@ public class Calculate {
 	public static PointXY Zero(Function f, double LowX, double UpX)
 	{
 		if(UpX <= LowX) return new PointXY(Double.NaN, Double.NaN);
-		/*
-		Function zeroline = new Function("0");
-		PointXY intersect = Intersect(f, zeroline, LowX, UpX);
-		if(Util.round(intersect.getY(), 4) != 0) intersect = new PointXY(Double.NaN, Double.NaN);
-		else intersect.setY(0);
-		return intersect;
-		*/
 		double step = 10 / 10000000.0;
 		double closest = 1, closestX = LowX - 1;
 		for(double x = LowX + 0.001; x < UpX; x += step)
@@ -90,7 +83,7 @@ public class Calculate {
 			}
 		}
 		
-		for(x = x2; x < x2 + 1; x+= 0.001)
+		for(x = x2; x < x2 + 1 && x < UpX; x+= 0.001)
 		{
 			currentDelta = Math.abs(g.Calc(x) - f.Calc(x));
 			if(currentDelta < 0.01)
@@ -100,7 +93,7 @@ public class Calculate {
 			}
 		}
 		
-		for(x = x2; x < x2 + 1; x+= step)
+		for(x = x2; x < x2 + 1 && x < UpX; x+= step)
 		{
 			currentDelta = Math.abs(g.Calc(x) - f.Calc(x));
 			if(smallestDelta > currentDelta)

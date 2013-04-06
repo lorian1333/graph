@@ -467,13 +467,13 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		//System.out.println(e.getPoint());
-		if(this.MovingVPointIndex == -1) return;
+		if(this.MovingVPointIndex == -1 || this.vpoints.size() == 0) return;
 		int deltax = (int) ( MouseStart.getX() -e.getPoint().getX() );
 		//System.out.println(deltax);
 		//return;
 		
 		double add = (deltax / size.getWidth()) * (settings.getXmax() - settings.getXmin()) * -1 * 0.5;
-
+		
 		VisualPoint vp = this.vpoints.get(MovingVPointIndex);
 		Point p = this.vmovablepoints.get(MovingPointIndex);
 		if(vp.getFunctionIndex() != -1)

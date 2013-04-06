@@ -504,9 +504,10 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		}
 		else if(e.getSource() instanceof JCheckBox)
 		{
-			//JCheckBox source = (JCheckBox) e.getSource();
-			//System.out.println(source.getName() + ":" + source.isSelected());
-			Render();
+			JCheckBox source = (JCheckBox) e.getSource();
+			int index = Integer.parseInt(source.getName().substring(1));
+			if(!textfields.get(index).getText().trim().isEmpty()) 
+				Render();
 		}
 	}
 	
