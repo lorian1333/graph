@@ -299,7 +299,7 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 		List<String> activefunctions = new ArrayList<String>();
 		for(int i=0;i< GraphFunctionsFrame.functions.size(); i++)
 		{
-			if(GraphFunctionsFrame.functions.get(i).isEmpty()) continue;
+			if(GraphFunctionsFrame.functions.get(i).isEmpty() || GraphFunctionsFrame.functions.get(i).drawOn() == false) continue;
 			activefunctions.add("Y" + (i+1));
 		}
 		return activefunctions.toArray(new String[activefunctions.size()]);
