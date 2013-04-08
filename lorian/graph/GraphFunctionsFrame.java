@@ -175,13 +175,19 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		settingsItem = new JMenuItem("Settings");
 		settingsItem.addActionListener(this);
 		
-		exitItem = new JMenuItem("Exit");
-		exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, ActionEvent.ALT_MASK));
-		exitItem.addActionListener(this);
+		
 		
 		fileMenu.add(settingsItem); 
-		fileMenu.addSeparator();
-		fileMenu.add(exitItem);
+		
+		
+		if(!applet)
+		{
+			exitItem = new JMenuItem("Exit");
+			exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, ActionEvent.ALT_MASK));
+			exitItem.addActionListener(this);
+			fileMenu.addSeparator();
+			fileMenu.add(exitItem);
+		}
 		
 		for(int i=0;i<calcMenuStrings.length; i++)
 		{
