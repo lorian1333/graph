@@ -60,6 +60,28 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	private static SpecialCharsFrame charframe;
 	public static WindowSettings settings;
 
+	public JMenuBar menuBar;
+	public static boolean applet = false;
+	public JPanel MainPanel;
+	
+	public GraphFunctionsFrame(boolean applet)
+	{
+		super("Graph v" + version);
+		textfields = new ArrayList<JTextField>();
+		labels = new ArrayList<JLabel>();
+		checkboxes = new ArrayList<JCheckBox>();
+		parseresults = new ArrayList<ParseResultIcon>();
+		functions = new ArrayList<Function>();
+		settings = new WindowSettings();
+		GraphFunctionsFrame.applet = applet;
+		initUI();
+		
+		if(!applet)
+		{
+			this.setVisible(true);
+		}
+
+	}
 	
 	private Color ChooseColor(Component component, String title, Color initialColor)
 	{
@@ -137,7 +159,6 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	}
 	private void InitMenu()
 	{
-		JMenuBar menuBar;
 		JMenu fileMenu, calcMenu, helpMenu;
 		JMenuItem settingsItem, exitItem;
 		//JMenuItem calcValueItem, calcZeroItem, calcMinItem, calcMaxItem, calcIntersectItem, calcDyDxItem, calcIntItem; 
@@ -173,17 +194,21 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		aboutItem = new JMenuItem("About");
 		aboutItem.addActionListener(this);
 		helpMenu.add(aboutItem);
-		
-		this.setJMenuBar(menuBar);
+		if(!applet)
+			this.setJMenuBar(menuBar);
 	}
 	private void initUI()
 	{
+		if(applet) MainPanel = new JPanel();
+		
 		boolean small;
-		if(Toolkit.getDefaultToolkit().getScreenSize().getHeight() <= 900) 
-			small = true;
-		else 
-			small = false;
-		//small = true;
+	
+			if(Toolkit.getDefaultToolkit().getScreenSize().getHeight() <= 900) 
+				small = true;
+			else 
+				small = false;
+			//small = true;
+	
 		
 		SetSystemLookAndFeel();
 		if(small)
@@ -293,47 +318,51 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		buttonPanelCons.setY(Spring.constant(10 + height *MaxFunctions));
 		panel.add(buttonpanel);
 		
-		this.setLayout(new BorderLayout());
-	
-		panel.setPreferredSize(new Dimension(450, 50 + height * (MaxFunctions+1)));
-		this.add(panel, BorderLayout.WEST);
-		this.add(new JSeparator(JSeparator.VERTICAL));		
-
-		this.add((JPanel) gframe, BorderLayout.EAST);
+		if(applet) MainPanel.setLayout(new BorderLayout());
+		else this.setLayout(new BorderLayout());
 		
+		panel.setPreferredSize(new Dimension(450, 50 + height * (MaxFunctions+1)));
+		
+		if(applet)
+		{
+			MainPanel.add(panel, BorderLayout.WEST);
+			MainPanel.add(new JSeparator(JSeparator.VERTICAL));		
+			MainPanel.add((JPanel) gframe, BorderLayout.EAST);
+		}
+		else
+		{
+			this.add(panel, BorderLayout.WEST);
+			this.add(new JSeparator(JSeparator.VERTICAL));		
+			this.add((JPanel) gframe, BorderLayout.EAST);
+		}
 		InitMenu();
 		
 		Render();
-		this.pack(); 
+		if(!applet)
+			this.pack();
+		
 		textfields.get(0).requestFocusInWindow();
 		this.setBackground(Color.WHITE);
-		if(small)
-			this.setSize(450 + (int) WindowSizeSmall.getWidth() + 10, (int) WindowSizeSmall.getHeight() + 50);
+		if(applet)
+		{
+			if(small)
+				MainPanel.setSize(450 + (int) WindowSizeSmall.getWidth() + 10, (int) WindowSizeSmall.getHeight() + 50);
+			else
+				MainPanel.setSize(450 + (int) WindowSize.getWidth() + 10, (int) WindowSize.getHeight() + 50);
+		}
 		else
-			this.setSize(450 + (int) WindowSize.getWidth() + 10, (int) WindowSize.getHeight() + 50);
+		{
+			if(small)
+				this.setSize(450 + (int) WindowSizeSmall.getWidth() + 10, (int) WindowSizeSmall.getHeight() + 50);
+			else
+				this.setSize(450 + (int) WindowSize.getWidth() + 10, (int) WindowSize.getHeight() + 50);
+			this.setResizable(false);
+			this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			this.setLocationRelativeTo(null);
+		}
 		
-		this.setResizable(false);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setLocationRelativeTo(null);
 	}
-	public GraphFunctionsFrame()
-	{
-		super("Graph v" + version);
-		textfields = new ArrayList<JTextField>();
-		labels = new ArrayList<JLabel>();
-		checkboxes = new ArrayList<JCheckBox>();
-		parseresults = new ArrayList<ParseResultIcon>();
-		functions = new ArrayList<Function>();
-		settings = new WindowSettings();
-		
-		initUI();
-		//Tests
-		//gframe.AddVisualPoint(new VisualPoint(new PointXY(-2, 4), 0, true, true, "Lower Limit"));
-		//gframe.AddVisualPoint(new VisualPoint(new PointXY(2, 4), 0, true, true, "Upper Limit"));	
-		//gframe.SetVisualPointsVisible(true);
-		
-		this.setVisible(true);
-	}
+
 
 	
 	private void Render()
@@ -384,34 +413,10 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 
 	public static void main(String[] args)
 	{
-	
-		//Parsertest();
-		
-		//Calctest();
-		
 		//Creating the actual window
-		GraphFunctionsFrame.funcframe = new GraphFunctionsFrame();
+		GraphFunctionsFrame.funcframe = new GraphFunctionsFrame(false);
 	}
-	/*
-	private static void Parsertest()
-	{
-		// improving the function parser
-		Function f = new Function();
-		//f.Parse("-+-123*456x*sin(x+4*4cos(x))45^2*765 + 4x + 3");
-		//f.Parse("(123.456*x*1^2)^x");
-		f.Parse("1/x^2");
-		System.out.println(f.Calc(2));
-	}
-	private static void Calctest()
-	{
-		//Function f = new Function("x^2");
-		
-		Function deriv = new Function("deriv(x^2+0)");
-		double val = Calculate.DyDx(deriv, 0.500000000000075);
-		System.out.println(val);
-	}
-	*/
-	
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() instanceof JButton || e.getSource() instanceof JMenuItem)

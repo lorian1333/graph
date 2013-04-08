@@ -1,9 +1,12 @@
 package lorian.graph;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.RenderingHints;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -21,8 +24,9 @@ public class ParseResultIcon extends JPanel {
 	public ParseResultIcon()
 	{
 		this.setPreferredSize(new Dimension(24, 24));
+		this.setOpaque(false);
 		this.setBackground(new Color(0, 0, 0, 0)); 
-		this.setOpaque(true);
+
 		try {
 			ok = ImageIO.read(getClass().getResource("/res/ok.png"));
 		} catch (IOException e) {
@@ -48,7 +52,7 @@ public class ParseResultIcon extends JPanel {
 	public void paintComponent(Graphics g)
 	{
 		super.paintComponents(g);
-		
+
 		if(state == State.OK)
 		{
 			g.drawImage(ok, 4, 4, null);
@@ -57,7 +61,8 @@ public class ParseResultIcon extends JPanel {
 		{
 			g.drawImage(error, 4, 4, null);
 		}
-
+		
+		
 	}
 	
 }

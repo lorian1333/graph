@@ -106,7 +106,7 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 		resultLabel.setFont(resultLabel.getFont().deriveFont(13.0f));
 		resultLabel.setVisible(false);
 		GraphFunctionsFrame.gframe.SetVisualPointsVisible(false);
-		this.add(resultLabel);
+		this.add(resultLabel, JLabel.CENTER);
 		
 		SpringLayout.Constraints resultCons = layout.getConstraints(resultLabel);
 		resultCons.setX(Spring.constant(80));
@@ -376,7 +376,6 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 				GraphFunctionsFrame.gframe.AddVisualPoint(new VisualPoint(new PointXY(x1val, result), func1index, false, true));
 			}
 			
-			resultLabel.setVisible(true);
 			break;
 		case ZERO:
 			PointXY zeropoint = lorian.graph.function.Calculate.Zero(GraphFunctionsFrame.functions.get(func1index), x1val, x2val);
@@ -392,7 +391,6 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 				GraphFunctionsFrame.gframe.AddVisualPoint(new VisualPoint(zeropoint, func1index, false, true));
 			}
 			
-			resultLabel.setVisible(true);
 			break;
 		case MINIMUM:
 			PointXY min = lorian.graph.function.Calculate.Minimum(GraphFunctionsFrame.functions.get(func1index), x1val, x2val);
@@ -405,7 +403,6 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 				GraphFunctionsFrame.gframe.AddVisualPoint(new VisualPoint(min, func1index, false, true));
 			}
 			
-			resultLabel.setVisible(true); 
 			break;
 		case MAXIMUM:
 			PointXY max = lorian.graph.function.Calculate.Maximum(GraphFunctionsFrame.functions.get(func1index), x1val, x2val);
@@ -418,7 +415,6 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 				GraphFunctionsFrame.gframe.AddVisualPoint(new VisualPoint(max , func1index, false, true));
 			}
 			
-			resultLabel.setVisible(true);
 			break;
 		case INTERSECT:
 			if(func1index == func2index)
@@ -440,7 +436,6 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 				GraphFunctionsFrame.gframe.AddVisualPoint(new VisualPoint(intersectpoint , func1index, false, true));
 			}
 			
-			resultLabel.setVisible(true);
 			break;
 		case DYDX:
 			double dydx = lorian.graph.function.Calculate.DyDx(GraphFunctionsFrame.functions.get(func1index), x1val);
@@ -453,7 +448,6 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 				GraphFunctionsFrame.gframe.AddVisualPoint(new VisualPoint(new PointXY(x1val, GraphFunctionsFrame.functions.get(func1index).Calc(x1val)), func1index, false, true, resultstr));
 			}
 			
-			resultLabel.setVisible(true);
 			break;
 		case INTEGRAL:
 			double integral = Util.round(lorian.graph.function.Calculate.Integral(GraphFunctionsFrame.functions.get(func1index), x1val, x2val), 6);
@@ -461,12 +455,14 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 			resultLabel.setText(resultstr);
 			GraphFunctionsFrame.gframe.ClearVisualPoints();
 			GraphFunctionsFrame.gframe.SetVisualPointsVisible(false);
-			resultLabel.setVisible(true);
 		
 			break;
 		default:
 			break;
 		}
+		SpringLayout.Constraints resultCons = layout.getConstraints(resultLabel);
+		resultCons.setX(Spring.constant(this.getWidth() / 2 - Util.getStringWidth(resultLabel.getFontMetrics(resultLabel.getFont()), resultLabel.getText()) / 2));
+		resultLabel.setVisible(true);
 		calculated = true;
 	}
 	
