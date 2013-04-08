@@ -37,7 +37,9 @@ public class Util {
 		int width = 0;
 		for(int i=0;i<s.length();i++)
 		{
-			width += f.getWidths()[s.charAt(i)];
+			if(s.charAt(i)<256)
+				width += f.getWidths()[s.charAt(i)];
+			else width += f.getWidths()['a'];
 		}
 		return width;
 	}
