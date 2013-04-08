@@ -584,7 +584,7 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 		}
 		resultLabel.setVisible(false);
 		GraphFunctionsFrame.gframe.SetVisualPointsVisible(false);
-		if(this.calc != Calculation.VALUE && this.calc != Calculation.DYDX && funcComboBox.getItemCount() > 0)
+		if(this.calc != Calculation.VALUE && this.calc != Calculation.DYDX && funcComboBox.getItemCount() > 0 && this.isVisible())
 			initMovablePoints((Double) x1.getValue(), (Double)  x2.getValue());
 
 			
