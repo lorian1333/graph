@@ -289,7 +289,9 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 		for(VisualPoint p: vpoints)
 		{
 			x = (int) (((p.getPoint().getX()  - settings.getXmin()) / (settings.getXmax() - settings.getXmin()) * size.getWidth())) - 13;
+			if(Double.isNaN(p.getPoint().getY())) p.setPoint(new PointXY(p.getPoint().getX(), 0.0));
 			y =  (int) size.getHeight() - (int) (((p.getPoint().getY()  - settings.getYmin()) / (settings.getYmax() - settings.getYmin()) * size.getHeight())) - 13;
+			
 			
 			if(MovingVPointIndex == i)
 			{
@@ -437,6 +439,7 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 		if(p.isMovable())
 		{
 			int x = (int) (((p.getPoint().getX()  - settings.getXmin()) / (settings.getXmax() - settings.getXmin()) * size.getWidth())) - 13;
+			if(Double.isNaN(p.getPoint().getY())) p.setPoint(new PointXY(p.getPoint().getX(), 0.0));
 			int y =  (int) size.getHeight() - (int) (((p.getPoint().getY()  - settings.getYmin()) / (settings.getYmax() - settings.getYmin()) * size.getHeight())) - 13;
 			vmovablepoints.add(new Point(x, y));
 		}
@@ -459,6 +462,8 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 			if(vp.getLabel().equals(label))
 			{
 				vp.setPoint(newlocation);
+				if(Double.isNaN(vp.getPoint().getY())) vp.setPoint(new PointXY(vp.getPoint().getX(), 0.0));
+				
 				int x = (int) (((vp.getPoint().getX()  - settings.getXmin()) / (settings.getXmax() - settings.getXmin()) * size.getWidth())) - 13;
 				int y =  (int) size.getHeight() - (int) (((vp.getPoint().getY()  - settings.getYmin()) / (settings.getYmax() - settings.getYmin()) * size.getHeight())) - 13;
 				int pointindex = GetMovableVisualPointIndex(i);
@@ -502,10 +507,13 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 		Point p = this.vmovablepoints.get(MovingPointIndex);
 		if(vp.getFunctionIndex() != -1)
 		{
+			if(Double.isNaN(vp.getPoint().getY())) vp.setPoint(new PointXY(vp.getPoint().getX(), 0.0));
+			
 			if(vp.getFunctionIndex() < functions.size())
 			{
 				Function f = this.functions.get(vp.getFunctionIndex());
 				vp.setPoint(new PointXY(vp.getPoint().getX() + add, f.Calc(vp.getPoint().getX() + add)));
+			
 				int y =  (int) size.getHeight() - (int) (((vp.getPoint().getY()  - settings.getYmin()) / (settings.getYmax() - settings.getYmin()) * size.getHeight())) - 13;
 				p.setLocation(p.getX() + deltax , y);
 			} 
