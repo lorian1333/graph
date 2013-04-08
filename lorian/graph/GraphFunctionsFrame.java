@@ -208,12 +208,12 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		if(applet) MainPanel = new JPanel();
 		
 		boolean small;
-	
-			if(Toolkit.getDefaultToolkit().getScreenSize().getHeight() <= 900) 
-				small = true;
-			else 
-				small = false;
-			//small = true;
+		
+		if(Toolkit.getDefaultToolkit().getScreenSize().getHeight() <= 900) 
+			small = true;
+		else 
+			small = false;
+		//small = true;
 	
 		
 		SetSystemLookAndFeel();
