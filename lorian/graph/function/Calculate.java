@@ -171,7 +171,7 @@ public class Calculate {
 				break;
 			}
 		}
-		//for(double x = Xstart; x < Xstart + 50 ; x += dx)
+
 		for(double x = Xtmp; x < Xtmp + 1; x += dx)
 		{
 			if(Double.isNaN(f.Calc(x)))
@@ -195,7 +195,7 @@ public class Calculate {
 				break;
 			}
 		}
-		//for(double x = Xstart; x < Xstart + 50 ; x += dx)
+
 		for(double x = Xtmp; x < Xtmp + 1; x += dx)
 		{
 			if(!Double.isNaN(f.Calc(x)))
