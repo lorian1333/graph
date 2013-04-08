@@ -74,7 +74,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		functions = new ArrayList<Function>();
 		settings = new WindowSettings();
 		GraphFunctionsFrame.applet = applet;
-		initUI();
+		initUI(false);
 		
 		if(!applet)
 		{
@@ -82,7 +82,24 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		}
 
 	}
-	
+	public GraphFunctionsFrame(boolean applet, boolean forceSmall)
+	{
+		super("Graph v" + version);
+		textfields = new ArrayList<JTextField>();
+		labels = new ArrayList<JLabel>();
+		checkboxes = new ArrayList<JCheckBox>();
+		parseresults = new ArrayList<ParseResultIcon>();
+		functions = new ArrayList<Function>();
+		settings = new WindowSettings();
+		GraphFunctionsFrame.applet = applet;
+		initUI(forceSmall);
+		
+		if(!applet)
+		{
+			this.setVisible(true);
+		}
+
+	}
 	private Color ChooseColor(Component component, String title, Color initialColor)
 	{
 		return JColorChooser.showDialog(component, title, initialColor);
@@ -203,17 +220,23 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		if(!applet)
 			this.setJMenuBar(menuBar);
 	}
-	private void initUI()
+	private void initUI(boolean forceSmall)
 	{
 		if(applet) MainPanel = new JPanel();
 		
 		boolean small;
-		
-		if(Toolkit.getDefaultToolkit().getScreenSize().getHeight() <= 900) 
-			small = true;
-		else 
-			small = false;
-		//small = true;
+		if(!applet && !forceSmall)
+		{
+			if(Toolkit.getDefaultToolkit().getScreenSize().getHeight() <= 900) 
+				small = true;
+			else 
+				small = false;
+			}
+		else
+		{
+			System.out.println("Forcing small mode");
+			small = forceSmall;
+		}
 	
 		
 		SetSystemLookAndFeel();
