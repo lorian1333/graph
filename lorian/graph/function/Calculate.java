@@ -182,4 +182,28 @@ public class Calculate {
 		
 		return Double.NaN;
 	}
+	public static double FindFirstXAfterNaN(Function f, double Xstart)
+	{
+		double dx = 0.0001;
+		if(!Double.isNaN(f.Calc(Xstart))) return Xstart;
+		
+		double Xtmp = 0;
+		for(double x = Xstart; x < Xstart + 50 ; x += 0.001)
+		{
+			if(!Double.isNaN(f.Calc(x))) {
+				Xtmp = x - 0.001;
+				break;
+			}
+		}
+		//for(double x = Xstart; x < Xstart + 50 ; x += dx)
+		for(double x = Xtmp; x < Xtmp + 1; x += dx)
+		{
+			if(!Double.isNaN(f.Calc(x)))
+			{
+				return x;
+			}
+		}
+		
+		return Double.NaN;
+	}
 }
