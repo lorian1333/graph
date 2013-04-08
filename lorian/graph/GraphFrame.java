@@ -174,6 +174,7 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 		if(f.isEmpty()) return;
 		g.setColor(f.getColor());
 		int xpix, ypix;
+		boolean inNaN = false;
 		double x,y;
 		double step = ((double) (settings.getXmax() - settings.getXmin())) / size.getWidth();
 		
@@ -184,6 +185,8 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 			y = f.Calc(x);
 			if(Double.isNaN(y)) 
 			{ 
+				if(inNaN) continue;
+				inNaN = true;
 				double tmpX = Calculate.FindLastXBeforeNaN(f, x - step);
 				if(!Double.isNaN(tmpX))
 				{
@@ -199,7 +202,28 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 				}
 				continue;
 			}
-			else if(WaitForRealNumber) WaitForRealNumber = false;
+			else {
+				if(inNaN)
+				{
+					double tmpX = Calculate.FindFirstXAfterNaN(f, x - step);
+					if(!Double.isNaN(tmpX))
+					{
+						double tmpY =  f.Calc(tmpX);
+						ypix = (int) ((settings.getYmax() - tmpY) * (size.getHeight() / (settings.getYmax() - settings.getYmin())));
+						g.drawRect(xpix, ypix, 1, 1);
+						if(previous == null) previous = new Point();
+						previous.setLocation(xpix, ypix);
+					}
+					
+					
+					inNaN = false;
+					continue;
+					
+				}
+				
+				if(WaitForRealNumber) WaitForRealNumber = false;
+				
+			}
 			
 			ypix = (int) ((settings.getYmax() - y) * (size.getHeight() / (settings.getYmax() - settings.getYmin())));
 			if(xpix > -1)
