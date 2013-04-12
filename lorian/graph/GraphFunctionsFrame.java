@@ -11,6 +11,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -32,12 +34,15 @@ import javax.swing.Spring;
 import javax.swing.SpringLayout;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.filechooser.FileFilter;
 
 import lorian.graph.fileio.GraphFileReader;
 import lorian.graph.fileio.GraphFileWriter;
+import lorian.graph.fileio.JFileChooserWithConfirmation;
 import lorian.graph.function.Function;
 import lorian.graph.function.MathChars;
 import lorian.graph.function.Util;
+import lorian.graph.fileio.ExtensionFileFilter;
 
 public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyListener, MouseListener {
 	private static final long serialVersionUID = -1090268654275240501L;
@@ -60,6 +65,11 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	private final String[] calcMenuStrings = { "Value", "Zero", "Minimum", "Maximum", "Intersect", "dy/dx", MathChars.Integral.getCode() + "f(x)dx" };
 	private final Color[] defaultColors = { new Color(37, 119, 255), new Color(224,0,0).brighter(), new Color(211,0,224).brighter(), new Color(0,158,224).brighter(), new Color(0,255,90), new Color(221,224,0).brighter(), new Color(224,84,0).brighter() };  
 
+	private static boolean FileSaved = false;
+	private static boolean FilePathPresent = false;
+	private static String FileName = "Untitled";
+	private static String FilePath;
+	private static final String FileExt = "lgf";
 	
 	private static GraphFunctionsFrame funcframe;
 	public static GraphFrame gframe; 
@@ -74,7 +84,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	
 	public GraphFunctionsFrame(boolean applet)
 	{
-		super("Graph v" + version);
+		super("Graph v" + version + " - " + FileName + " *");
 		textfields = new ArrayList<JTextField>();
 		labels = new ArrayList<JLabel>();
 		checkboxes = new ArrayList<JCheckBox>();
@@ -92,7 +102,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	}
 	public GraphFunctionsFrame(boolean applet, boolean forceSmall)
 	{
-		super("Graph v" + version);
+		super("Graph v" + version + " - " + FileName + " *");
 		textfields = new ArrayList<JTextField>();
 		labels = new ArrayList<JLabel>();
 		checkboxes = new ArrayList<JCheckBox>();
@@ -185,8 +195,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	private void InitMenu()
 	{
 		JMenu fileMenu, calcMenu, helpMenu;
-		JMenuItem settingsItem, exitItem;
-		//JMenuItem calcValueItem, calcZeroItem, calcMinItem, calcMaxItem, calcIntersectItem, calcDyDxItem, calcIntItem; 
+		JMenuItem NewFileItem,OpenFileItem, SaveFileItem, SaveFileAsItem, settingsItem, exitItem;
 		JMenuItem aboutItem;
 		
 		menuBar = new JMenuBar();
@@ -197,11 +206,27 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		menuBar.add(calcMenu);
 		menuBar.add(helpMenu);
 		
+		NewFileItem = new JMenuItem("New");
+		NewFileItem.addActionListener(this);
+		
+		OpenFileItem = new JMenuItem("Open");
+		OpenFileItem.addActionListener(this);
+		
+		SaveFileItem = new JMenuItem("Save");
+		SaveFileItem.addActionListener(this);
+		
+		SaveFileAsItem = new JMenuItem("Save as");
+		SaveFileAsItem.addActionListener(this);
+		
 		settingsItem = new JMenuItem("Settings");
 		settingsItem.addActionListener(this);
 		
 		
-		
+		fileMenu.add(NewFileItem);
+		fileMenu.add(OpenFileItem);
+		fileMenu.add(SaveFileItem);
+		fileMenu.add(SaveFileAsItem);
+		fileMenu.addSeparator();
 		fileMenu.add(settingsItem); 
 		
 		
@@ -399,7 +424,164 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		}
 		
 	}
-
+	
+	private boolean SaveFile() 
+	{
+		System.out.println("Saving to " + FilePath);
+		GraphFileWriter fw = new GraphFileWriter(FilePath);
+		fw.setWindowSettings(settings);
+		int i=0;
+		for(Function f: functions)
+		{
+			if(!f.isEmpty())
+			{
+				fw.addFunction(f, i);
+			}
+			i++;
+		}
+		try
+		{
+			boolean result =  fw.write();
+			System.out.println("Done");
+			return result;
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+			return false;
+		}
+		
+	}
+	private boolean OpenFile(String filePath)
+	{
+		System.out.println("Opening " + filePath);
+		GraphFileReader fr = new GraphFileReader(filePath);
+		try
+		{
+			if(!fr.read()) return false;
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+			return false;
+		}
+		
+		GraphFunctionsFrame.settings = fr.getWindowSettings();
+		
+		String[] reconstructedfunctions = fr.getReconstructedFunctionStrings();
+		short[] indexes = fr.getFunctionIndexes();
+		Function[] functions = fr.getReconstructedFunctions();
+		
+		ClearAll();
+		for(int i=0;i<indexes.length; i++)
+		{
+			if(reconstructedfunctions[i].trim().equalsIgnoreCase("")) continue;
+			
+			int j = indexes[i];
+			JCheckBox checkbox = this.checkboxes.get(j);
+			JLabel label = this.labels.get(j);
+			JTextField textfield = this.textfields.get(j);
+			checkbox.setSelected(functions[i].drawOn());
+			label.setBackground(functions[i].getColor());
+			textfield.setText(reconstructedfunctions[i]);
+			this.checkboxes.set(j, checkbox);
+			this.labels.set(j, label);
+			this.textfields.set(j, textfield);
+		}
+		
+		UpdateWindowSettings();
+		Render();
+		FilePath = filePath;
+		FilePathPresent = true;
+		return true;
+	}
+	
+	private boolean ShowOpenFileDialog()
+	{
+		JFileChooserWithConfirmation openFile;
+		 if(!FilePathPresent)
+			 openFile = new JFileChooserWithConfirmation(System.getProperty("user.dir"));
+		 else
+			 openFile = new JFileChooserWithConfirmation(new File(FilePath));
+		 
+		 FileFilter openFilter = new ExtensionFileFilter("Graph files", new String[] { FileExt });
+		 openFile.setFileFilter(openFilter);
+		 
+		 int openOption = openFile.showOpenDialog(this);
+		 if(openOption == JFileChooser.APPROVE_OPTION)
+		 {
+			String filePath = openFile.getSelectedFile().getAbsolutePath();
+			if(!filePath.endsWith("." + FileExt))
+			{
+				filePath += "." + FileExt;
+			}
+			return OpenFile(filePath);
+		 }
+		 else return false;
+	}
+	private boolean SaveFileAs()
+	{
+		 JFileChooserWithConfirmation saveFile;
+		 if(!FilePathPresent)
+			 saveFile = new JFileChooserWithConfirmation(System.getProperty("user.dir"));
+		 else
+			 saveFile = new JFileChooserWithConfirmation(new File(FilePath));
+		 
+	
+		 FileFilter saveFilter = new ExtensionFileFilter("Graph files", new String[] { FileExt });
+		 saveFile.setFileFilter(saveFilter);
+		 
+		 int saveOption = saveFile.showSaveDialog(this);
+		 if(saveOption == JFileChooser.APPROVE_OPTION)
+		 {
+			FilePath = saveFile.getSelectedFile().getAbsolutePath();
+			if(!FilePath.endsWith("." + FileExt))
+			{
+				FilePath += "." + FileExt;
+			}
+			FilePathPresent = true;
+			return SaveFile();
+					
+		 }
+		 else return false;
+	}
+	private boolean ConfirmFileChanges()
+	{
+		int n = JOptionPane.showConfirmDialog (this, String.format("Do you want to save changes to %s?", FileName), "Graph", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+		if(n == JOptionPane.YES_OPTION)
+		{
+			return SaveFileAs();
+		}
+		else if(n == JOptionPane.NO_OPTION)
+		{
+			return true;
+		}
+		else if(n == JOptionPane.CANCEL_OPTION)
+		{
+			return false;
+		}
+		return false;
+	}
+	
+	private void ClearAll()
+	{
+		for(JTextField txt: textfields)
+		{
+			txt.setText("");
+		}
+		for(JCheckBox check : checkboxes)
+		{
+			check.setSelected(true);
+		}
+		for(int i=0;i<MaxFunctions;i++)
+		{
+			JLabel label = this.labels.get(i);
+			label.setBackground(defaultColors[i % defaultColors.length]);
+		}
+		
+		settings = new WindowSettings();
+		Render();
+	}
 
 	
 	private void Render()
@@ -453,9 +635,10 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		WindowSettings wsettings = new WindowSettings();
 		fw.setWindowSettings(wsettings);
 		Function f = new Function("sin(x)cos(x)");
-		f.setColor(new Color(12, 34, 56));
+		Function g = new Function("4x^3+3x+2");
 		
 		fw.addFunction(f, 0);
+		fw.addFunction(g, 3);
 		try {
 			fw.write();
 		} catch (IOException e) {
@@ -464,7 +647,11 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		} 
 		System.out.println("Done writing");
 		
-		GraphFileReader fr = new GraphFileReader("test.bin");
+	
+	}
+	private static void ReaderTest()
+	{
+		GraphFileReader fr = new GraphFileReader("test.lgf");
 		try {
 			fr.read();
 		} catch (IOException e) {
@@ -472,14 +659,26 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 			return;
 		}
 		System.out.println("Done reading");
-		
-		System.out.println(fr.getReconstructedFunctionStrings()[0]);
+		String[] reconstructedfunctions = fr.getReconstructedFunctionStrings();
+		short[] indexes = fr.getFunctionIndexes();
+		int i = 0;
+		for(String fstr : reconstructedfunctions)
+		{
+			if(fstr.trim().equalsIgnoreCase(""))
+			{
+				i++;
+				continue;
+			}
+			System.out.println(indexes[i] + ": " + fstr);
+			i++;
+		}
 	}
 	public static void main(String[] args)
 	{
 		System.out.println("Graph v" + GraphFunctionsFrame.version);
 		
 		//WriterTest();
+		//ReaderTest();
 		
 		GraphFunctionsFrame.funcframe = new GraphFunctionsFrame(false);
 	}
@@ -501,6 +700,51 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 				else 
 					charframe.Restore();
 			}
+			
+			else if(buttonname.equalsIgnoreCase("new"))
+			{
+				System.out.println("Creating new file...");
+				if(!FileSaved)
+				{
+					if(!ConfirmFileChanges())
+					{
+						System.out.println("New file canceled by user");
+						return;
+					}
+				}
+				ClearAll();
+			}
+			else if(buttonname.equalsIgnoreCase("open"))
+			{
+				System.out.println("Opening file...");
+				if(!FileSaved)
+				{
+					if(!ConfirmFileChanges())
+					{
+						System.out.println("Canceled by user");
+						return;
+					}
+				}
+				ShowOpenFileDialog();
+			}
+			else if(buttonname.equalsIgnoreCase("save"))
+			{
+				if(FilePathPresent)
+				{
+					SaveFile();
+				}
+				else
+				{
+					System.out.println("Saving file");
+					SaveFileAs();
+				}
+			}
+			else if(buttonname.equalsIgnoreCase("save as"))
+			{
+				System.out.println("Saving file");
+				SaveFileAs();
+			}
+			
 			else if (buttonname.equalsIgnoreCase("settings")) 
 			{
 				if(settingsframe == null)
@@ -510,6 +754,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 				else
 					settingsframe.Restore();
 			}
+			
 			else if (buttonname.equalsIgnoreCase("exit")) 
 			{
 				System.exit(0);

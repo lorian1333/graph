@@ -307,6 +307,8 @@ public class Factor {
 			else value = 1;
 			type = Type.SPECIAL;
 			specialfac = new Factor(this.argumentChar);
+			
+			System.out.println("SPECIAL!!!!!!!!");
 			return specialfac.Parse(s.substring(ii));
 		
 			/*

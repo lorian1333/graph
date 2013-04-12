@@ -21,7 +21,6 @@ public class GraphFileReader {
 	private short file_major_version, file_minor_version;
 	private WindowSettings wsettings;
 	private short functionCount;
-	private Function[] functions;
 	private FunctionData[] functiondata;
 	
 	public GraphFileReader(String filename)
@@ -114,7 +113,11 @@ public class GraphFileReader {
 			fd.index = ds.readShort();
 			fd.draw  = ds.readBoolean();
 			
-			fd.color = new Color(ds.readByte(), ds.readByte(), ds.readByte());
+			int r = ds.read();
+			int g = ds.read();
+			int b = ds.read();
+			//fd.color = new Color(ds.readByte(), ds.readByte(), ds.readByte());
+			fd.color = new Color(r, g, b);
 		}
 		fd.termscount = ds.readInt();
 		fd.terms = new TermData[fd.termscount];
@@ -127,7 +130,6 @@ public class GraphFileReader {
 	private boolean readFunctions() throws IOException
 	{
 		functionCount = ds.readShort();
-		functions = new Function[functionCount];
 		functiondata = new FunctionData[functionCount];
 		
 		for(short i=0;i<functionCount;i++)
@@ -311,9 +313,35 @@ public class GraphFileReader {
 		String functions[] = new String[this.functionCount];
 		for(int i=0;i<this.functionCount; i++)
 		{
-			if(functiondata[i] != null)
+			if(functiondata[i].termscount > 0)
+			{
 				functions[i] = reconstructFunction(functiondata[i]);
+			}
 		}
 		return functions;
+	}
+	public Function[] getReconstructedFunctions()
+	{
+		Function[] functions = new Function[this.functionCount];
+		String[] fstrings = getReconstructedFunctionStrings();
+		for(int i=0;i<functionCount;i++)
+		{
+			Function f = new Function();
+			f.Parse(fstrings[i]);
+			f.setColor(this.functiondata[i].color);
+			f.setDraw(this.functiondata[i].draw);
+			functions[i] = f;
+		}
+		return functions;
+	}
+	public short[] getFunctionIndexes()
+	{
+		short[] indexes = new short[this.functionCount];
+	
+		for(int i=0;i<functionCount;i++)
+		{
+			indexes[i] = functiondata[i].index;
+		}
+		return indexes;
 	}
 }
