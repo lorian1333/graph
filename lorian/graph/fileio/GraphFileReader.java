@@ -83,12 +83,23 @@ public class GraphFileReader {
 			{
 				factor.functionname = readString();
 				factor.functionargscount = ds.readInt();
-				factor.functionargs = new String[factor.functionargscount];
-				for(int i=0;i<factor.functionargscount;i++)
+
+				if(factor.functionname.equalsIgnoreCase("const") || factor.functionname.equalsIgnoreCase("dydx")|| factor.functionname.equalsIgnoreCase("deriv"))
 				{
-					factor.functionargs[i] = readString();
+					factor.functionargs_str = new String[factor.functionargscount];
+					for(int i=0;i<factor.functionargscount;i++)
+					{
+						factor.functionargs_str[i] = readString();
+					}
 				}
-				System.out.printf("Function: %s(%s)\n", factor.functionname, factor.functionargs[0]);
+				else
+				{
+					factor.functionargs = new FunctionData[factor.functionargscount];
+					for(int i=0;i<factor.functionargscount;i++)
+					{
+						factor.functionargs[i] = readFunction(false);
+					}
+				}
 				break;
 			}
 		}
@@ -251,11 +262,23 @@ public class GraphFileReader {
 			case FUNCTION:
 			{
 				s += fd.functionname + "(";
-				for(int i = 0; i< fd.functionargscount; i++)
+				if(fd.functionname.equalsIgnoreCase("const") || fd.functionname.equalsIgnoreCase("dydx")|| fd.functionname.equalsIgnoreCase("deriv"))
 				{
-					s += fd.functionargs[i];
-					if(i < fd.functionargscount - 1)
-						s += ", ";
+					for(int i = 0; i< fd.functionargscount; i++)
+					{
+						s += fd.functionargs_str[i];
+						if(i < fd.functionargscount - 1)
+							s += ", ";
+					}
+				}
+				else
+				{
+					for(int i = 0; i< fd.functionargscount; i++)
+					{
+						s += reconstructFunction(fd.functionargs[i]);
+						if(i < fd.functionargscount - 1)
+							s += ", ";
+					}
 				}
 				s += ")";
 				break;

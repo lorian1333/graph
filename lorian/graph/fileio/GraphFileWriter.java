@@ -75,9 +75,19 @@ public class GraphFileWriter {
 			{
 				writeString(f.getFunctionName());
 				ds.writeInt(f.getFunctionArgs().size());
-				for(String arg: f.getFunctionArgs())
+				if(f.getFunctionName().equalsIgnoreCase("const") || f.getFunctionName().equalsIgnoreCase("deriv") ||f.getFunctionName().equalsIgnoreCase("dydx"))
 				{
-					writeString(arg);
+					for(String arg: f.getFunctionArgs())
+					{
+						writeString(arg);
+					}
+				}
+				else
+				{
+					for(String arg: f.getFunctionArgs())
+					{
+						writeFunction(new Function(arg));
+					}
 				}
 				break;
 			}
