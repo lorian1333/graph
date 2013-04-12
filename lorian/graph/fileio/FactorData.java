@@ -13,5 +13,6 @@ public class FactorData {
 	
 	public String functionname; // type = FUNCTION
 	public int functionargscount;
-	public String[] functionargs;
+	public String[] functionargs_str;
+	public FunctionData[] functionargs;
 }

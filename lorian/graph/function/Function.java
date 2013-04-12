@@ -105,7 +105,6 @@ public class Function {
 			Term term = new Term(this.argumentChar);
 			int funcdepth=0;
 			boolean ignoreminplus = true;
-			//while(!(s.charAt(index)=='-' || s.charAt(index)=='+') && funcdepth == 0 && onlyplusminus == true)
 			while(true)
 			{
 				if(index == s.length())
