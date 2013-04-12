@@ -319,7 +319,7 @@ public class GraphFileReader {
 			}
 		}
 		return functions;
-	}
+	} 
 	public Function[] getReconstructedFunctions()
 	{
 		Function[] functions = new Function[this.functionCount];
