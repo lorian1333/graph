@@ -266,6 +266,11 @@ public class Term {
 		return product;
 		
 	}
+	
+	public List<Factor> getFactors()
+	{
+		return this.factors;
+	}
 }
 
 /*

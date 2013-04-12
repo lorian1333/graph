@@ -11,6 +11,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,14 +32,21 @@ import javax.swing.Spring;
 import javax.swing.SpringLayout;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+
+import lorian.graph.fileio.GraphFileReader;
+import lorian.graph.fileio.GraphFileWriter;
 import lorian.graph.function.Function;
 import lorian.graph.function.MathChars;
 import lorian.graph.function.Util;
 
 public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyListener, MouseListener {
 	private static final long serialVersionUID = -1090268654275240501L;
-	public static int MaxFunctions = 20;
+	
 	public static final String version = "1.0 Beta";
+	public static final short major_version = 0x0001;
+	public static final short minor_version = 0x0000;
+	
+	public static int MaxFunctions = 20;
 	private final Dimension WindowSize = new Dimension(800, 800);
 	private final Dimension WindowSizeSmall = new Dimension(600, 600);
 	public static List<Function> functions;
@@ -112,28 +120,28 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 			SwingUtilities.updateComponentTreeUI(funcframe);
 		}
 		catch (NullPointerException e) { 
-			System.out.println("Error changing GUI Style of function frame");
+			//System.out.println("Error changing GUI Style of function frame");
 		}
 		try
 		{
 			SwingUtilities.updateComponentTreeUI(gframe);
 		}
 		catch (NullPointerException e) {
-			System.out.println("Error changing GUI Style of gframe");
+			//System.out.println("Error changing GUI Style of gframe");
 		}
 		try
 		{
 			SwingUtilities.updateComponentTreeUI(settingsframe);
 		}
 		catch (NullPointerException e) {
-			System.out.println("Error changing GUI Style of settings frame");
+			//System.out.println("Error changing GUI Style of settings frame");
 		}
 		try
 		{
 			SwingUtilities.updateComponentTreeUI(charframe);
 		}
 		catch (NullPointerException e) {
-			System.out.println("Error changing GUI Style of char frame");
+			//System.out.println("Error changing GUI Style of char frame");
 		}
 		
 	}
@@ -439,10 +447,40 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		System.out.println("Done");		
 	}
 
-
+	public static void WriterTest()
+	{
+		GraphFileWriter fw = new GraphFileWriter("test.bin");
+		WindowSettings wsettings = new WindowSettings();
+		fw.setWindowSettings(wsettings);
+		Function f = new Function("sin(x)cos(x)");
+		f.setColor(new Color(12, 34, 56));
+		
+		fw.addFunction(f, 0);
+		try {
+			fw.write();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return;
+		} 
+		System.out.println("Done writing");
+		
+		GraphFileReader fr = new GraphFileReader("test.bin");
+		try {
+			fr.read();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return;
+		}
+		System.out.println("Done reading");
+		
+		System.out.println(fr.getReconstructedFunctionStrings()[0]);
+	}
 	public static void main(String[] args)
 	{
-		//Creating the actual window
+		System.out.println("Graph v" + GraphFunctionsFrame.version);
+		
+		//WriterTest();
+		
 		GraphFunctionsFrame.funcframe = new GraphFunctionsFrame(false);
 	}
 

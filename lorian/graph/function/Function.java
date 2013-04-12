@@ -170,6 +170,10 @@ public class Function {
 	public void setColor(Color color) {
 		this.color = color;
 	}
+	public List<Term> getTerms()
+	{
+		return this.terms;
+	}
 	public boolean isEmpty()
 	{
 		return this.isEmpty;

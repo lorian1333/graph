@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Factor {
-	enum Type
+	public enum Type
 	{
-		CONSTANT, ARGUMENT, PARENTHESES, FUNCTION, SPECIAL
+		CONSTANT, ARGUMENT, PARENTHESES, SPECIAL, FUNCTION
 	}
 	
 	
@@ -328,9 +328,7 @@ public class Factor {
 		{
 			type = Type.ARGUMENT;
 			parsed = ParseX(s);
-			return parsed;
-		
-					
+			return parsed;				
 		}
 		else if(s.charAt(s.length() - 1) == ')')
 		{
@@ -347,6 +345,7 @@ public class Factor {
 			}
 			else
 			{
+				System.out.println(s);
 				parsed = ParseOther(s);
 			}
 			return parsed;
@@ -396,6 +395,35 @@ public class Factor {
 			return MathFunctions.Calculate(functionname, functionargs, arg);
 		}
 		else return 0;
+	}
+	
+	public Type getType()
+	{
+		return this.type;
+	}
+	public Function getBaseFunction()
+	{
+		return this.basefunc;
+	}
+	public Function getExponentFunction()
+	{
+		return this.exponentfunc;
+	}
+	public double getValue()
+	{
+		return this.value;
+	}
+	public Factor getSpecialFac()
+	{
+		return this.specialfac;
+	}
+	public String getFunctionName()
+	{
+		return this.functionname;
+	}
+	public List<String> getFunctionArgs()
+	{
+		return this.functionargs;
 	}
 }
 

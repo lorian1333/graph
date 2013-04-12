@@ -4,6 +4,7 @@ public class WindowSettings {
 
 	private long Xmin, Xmax, Ymin, Ymax;
 	private boolean grid;
+	
 	public WindowSettings()
 	{
 		setXmin(-10);
