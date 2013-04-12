@@ -101,6 +101,8 @@ public class SettingsFrame extends JFrame implements ActionListener {
 						public void stateChanged(ChangeEvent e) {
 							SpinnerModel model = (SpinnerModel) e.getSource();
 							GraphFunctionsFrame.settings.setXmin( ((Double)model.getValue()).longValue());
+							GraphFunctionsFrame.FileSaved = false;
+							GraphFunctionsFrame.UpdateTitle();
 						}
 					});
 					break;
@@ -110,6 +112,8 @@ public class SettingsFrame extends JFrame implements ActionListener {
 						public void stateChanged(ChangeEvent e) {
 							SpinnerModel model = (SpinnerModel) e.getSource();
 							GraphFunctionsFrame.settings.setXmax(((Double)model.getValue()).longValue());
+							GraphFunctionsFrame.FileSaved = false;
+							GraphFunctionsFrame.UpdateTitle();
 						}
 					});
 					break;
@@ -119,6 +123,8 @@ public class SettingsFrame extends JFrame implements ActionListener {
 						public void stateChanged(ChangeEvent e) {
 							SpinnerModel model = (SpinnerModel) e.getSource();
 							GraphFunctionsFrame.settings.setYmin( ((Double)model.getValue()).longValue());
+							GraphFunctionsFrame.FileSaved = false;
+							GraphFunctionsFrame.UpdateTitle();
 						}
 					});
 					break;
@@ -128,6 +134,8 @@ public class SettingsFrame extends JFrame implements ActionListener {
 						public void stateChanged(ChangeEvent e) {
 							SpinnerModel model = (SpinnerModel) e.getSource();
 							GraphFunctionsFrame.settings.setYmax( ((Double)model.getValue()).longValue());
+							GraphFunctionsFrame.FileSaved = false;
+							GraphFunctionsFrame.UpdateTitle();
 						}
 					});
 					break;
@@ -217,6 +225,7 @@ public class SettingsFrame extends JFrame implements ActionListener {
 		{
 			Close();
 			GraphFunctionsFrame.UpdateWindowSettings();
+			GraphFunctionsFrame.UpdateTitle();
 		}
 		else if(e.getSource() instanceof JComboBox<?>)
 		{
@@ -236,6 +245,8 @@ public class SettingsFrame extends JFrame implements ActionListener {
 		}
 		else if(e.getSource() instanceof JCheckBox)
 		{
+			GraphFunctionsFrame.FileSaved = false;
+			GraphFunctionsFrame.UpdateTitle();
 			GraphFunctionsFrame.settings.setGrid(((JCheckBox) e.getSource()).isSelected());
 		}
 

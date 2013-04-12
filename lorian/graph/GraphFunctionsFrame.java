@@ -67,7 +67,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	private final String[] calcMenuStrings = { "Value", "Zero", "Minimum", "Maximum", "Intersect", "dy/dx", MathChars.Integral.getCode() + "f(x)dx" };
 	private final Color[] defaultColors = { new Color(37, 119, 255), new Color(224,0,0).brighter(), new Color(211,0,224).brighter(), new Color(0,158,224).brighter(), new Color(0,255,90), new Color(221,224,0).brighter(), new Color(224,84,0).brighter() };  
 
-	private static boolean FileSaved = false;
+	public static boolean FileSaved = false;
 	private static boolean FilePathPresent = false;
 	private static String FileName = "Untitled";
 	private static String FilePath;
@@ -189,16 +189,16 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		UpdateGUIStyle();
 	}
 	public static void UpdateWindowSettings()
-	{
+	{		
 		gframe.UpdateWindowSettings(settings);
 		if(gframe.windowerror)
 		{
 			JOptionPane.showMessageDialog(null, "Invalid window settings", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
-	private void UpdateTitle()
+	public static void UpdateTitle()
 	{
-		this.setTitle("Graph v" + version + " - " + FileName + (FileSaved ? "" : " *"));
+		GraphFunctionsFrame.funcframe.setTitle("Graph v" + version + " - " + FileName + (FileSaved ? "" : " *"));
 	}
 	private void InitMenu()
 	{
@@ -467,6 +467,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		}
 		
 	}
+	
 	private boolean OpenFile(String filePath)
 	{
 		System.out.println("Opening " + filePath);
@@ -475,19 +476,21 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		{
 			if(!fr.read()) return false;
 		}
-		catch (IOException e)
+		catch (Exception e)
 		{
 			e.printStackTrace();
+			JOptionPane.showMessageDialog(this, "Could not open " + (new File(filePath)).getName(), "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
+
+		ClearAll();
 		
-		GraphFunctionsFrame.settings = fr.getWindowSettings();
 		
 		String[] reconstructedfunctions = fr.getReconstructedFunctionStrings();
 		short[] indexes = fr.getFunctionIndexes();
 		Function[] functions = fr.getReconstructedFunctions();
 		
-		ClearAll();
+		settings = fr.getWindowSettings();
 		for(int i=0;i<indexes.length; i++)
 		{
 			if(reconstructedfunctions[i].trim().equalsIgnoreCase("")) continue;
@@ -876,7 +879,6 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	@Override
 	public void keyTyped(KeyEvent e) 
 	{
-		System.out.println((int) e.getKeyChar());
 		if((e.getKeyChar() >= 'a' && e.getKeyChar() <= 'z') ||(e.getKeyChar() >= 'A' && e.getKeyChar() <= 'Z') || (e.getKeyChar() >= '0' && e.getKeyChar() <= '9') || e.getKeyChar() == '(' || e.getKeyChar() == ')' || e.getKeyChar() == '^' || e.getKeyChar() == ' ' || e.getKeyChar() == 0x08)
 		{
 			FileSaved = false;
