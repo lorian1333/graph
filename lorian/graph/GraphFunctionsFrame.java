@@ -11,6 +11,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -44,7 +46,7 @@ import lorian.graph.function.MathChars;
 import lorian.graph.function.Util;
 import lorian.graph.fileio.ExtensionFileFilter;
 
-public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyListener, MouseListener {
+public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyListener, MouseListener, WindowListener {
 	private static final long serialVersionUID = -1090268654275240501L;
 	
 	public static final String version = "1.0 Beta";
@@ -70,6 +72,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	private static String FileName = "Untitled";
 	private static String FilePath;
 	private static final String FileExt = "lgf";
+	private boolean empty = true;
 	
 	private static GraphFunctionsFrame funcframe;
 	public static GraphFrame gframe; 
@@ -111,6 +114,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		settings = new WindowSettings();
 		GraphFunctionsFrame.applet = applet;
 		initUI(forceSmall);
+		
 		
 		if(!applet)
 		{
@@ -192,6 +196,10 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 			JOptionPane.showMessageDialog(null, "Invalid window settings", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
+	private void UpdateTitle()
+	{
+		this.setTitle("Graph v" + version + " - " + FileName + (FileSaved ? "" : " *"));
+	}
 	private void InitMenu()
 	{
 		JMenu fileMenu, calcMenu, helpMenu;
@@ -207,18 +215,23 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		menuBar.add(helpMenu);
 		
 		NewFileItem = new JMenuItem("New");
+		NewFileItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK)); 
 		NewFileItem.addActionListener(this);
 		
 		OpenFileItem = new JMenuItem("Open");
+		OpenFileItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK)); 
 		OpenFileItem.addActionListener(this);
 		
 		SaveFileItem = new JMenuItem("Save");
+		SaveFileItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK)); 
 		SaveFileItem.addActionListener(this);
 		
 		SaveFileAsItem = new JMenuItem("Save as");
+		SaveFileAsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK)); 
 		SaveFileAsItem.addActionListener(this);
 		
 		settingsItem = new JMenuItem("Settings");
+		settingsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.ALT_MASK)); 
 		settingsItem.addActionListener(this);
 		
 		
@@ -309,13 +322,12 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 			
 			
 			JTextField textField = new JTextField();
-			//textField.setText("" + MathChars.Pi.getCode());
-			
+				
 			textField.setPreferredSize(new Dimension(350, (int) textField.getPreferredSize().getHeight() + 5)); 
 			textField.setFont(textField.getFont().deriveFont(15.0f));
 			textField.setForeground(Color.BLACK);
 			textField.addKeyListener(this);
-
+			
 			//JTextPane textField = new JTextPane();
 			//textField.setContentType("text/html");
 			//textField.setText("<HTML>x<sup>2</sup></HTML> ");
@@ -419,7 +431,8 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 			else
 				this.setSize(450 + (int) WindowSize.getWidth() + 10, (int) WindowSize.getHeight() + 50);
 			this.setResizable(false);
-			this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+			this.addWindowListener(this);
 			this.setLocationRelativeTo(null);
 		}
 		
@@ -443,6 +456,8 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		{
 			boolean result =  fw.write();
 			System.out.println("Done");
+			FileSaved = result;
+			empty = false;
 			return result;
 		}
 		catch (IOException e)
@@ -493,6 +508,8 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		Render();
 		FilePath = filePath;
 		FilePathPresent = true;
+		FileName = (new File(filePath)).getName();
+		FileSaved = true;
 		return true;
 	}
 	
@@ -540,6 +557,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 				FilePath += "." + FileExt;
 			}
 			FilePathPresent = true;
+			FileName = (new File(FilePath)).getName();
 			return SaveFile();
 					
 		 }
@@ -547,7 +565,9 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	}
 	private boolean ConfirmFileChanges()
 	{
-		int n = JOptionPane.showConfirmDialog (this, String.format("Do you want to save changes to %s?", FileName), "Graph", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+		
+		int n= JOptionPane.showConfirmDialog (this, String.format("Do you want to save changes to %s?", FileName), "Graph", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+		
 		if(n == JOptionPane.YES_OPTION)
 		{
 			return SaveFileAs();
@@ -580,6 +600,11 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		}
 		
 		settings = new WindowSettings();
+		FilePath = "";
+		FileSaved = false;
+		FilePathPresent = false;
+		FileName = "Untitled";
+		empty = true;
 		Render();
 	}
 
@@ -601,6 +626,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 				parseresults.set(i, parseresult);
 				continue;
 			}
+			empty = false;
 			if(!f.Parse(text))
 			{
 				System.out.println("Error: Unable to parse function Y" + (i+1));
@@ -704,7 +730,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 			else if(buttonname.equalsIgnoreCase("new"))
 			{
 				System.out.println("Creating new file...");
-				if(!FileSaved)
+				if(!FileSaved && !empty)
 				{
 					if(!ConfirmFileChanges())
 					{
@@ -713,11 +739,12 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 					}
 				}
 				ClearAll();
+				UpdateTitle();
 			}
 			else if(buttonname.equalsIgnoreCase("open"))
 			{
 				System.out.println("Opening file...");
-				if(!FileSaved)
+				if(!FileSaved && !empty)
 				{
 					if(!ConfirmFileChanges())
 					{
@@ -726,6 +753,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 					}
 				}
 				ShowOpenFileDialog();
+				UpdateTitle();
 			}
 			else if(buttonname.equalsIgnoreCase("save"))
 			{
@@ -738,11 +766,14 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 					System.out.println("Saving file");
 					SaveFileAs();
 				}
+				UpdateTitle();
 			}
 			else if(buttonname.equalsIgnoreCase("save as"))
 			{
 				System.out.println("Saving file");
 				SaveFileAs();
+				
+				UpdateTitle();
 			}
 			
 			else if (buttonname.equalsIgnoreCase("settings")) 
@@ -842,12 +873,32 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	        gframe.Update(funcindex, functions.get(funcindex));
 	    }  
 	
+	@Override
+	public void keyTyped(KeyEvent e) 
+	{
+		System.out.println((int) e.getKeyChar());
+		if((e.getKeyChar() >= 'a' && e.getKeyChar() <= 'z') ||(e.getKeyChar() >= 'A' && e.getKeyChar() <= 'Z') || (e.getKeyChar() >= '0' && e.getKeyChar() <= '9') || e.getKeyChar() == '(' || e.getKeyChar() == ')' || e.getKeyChar() == '^' || e.getKeyChar() == ' ' || e.getKeyChar() == 0x08)
+		{
+			FileSaved = false;
+			empty = false;
+			UpdateTitle();
+		}
+	}	
+	
+	@Override
+	public void windowClosing(WindowEvent e) {
+		if(!FileSaved && !empty)
+		{
+			if(ConfirmFileChanges()) System.exit(0);
+		}
+		else
+			System.exit(0);
+	}
+	
 	
 	//Unused
 	@Override
 	public void keyReleased(KeyEvent e) {}
-	@Override
-	public void keyTyped(KeyEvent e) {}	
 	@Override
 	public void mouseClicked(MouseEvent arg0) {}
 	@Override
@@ -856,5 +907,17 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	public void mouseExited(MouseEvent arg0) {}
 	@Override
 	public void mousePressed(MouseEvent arg0) {}
+	@Override
+	public void windowActivated(WindowEvent arg0) {}
+	@Override
+	public void windowClosed(WindowEvent arg0){}
+	@Override
+	public void windowDeactivated(WindowEvent arg0) {}
+	@Override
+	public void windowDeiconified(WindowEvent arg0) {}
+	@Override
+	public void windowIconified(WindowEvent arg0) {}
+	@Override
+	public void windowOpened(WindowEvent arg0) {}
 	
 }
