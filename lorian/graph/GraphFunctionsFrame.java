@@ -198,7 +198,8 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	}
 	public static void UpdateTitle()
 	{
-		GraphFunctionsFrame.funcframe.setTitle("Graph v" + version + " - " + FileName + (FileSaved ? "" : " *"));
+		if(!applet)
+			GraphFunctionsFrame.funcframe.setTitle("Graph v" + version + " - " + FileName + (FileSaved ? "" : " *"));
 	}
 	private void InitMenu()
 	{
