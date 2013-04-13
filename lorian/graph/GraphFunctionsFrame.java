@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,6 +30,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
@@ -55,7 +57,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	
 	public static int MaxFunctions = 20;
 	private final Dimension WindowSize = new Dimension(800, 800);
-	private final Dimension WindowSizeSmall = new Dimension(600, 600);
+	private final Dimension WindowSizeSmall = new Dimension(640, 640);
 	public static List<Function> functions;
 	
 	private List<JTextField> textfields;
@@ -84,6 +86,9 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	public JMenuBar menuBar;
 	public static boolean applet = false;
 	public JPanel MainPanel;
+	
+	public JProgressBar progressbar;
+	public JLabel statusLabel;
 	
 	public GraphFunctionsFrame(boolean applet)
 	{
@@ -278,7 +283,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 				small = true;
 			else 
 				small = false;
-			}
+		}	
 		else
 		{
 			System.out.println("Forcing small mode");
@@ -380,6 +385,8 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 			
 			
 		}
+		
+		
 		JPanel buttonpanel = new JPanel();
 		for(int i=0;i< buttons.length ;i++)
 		{
@@ -393,6 +400,29 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		buttonPanelCons.setY(Spring.constant(10 + height *MaxFunctions));
 		panel.add(buttonpanel);
 		
+		JPanel progressPanel = new JPanel();
+		progressPanel.setLayout(new GridLayout(2, 1)); 
+		progressbar = new JProgressBar(0, 100);
+		progressbar.setValue(0);
+		progressbar.setPreferredSize(new Dimension(300, 20));
+		progressbar.setStringPainted(true);
+		progressbar.setVisible(false);
+		statusLabel = new JLabel("Done");
+		statusLabel.setVisible(false);
+		
+		progressPanel.add(statusLabel);
+		progressPanel.add(progressbar);
+		
+		
+		panel.add(progressPanel);
+		
+		SpringLayout.Constraints progressCons = layout.getConstraints(progressPanel);
+		progressCons.setX(Spring.constant(50));
+		if(small)
+			progressCons.setY(Spring.constant(height * MaxFunctions + 50));
+		else
+			progressCons.setY(Spring.constant(745));
+
 		if(applet) MainPanel.setLayout(new BorderLayout());
 		else this.setLayout(new BorderLayout());
 		
@@ -441,9 +471,11 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	
 	private boolean SaveFile() 
 	{
+		Render();
 		System.out.println("Saving to " + FilePath);
 		GraphFileWriter fw = new GraphFileWriter(FilePath);
 		fw.setWindowSettings(settings);
+		
 		int i=0;
 		for(Function f: functions)
 		{
@@ -616,6 +648,10 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	private void Render()
 	{
 		System.out.println("Parsing functions...");
+		this.progressbar.setVisible(true);
+		this.progressbar.setValue(0);
+		this.statusLabel.setVisible(true);
+		
 		functions.clear();
 		for(int i=0;i<GraphFunctionsFrame.MaxFunctions;i++)
 		{
@@ -628,6 +664,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 				//System.out.println("Y" + (i+1) + " is empty. Skipping.");
 				parseresult.setState(ParseResultIcon.State.EMPTY);
 				parseresults.set(i, parseresult);
+				progressbar.setValue((int) (((double)(i+1)/(double)MaxFunctions) * 100.0));
 				continue;
 			}
 			empty = false;
@@ -639,6 +676,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 				functions.add(f);
 				parseresult.setState(ParseResultIcon.State.ERROR);
 				parseresults.set(i, parseresult);
+				progressbar.setValue((int) (((double)(i+1)/(double)MaxFunctions) * 100.0));
 				continue;
 				
 			}
@@ -649,7 +687,10 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 			parseresult.setState(ParseResultIcon.State.OK);
 			parseresults.set(i, parseresult);
 			System.out.println("Added function Y" + (i+1) + " with color " + c.getRed() + "," + c.getGreen() + "," + c.getBlue());
+			progressbar.setValue((int) (((double)(i+1)/(double)MaxFunctions) * 100.0));
 		}
+		progressbar.setVisible(false);
+		statusLabel.setVisible(false);
 		gframe.Update(functions);
 		this.repaint();
 		if(calcframe != null)
