@@ -1,6 +1,7 @@
 package lorian.graph.fileio;
 
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
@@ -124,6 +125,12 @@ public class GraphFileWriter {
 	public boolean write() throws IOException 
 	{
 		if(wsettings == null) return false;
+		
+		File tmpfile = new File(filename);
+		if(tmpfile.exists())
+		{
+			tmpfile.delete();
+		}
 		ds = new DataOutputStream(new FileOutputStream(filename));
 		
 		
