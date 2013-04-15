@@ -641,6 +641,8 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		FilePathPresent = false;
 		FileName = "Untitled";
 		empty = true;
+		UpdateWindowSettings();
+		settingsframe.ResetWindowSettings();
 		Render();
 	}
 
@@ -828,7 +830,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 					settingsframe = new SettingsFrame(this.getLocation());
 				}
 				else
-					settingsframe.Restore();
+					settingsframe.setVisible(true);
 			}
 			
 			else if (buttonname.equalsIgnoreCase("exit")) 

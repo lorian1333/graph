@@ -15,6 +15,8 @@ import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +26,7 @@ import javax.swing.JPanel;
 import javax.swing.Spring;
 import javax.swing.SpringLayout;
 
-public class GraphFrame extends JPanel implements MouseListener,  MouseMotionListener {
+public class GraphFrame extends JPanel implements  MouseListener,  MouseMotionListener {
 	private static final long serialVersionUID = -741311884013992607L;
 	private List<Function> functions;
 	
@@ -592,8 +594,6 @@ public class GraphFrame extends JPanel implements MouseListener,  MouseMotionLis
 		MovingVPointIndex = -1;
 		MovingPointIndex = -1;
 		MouseStart = null;
-		
 	}
-
 
 }

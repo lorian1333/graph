@@ -27,7 +27,8 @@ public class SettingsFrame extends JFrame implements ActionListener {
 	private static final long serialVersionUID = 3855842044783300106L;
 	private final String[] labels = {"Window", "Xmin:", "Xmax:", "Ymin:", "Ymax:", "Grid:", "Interface", "Look and Feel:" };
 	private final String[] GUIstyles = {"System default", "Cross-platform" };
-	//WindowSettings settings;
+	private SpinnerModel[] smodels = new SpinnerModel[4];
+	
 	public SettingsFrame(Point point)
 	{
 		//this.settings = currentSettings;
@@ -35,7 +36,7 @@ public class SettingsFrame extends JFrame implements ActionListener {
 		{
 			@Override
 			public void windowClosing(WindowEvent e) {
-				( (SettingsFrame) e.getSource()).Close();
+				((SettingsFrame) e.getSource()).Close();
 			}
 			@Override
 			public void windowDeactivated(WindowEvent e){}
@@ -57,7 +58,7 @@ public class SettingsFrame extends JFrame implements ActionListener {
 		this.setResizable(false);
 		
 		initUI();
-		Restore();
+		this.setVisible(true);
 	}
 	private void initUI()
 	{
@@ -143,6 +144,7 @@ public class SettingsFrame extends JFrame implements ActionListener {
 					smodel = new SpinnerNumberModel(0, Long.MIN_VALUE, Long.MAX_VALUE, 1);
 					break;
 				}
+				smodels[i-1] = smodel;
 				
 				JSpinner spinner = new JSpinner(smodel);
 				spinner.setFont(spinner.getFont().deriveFont(13.0f)); 
@@ -210,15 +212,19 @@ public class SettingsFrame extends JFrame implements ActionListener {
 		this.setSize(300, i* height + 120);
 		
 	}
-	public void Restore()
-	{
-		this.setVisible(true);
-	}
 	public void Close()
 	{
 		this.setVisible(false);
 		this.dispose();
 	}
+	public void ResetWindowSettings()
+	{
+		smodels[0].setValue(-10.0);
+		smodels[1].setValue(10.0);
+		smodels[2].setValue(-10.0);
+		smodels[3].setValue(10.0);
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getActionCommand()=="OK")
