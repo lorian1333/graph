@@ -28,7 +28,7 @@ public class SettingsFrame extends JFrame implements ActionListener {
 	private final String[] labels = {"Window", "Xmin:", "Xmax:", "Ymin:", "Ymax:", "Grid:", "Interface", "Look and Feel:" };
 	private final String[] GUIstyles = {"System default", "Cross-platform" };
 	private SpinnerModel[] smodels = new SpinnerModel[4];
-	
+	private boolean initialized = false;
 	public SettingsFrame(Point point)
 	{
 		//this.settings = currentSettings;
@@ -210,7 +210,7 @@ public class SettingsFrame extends JFrame implements ActionListener {
 		buttonCons.setY(Spring.constant(40 + height * i));
 		this.add(panel);
 		this.setSize(300, i* height + 120);
-		
+		initialized = true;
 	}
 	public void Close()
 	{
@@ -219,6 +219,7 @@ public class SettingsFrame extends JFrame implements ActionListener {
 	}
 	public void ResetWindowSettings()
 	{
+		if(!initialized) return;
 		smodels[0].setValue(-10.0);
 		smodels[1].setValue(10.0);
 		smodels[2].setValue(-10.0);

@@ -642,7 +642,8 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		FileName = "Untitled";
 		empty = true;
 		UpdateWindowSettings();
-		settingsframe.ResetWindowSettings();
+		if(settingsframe != null)
+			settingsframe.ResetWindowSettings();
 		Render();
 	}
 
