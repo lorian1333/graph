@@ -1,4 +1,4 @@
 TODO:
 - Add a nicer way to type the functions.
 - Add screenshot support.
-- Finish progressbar
+- Add other languages.
