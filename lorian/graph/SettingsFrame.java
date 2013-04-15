@@ -29,6 +29,8 @@ public class SettingsFrame extends JFrame implements ActionListener {
 	private final String[] GUIstyles = {"System default", "Cross-platform" };
 	private SpinnerModel[] smodels = new SpinnerModel[4];
 	private boolean initialized = false;
+	
+	private boolean autoChange = false;
 	public SettingsFrame(Point point)
 	{
 		//this.settings = currentSettings;
@@ -102,8 +104,11 @@ public class SettingsFrame extends JFrame implements ActionListener {
 						public void stateChanged(ChangeEvent e) {
 							SpinnerModel model = (SpinnerModel) e.getSource();
 							GraphFunctionsFrame.settings.setXmin( ((Double)model.getValue()).longValue());
-							GraphFunctionsFrame.FileSaved = false;
-							GraphFunctionsFrame.UpdateTitle();
+							if(!autoChange)
+							{
+								GraphFunctionsFrame.FileSaved = false;
+								GraphFunctionsFrame.UpdateTitle();
+							}
 						}
 					});
 					break;
@@ -113,8 +118,11 @@ public class SettingsFrame extends JFrame implements ActionListener {
 						public void stateChanged(ChangeEvent e) {
 							SpinnerModel model = (SpinnerModel) e.getSource();
 							GraphFunctionsFrame.settings.setXmax(((Double)model.getValue()).longValue());
-							GraphFunctionsFrame.FileSaved = false;
-							GraphFunctionsFrame.UpdateTitle();
+							if(!autoChange)
+							{
+								GraphFunctionsFrame.FileSaved = false;
+								GraphFunctionsFrame.UpdateTitle();
+							}
 						}
 					});
 					break;
@@ -124,8 +132,11 @@ public class SettingsFrame extends JFrame implements ActionListener {
 						public void stateChanged(ChangeEvent e) {
 							SpinnerModel model = (SpinnerModel) e.getSource();
 							GraphFunctionsFrame.settings.setYmin( ((Double)model.getValue()).longValue());
-							GraphFunctionsFrame.FileSaved = false;
-							GraphFunctionsFrame.UpdateTitle();
+							if(!autoChange)
+							{
+								GraphFunctionsFrame.FileSaved = false;
+								GraphFunctionsFrame.UpdateTitle();
+							}
 						}
 					});
 					break;
@@ -135,8 +146,11 @@ public class SettingsFrame extends JFrame implements ActionListener {
 						public void stateChanged(ChangeEvent e) {
 							SpinnerModel model = (SpinnerModel) e.getSource();
 							GraphFunctionsFrame.settings.setYmax( ((Double)model.getValue()).longValue());
-							GraphFunctionsFrame.FileSaved = false;
-							GraphFunctionsFrame.UpdateTitle();
+							if(!autoChange)
+							{
+								GraphFunctionsFrame.FileSaved = false;
+								GraphFunctionsFrame.UpdateTitle();
+							}
 						}
 					});
 					break;
@@ -220,10 +234,12 @@ public class SettingsFrame extends JFrame implements ActionListener {
 	public void ResetWindowSettings()
 	{
 		if(!initialized) return;
+		autoChange = true;
 		smodels[0].setValue(-10.0);
 		smodels[1].setValue(10.0);
 		smodels[2].setValue(-10.0);
 		smodels[3].setValue(10.0);
+		autoChange = false;
 	}
 	
 	@Override

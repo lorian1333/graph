@@ -6,6 +6,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
+import java.awt.PageAttributes.OriginType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -88,7 +89,8 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	public JPanel MainPanel;
 	
 	public JProgressBar progressbar;
-	public JLabel statusLabel;
+	private JPanel progressPanel;
+	private boolean doProgressBar = false;
 	
 	public GraphFunctionsFrame(boolean applet)
 	{
@@ -106,6 +108,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		{
 			this.setVisible(true);
 		}
+		Render();
 
 	}
 	public GraphFunctionsFrame(boolean applet, boolean forceSmall)
@@ -125,6 +128,8 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		{
 			this.setVisible(true);
 		}
+		
+		Render();
 
 	}
 	private Color ChooseColor(Component component, String title, Color initialColor)
@@ -400,19 +405,16 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		buttonPanelCons.setY(Spring.constant(10 + height *MaxFunctions));
 		panel.add(buttonpanel);
 		
-		JPanel progressPanel = new JPanel();
-		progressPanel.setLayout(new GridLayout(2, 1)); 
+		progressPanel = new JPanel();
+		//progressPanel.setLayout(new GridLayout(2, 1)); 
 		progressbar = new JProgressBar(0, 100);
 		progressbar.setValue(0);
 		progressbar.setPreferredSize(new Dimension(300, 20));
 		progressbar.setStringPainted(true);
-		progressbar.setVisible(false);
-		statusLabel = new JLabel("Done");
-		statusLabel.setVisible(false);
+		//progressbar.setVisible(false);
 		
-		progressPanel.add(statusLabel);
 		progressPanel.add(progressbar);
-		
+		progressPanel.setVisible(false);
 		
 		panel.add(progressPanel);
 		
@@ -422,7 +424,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 			progressCons.setY(Spring.constant(height * MaxFunctions + 50));
 		else
 			progressCons.setY(Spring.constant(745));
-
+			
 		if(applet) MainPanel.setLayout(new BorderLayout());
 		else this.setLayout(new BorderLayout());
 		
@@ -442,7 +444,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		}
 		InitMenu();
 		
-		Render();
+
 		if(!applet)
 			this.pack();
 		
@@ -504,6 +506,11 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	private boolean OpenFile(String filePath)
 	{
 		System.out.println("Opening " + filePath);
+		progressbar.setValue(0);
+
+		progressbar.setString(String.format("Opening %s...... (%d%%)", (new File(filePath)).getName(), progressbar.getValue()));
+		progressPanel.setVisible(true);
+		progressPanel.paintAll(progressPanel.getGraphics());
 		GraphFileReader fr = new GraphFileReader(filePath);
 		try
 		{
@@ -513,12 +520,16 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		{
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(this, "Could not open " + (new File(filePath)).getName(), "Error", JOptionPane.ERROR_MESSAGE);
+			progressPanel.setVisible(false);
 			return false;
 		}
-
+		doProgressBar = false;
 		ClearAll();
-		
-		
+		doProgressBar = true;
+		progressbar.setValue(20);
+		progressbar.setString(String.format("Opening %s...... (%d%%)", (new File(filePath)).getName(), progressbar.getValue()));
+		progressPanel.paintAll(progressPanel.getGraphics());
+
 		String[] reconstructedfunctions = fr.getReconstructedFunctionStrings();
 		short[] indexes = fr.getFunctionIndexes();
 		Function[] functions = fr.getReconstructedFunctions();
@@ -539,9 +550,15 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 			this.labels.set(j, label);
 			this.textfields.set(j, textfield);
 		}
-		
+		progressbar.setValue(50);
+		progressbar.setString(String.format("Drawing functions... (%d%%)", progressbar.getValue()));
+		progressPanel.paintAll(progressPanel.getGraphics());
 		UpdateWindowSettings();
 		Render();
+
+		
+		progressPanel.setVisible(false);
+		
 		FilePath = filePath;
 		FilePathPresent = true;
 		FileName = (new File(filePath)).getName();
@@ -606,7 +623,10 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		
 		if(n == JOptionPane.YES_OPTION)
 		{
-			return SaveFileAs();
+			if(FilePathPresent)
+				return SaveFile();
+			else
+				return SaveFileAs();
 		}
 		else if(n == JOptionPane.NO_OPTION)
 		{
@@ -647,14 +667,25 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		Render();
 	}
 
-	
+	private void ProgressbarTest()
+	{
+		for(int i=0;i<10;i++)
+		{
+			progressbar.setValue((i+1)*10);
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return;
+			} 
+		}
+	}
 	private void Render()
 	{
+	
 		System.out.println("Parsing functions...");
-		this.progressbar.setVisible(true);
-		this.progressbar.setValue(0);
-		this.statusLabel.setVisible(true);
-		
+		int progstart = progressbar.getValue();
 		functions.clear();
 		for(int i=0;i<GraphFunctionsFrame.MaxFunctions;i++)
 		{
@@ -667,7 +698,12 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 				//System.out.println("Y" + (i+1) + " is empty. Skipping.");
 				parseresult.setState(ParseResultIcon.State.EMPTY);
 				parseresults.set(i, parseresult);
-				progressbar.setValue((int) (((double)(i+1)/(double)MaxFunctions) * 100.0));
+				if(doProgressBar)
+				{
+					progressbar.setValue(progstart + (int) (((double)(i+1)/(double)MaxFunctions) * (100-progstart)));
+					progressbar.setString(String.format("Drawing functions... (%d%%)", progressbar.getValue()));
+					progressPanel.paintAll(progressPanel.getGraphics());
+				}
 				continue;
 			}
 			empty = false;
@@ -679,7 +715,12 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 				functions.add(f);
 				parseresult.setState(ParseResultIcon.State.ERROR);
 				parseresults.set(i, parseresult);
-				progressbar.setValue((int) (((double)(i+1)/(double)MaxFunctions) * 100.0));
+				if(doProgressBar)
+				{
+					progressbar.setValue(progstart + (int) (((double)(i+1)/(double)MaxFunctions) * (100-progstart)));
+					progressbar.setString(String.format("Drawing functions... (%d%%)", progressbar.getValue()));
+					progressPanel.paintAll(progressPanel.getGraphics());
+				}
 				continue;
 				
 			}
@@ -690,69 +731,31 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 			parseresult.setState(ParseResultIcon.State.OK);
 			parseresults.set(i, parseresult);
 			System.out.println("Added function Y" + (i+1) + " with color " + c.getRed() + "," + c.getGreen() + "," + c.getBlue());
-			progressbar.setValue((int) (((double)(i+1)/(double)MaxFunctions) * 100.0));
+			if(doProgressBar)
+			{
+				progressbar.setValue(progstart + (int) (((double)(i+1)/(double)MaxFunctions) * (100-progstart)));
+				progressbar.setString(String.format("Drawing functions... (%d%%)", progressbar.getValue()));
+				progressPanel.paintAll(progressPanel.getGraphics());
+			}
 		}
-		progressbar.setVisible(false);
-		statusLabel.setVisible(false);
+		progressbar.setValue(100);
+		progressbar.setString(String.format("Done... (%d%%)", progressbar.getValue()));
+		progressPanel.paintAll(progressPanel.getGraphics());
 		gframe.Update(functions);
 		this.repaint();
 		if(calcframe != null)
 		{
 			calcframe.Update();
 		}
-		System.out.println("Done");		
+		System.out.println("Done");
+		
+		//ProgressbarTest();
 	}
 
-	public static void WriterTest()
-	{
-		GraphFileWriter fw = new GraphFileWriter("test.bin");
-		WindowSettings wsettings = new WindowSettings();
-		fw.setWindowSettings(wsettings);
-		Function f = new Function("sin(x)cos(x)");
-		Function g = new Function("4x^3+3x+2");
-		
-		fw.addFunction(f, 0);
-		fw.addFunction(g, 3);
-		try {
-			fw.write();
-		} catch (IOException e) {
-			e.printStackTrace();
-			return;
-		} 
-		System.out.println("Done writing");
-		
 	
-	}
-	private static void ReaderTest()
-	{
-		GraphFileReader fr = new GraphFileReader("test.lgf");
-		try {
-			fr.read();
-		} catch (IOException e) {
-			e.printStackTrace();
-			return;
-		}
-		System.out.println("Done reading");
-		String[] reconstructedfunctions = fr.getReconstructedFunctionStrings();
-		short[] indexes = fr.getFunctionIndexes();
-		int i = 0;
-		for(String fstr : reconstructedfunctions)
-		{
-			if(fstr.trim().equalsIgnoreCase(""))
-			{
-				i++;
-				continue;
-			}
-			System.out.println(indexes[i] + ": " + fstr);
-			i++;
-		}
-	}
 	public static void main(String[] args)
 	{
 		System.out.println("Graph v" + GraphFunctionsFrame.version);
-		
-		//WriterTest();
-		//ReaderTest();
 		
 		GraphFunctionsFrame.funcframe = new GraphFunctionsFrame(false);
 	}
