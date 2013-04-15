@@ -319,19 +319,31 @@ public class GraphFileReader {
 					}
 					else 
 					{
-						if(nextNegative) s += '-';
+						if(nextNegative)
+						{
+							s += '-';
+							nextNegative = false;
+						}
 						s += tmp;
 					}
 				}
 				else 
 				{
-					if(nextNegative) s += '-';
+					if(nextNegative)
+					{
+						s += '-';
+						nextNegative = false;
+					}
 					s += tmp;
 				}
 			}
 			else 
 			{
-				if(nextNegative) s += '-';
+				if(nextNegative)
+				{
+					s += '-';
+					nextNegative = false;
+				}
 				s += tmp;
 			}
 			
