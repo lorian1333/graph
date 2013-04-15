@@ -290,6 +290,7 @@ public class GraphFileReader {
 	{
 		String s = "";
 		Factor.Type previousType = Factor.Type.SPECIAL;
+		boolean nextNegative=  false;
 		for(int i=0;i<td.factorscount;i++)
 		{
 			FactorData fd = td.factors[i];
@@ -308,8 +309,31 @@ public class GraphFileReader {
 			{
 				if(td.factorscount == 1) s += tmp;
 			}
-			else
+			else if(tmp.equalsIgnoreCase("-1"))
+			{
+				if(i < td.factorscount-1)
+				{
+					if(td.factors[i+1].type != Factor.Type.SPECIAL)
+					{
+						nextNegative = !nextNegative;
+					}
+					else 
+					{
+						if(nextNegative) s += '-';
+						s += tmp;
+					}
+				}
+				else 
+				{
+					if(nextNegative) s += '-';
+					s += tmp;
+				}
+			}
+			else 
+			{
+				if(nextNegative) s += '-';
 				s += tmp;
+			}
 			
 			
 			previousType = fd.type;
