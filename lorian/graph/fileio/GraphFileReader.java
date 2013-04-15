@@ -215,6 +215,10 @@ public class GraphFileReader {
 					{
 						s = s.substring(0, s.length()-2);
 					}
+					else if(s.endsWith("^-1"))
+					{
+						s = String.format("1/%s", s.subSequence(0, s.length()-3)); 
+					}
 				}
 				else
 				{
@@ -235,6 +239,14 @@ public class GraphFileReader {
 					{
 						s = s.substring(0, s.length()-2);
 					}
+					else if(s.endsWith("^-1"))
+					{
+						if((new Function(s.substring(0, s.length()-3))).getTerms().size() == 1)
+							s = String.format("1/%s", s.subSequence(1, s.length()-4)); 
+						else
+						s = String.format("1/%s", s.subSequence(0, s.length()-3)); 
+					}
+					
 				}
 				else
 				{
@@ -294,7 +306,7 @@ public class GraphFileReader {
 		for(int i=0;i<td.factorscount;i++)
 		{
 			FactorData fd = td.factors[i];
-
+			
 			if(td.factorscount > 1 && s.trim().length() > 0 && !(previousType == Factor.Type.CONSTANT && (fd.type == Factor.Type.ARGUMENT || fd.type == Factor.Type.FUNCTION || fd.type == Factor.Type.PARENTHESES)))
 			{	
 				if(previousType == fd.type)
@@ -305,6 +317,9 @@ public class GraphFileReader {
 			}
 			
 			String tmp =  reconstructFactor(fd);
+			if(tmp.startsWith("1/") && s.length() > 0)
+				s += "*";
+			
 			if(tmp.equalsIgnoreCase("1"))
 			{
 				if(td.factorscount == 1) s += tmp;
