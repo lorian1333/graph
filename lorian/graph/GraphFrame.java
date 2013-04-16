@@ -1,5 +1,7 @@
 package lorian.graph;
 
+import lorian.graph.fileio.ExtensionFileFilter;
+import lorian.graph.fileio.JFileChooserWithConfirmation;
 import lorian.graph.function.*;
 
 import java.awt.BasicStroke;
@@ -12,21 +14,31 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
+import javax.swing.JFileChooser;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.Spring;
 import javax.swing.SpringLayout;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.plaf.basic.BasicComboBoxUI.ItemHandler;
 
-public class GraphFrame extends JPanel implements  MouseListener,  MouseMotionListener {
+public class GraphFrame extends JPanel implements  ActionListener, MouseListener,  MouseMotionListener {
 	private static final long serialVersionUID = -741311884013992607L;
 	private List<Function> functions;
 	
@@ -80,7 +92,8 @@ public class GraphFrame extends JPanel implements  MouseListener,  MouseMotionLi
 		{
 			e.printStackTrace();
 		}
-
+		
+		InitPopupMenu();
 		InitCalcPanel();	
 		CalculateAxes();
 	}
@@ -99,6 +112,37 @@ public class GraphFrame extends JPanel implements  MouseListener,  MouseMotionLi
 		//cons.setX(Spring.constant((int) (size.getWidth() - CalcPanel.getPreferredSize().getWidth())));
 		cons.setX(Spring.constant(0));
 		cons.setY(Spring.constant((int) (size.getHeight() - CalcPanel.getPreferredSize().getHeight()) + 10)); 
+	}
+	private void InitPopupMenu()
+	{
+		final JPopupMenu menu = new JPopupMenu();
+		JMenuItem screenShotItem = new JMenuItem("Save screenshot");
+		screenShotItem.setName("screenshot");
+		menu.add(screenShotItem);
+		screenShotItem.addActionListener(this);
+		this.addMouseListener(new MouseListener()
+		{
+			@Override
+			public void mouseClicked(MouseEvent e) {}
+			@Override
+			public void mouseEntered(MouseEvent e) {}
+			@Override
+			public void mouseExited(MouseEvent e) {}
+
+			public void mousePressed( MouseEvent e )  
+            { checkForTriggerEvent( e ); }  
+
+			public void mouseReleased( MouseEvent e )  
+            { checkForTriggerEvent( e ); }  
+			
+			 private void checkForTriggerEvent( MouseEvent e )  
+	            {  
+	               if(e.isPopupTrigger())  
+	                  menu.show(e.getComponent(), e.getX(), e.getY());  
+	            }  
+
+		}
+		);
 	}
 	private void CalculateAxes()
 	{
@@ -495,6 +539,58 @@ public class GraphFrame extends JPanel implements  MouseListener,  MouseMotionLi
 		}
 		return -1;
 	}
+	private void TakeScreenShot(boolean clearStuff)
+	{
+		if(clearStuff)
+		{
+			this.setCalcPanelVisible(false);
+			this.setCalcPanelVisible(false);
+			this.SetVisualPointsVisible(false);
+			this.ClearVisualPoints();
+			this.SetVisualPointsVisible(false);
+			this.SetFillFunction(false);
+		}
+		
+		BufferedImage bImg = new BufferedImage((int)size.getWidth(), (int)size.getHeight(), BufferedImage.TYPE_INT_RGB);
+		Graphics gImg = bImg.getGraphics();
+		gImg.setColor(Color.WHITE);
+		gImg.clearRect(0, 0, bImg.getWidth(), bImg.getHeight());
+		this.paintAll(gImg);
+		
+		try
+		{
+			JFileChooserWithConfirmation saveFile;
+			if(!GraphFunctionsFrame.FilePathPresent)
+				saveFile = new JFileChooserWithConfirmation(System.getProperty("user.dir"));
+			else
+				saveFile = new JFileChooserWithConfirmation(new File(GraphFunctionsFrame.FilePath));
+			 
+			FileFilter saveFilter = new ExtensionFileFilter("PNG Image", new String[] { "PNG" });
+			saveFile.setFileFilter(saveFilter);
+			
+			int saveOption = saveFile.showSaveDialog(this);
+			if(saveOption != JFileChooser.APPROVE_OPTION)
+			{
+				System.out.println("Canceled by user");
+				return;
+			}
+			 
+			File output;
+			if(saveFile.getSelectedFile().getAbsolutePath().toLowerCase().endsWith(".png")) output = saveFile.getSelectedFile();
+			else output = new File(saveFile.getSelectedFile().getAbsolutePath() + ".png");
+			
+			ImageIO.write(bImg,"png", output);
+			System.out.println("Done");
+			JOptionPane.showMessageDialog(this, "Screenshot saved", "Graph", JOptionPane.INFORMATION_MESSAGE);
+
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+		}
+		
+	}
+	
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		//System.out.println(e.getPoint());
@@ -574,26 +670,30 @@ public class GraphFrame extends JPanel implements  MouseListener,  MouseMotionLi
 		setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR)); 
 	
 	}
-	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if(((JMenuItem) e.getSource()).getName().equalsIgnoreCase("screenshot"))
+		{
+			System.out.println("Taking screenshot");
+			TakeScreenShot(false);
+		}
+		
+	}
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if(CalcPanelVisible)
 			((CalculateFrame) this.CalcPanel.getComponent(0)).Update();
 	}
 	@Override
-	public void mouseEntered(MouseEvent e) {
-		
-	}
-	@Override
-	public void mouseExited(MouseEvent e) {
-		
-	}
-	
-	@Override
 	public void mouseReleased(MouseEvent e) {
 		MovingVPointIndex = -1;
 		MovingPointIndex = -1;
 		MouseStart = null;
 	}
-
+	
+	@Override
+	public void mouseEntered(MouseEvent e) {}
+	@Override
+	public void mouseExited(MouseEvent e) {}
+	
 }

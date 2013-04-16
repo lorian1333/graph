@@ -71,10 +71,11 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	private final Color[] defaultColors = { new Color(37, 119, 255), new Color(224,0,0).brighter(), new Color(211,0,224).brighter(), new Color(0,158,224).brighter(), new Color(0,255,90), new Color(221,224,0).brighter(), new Color(224,84,0).brighter() };  
 
 	public static boolean FileSaved = false;
-	private static boolean FilePathPresent = false;
-	private static String FileName = "Untitled";
-	private static String FilePath;
-	private static final String FileExt = "lgf";
+	public static boolean FilePathPresent = false;
+	public static String FileName = "Untitled";
+	public static String FilePath;
+	public static final String FileExt = "lgf";
+	
 	private boolean empty = true;
 	
 	private static GraphFunctionsFrame funcframe;
