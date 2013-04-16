@@ -19,8 +19,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -36,7 +34,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.Spring;
 import javax.swing.SpringLayout;
 import javax.swing.filechooser.FileFilter;
-import javax.swing.plaf.basic.BasicComboBoxUI.ItemHandler;
 
 public class GraphFrame extends JPanel implements  ActionListener, MouseListener,  MouseMotionListener {
 	private static final long serialVersionUID = -741311884013992607L;

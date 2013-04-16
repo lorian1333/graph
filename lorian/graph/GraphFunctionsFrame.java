@@ -4,9 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.Toolkit;
-import java.awt.PageAttributes.OriginType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -668,20 +666,6 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		Render();
 	}
 
-	private void ProgressbarTest()
-	{
-		for(int i=0;i<10;i++)
-		{
-			progressbar.setValue((i+1)*10);
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return;
-			} 
-		}
-	}
 	private void Render()
 	{
 	
