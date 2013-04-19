@@ -40,6 +40,7 @@ public class Calculate {
 		for(double x = LowX + dx; x < UpX; x += dx)
 		{
 			val = f.Calc(x);
+			if(Double.isInfinite(-val)) return new PointXY(returnRounded(Util.round(x, 6)), val);
 			if(val < lowest)
 			{
 				lowest = val;
@@ -57,12 +58,14 @@ public class Calculate {
 		for(double x = LowX; x < UpX; x += dx)
 		{
 			val = f.Calc(x);
+			if(Double.isInfinite(val)) return new PointXY(returnRounded(Util.round(x, 6)), val);
 			if(val > highest)
 			{
 				highest = val;
 				highestX = x;
 			}
 		}
+		System.out.println("y=" + f.Calc(highestX));
 		return new PointXY(returnRounded(Util.round(highestX, 6)), returnRounded(f.Calc(highestX)));
 	}
 	public static PointXY Intersect(Function f, Function g, double LowX, double UpX)
