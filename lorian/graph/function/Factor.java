@@ -273,9 +273,11 @@ public class Factor {
 	{
 		if(!Util.StringContains(s, '^'))
 		{
-			exponentfunc.Parse("1");
+			//exponentfunc.Parse("1");
+			value = 1;
 			return true;
 		} 
+		value = 0;
 		String exponentstr = s.substring(s.indexOf('^')+1);
 		return exponentfunc.Parse(exponentstr);
 		//return true;
@@ -325,7 +327,6 @@ public class Factor {
 	}
 	public boolean Parse(String s)
 	{
-		
 		if(s.charAt(0) == argumentChar)
 		{
 			type = Type.ARGUMENT;
@@ -359,7 +360,7 @@ public class Factor {
 			parsed =  ParseParentheses(s);
 			return parsed;
 		}
-		else if(!Util.StringContains(s, argumentChar))
+		else if(!Util.StringContains(s, "abcdefghijklmnopqrstuvwxyz")) 
 		{
 			type = Type.CONSTANT;
 			parsed = ParseConstant(s);
@@ -382,7 +383,9 @@ public class Factor {
 		}
 		else if(type == Type.ARGUMENT)
 		{
-			return Math.pow(arg, exponentfunc.Calc(arg)); 
+			if(value == 0)
+				return Math.pow(arg, exponentfunc.Calc(arg));
+			else return arg;
 		}
 		else if(type == Type.PARENTHESES)
 		{
