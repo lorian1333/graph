@@ -65,7 +65,6 @@ public class Calculate {
 				highestX = x;
 			}
 		}
-		System.out.println("y=" + f.Calc(highestX));
 		return new PointXY(returnRounded(Util.round(highestX, 6)), returnRounded(f.Calc(highestX)));
 	}
 	public static PointXY Intersect(Function f, Function g, double LowX, double UpX)
