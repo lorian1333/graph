@@ -208,7 +208,11 @@ public class GraphFileReader {
 			case ARGUMENT:
 			{
 				s += "" + argumentChar + '^';
-				if(fd.exponentfunc.termscount==1 && fd.exponentfunc.terms[0].factorscount==1)
+				if(fd.exponentfunc.termscount==0)
+				{
+					s = "" + argumentChar;
+				}
+				else if(fd.exponentfunc.termscount==1 && fd.exponentfunc.terms[0].factorscount==1)
 				{
 					s += reconstructFunction(fd.exponentfunc);
 					if(s.endsWith("^1"))
