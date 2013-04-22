@@ -6,7 +6,6 @@ TODO:
 	- Add a way to change the language in settingsframe
 - Make the FileChooser bigger in Linux	
 - Better color chooser
-- Fix bug: Y1=x becomes Y1=x^() when reconstructed
 
 PLANS:
 - Fullscreen mode
