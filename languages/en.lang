@@ -29,8 +29,9 @@ message.confirmchanges=Do you want to save changes to %s?
 message.confirmoverwrite_0=%s already exists.
 message.confirmoverwrite_1=Are you sure you want to overwrite it?
 message.error=Error
-message.progressbardrawingfunctions=Drawing functions... (%d%%)
-message.progressbardone=Done... (%d%%)
+message.progressbar.opening=Opening %s... (%d%%)
+message.progressbar.drawingfunctions=Drawing functions... (%d%%)
+message.progressbar.done=Done... (%d%%)
 message.screenshotsaved=Screenshot saved
 color.choosecolor=Choose color
 

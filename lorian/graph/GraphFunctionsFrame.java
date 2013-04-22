@@ -635,8 +635,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	{
 		System.out.println("Opening " + filePath);
 		progressbar.setValue(0);
-		//TODO Translate this stuff
-		progressbar.setString(String.format("Opening %s...... (%d%%)", (new File(filePath)).getName(), progressbar.getValue()));
+		progressbar.setString(String.format(Translate("message.progressbar.opening"), (new File(filePath)).getName(), progressbar.getValue()));
 		progressPanel.setVisible(true);
 		progressPanel.paintAll(progressPanel.getGraphics());
 		GraphFileReader fr = new GraphFileReader(filePath);
@@ -655,7 +654,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		ClearAll();
 		doProgressBar = true;
 		progressbar.setValue(20);
-		progressbar.setString(String.format("Opening %s...... (%d%%)", (new File(filePath)).getName(), progressbar.getValue()));
+		progressbar.setString(String.format(Translate("message.progressbar.opening"), (new File(filePath)).getName(), progressbar.getValue()));
 		progressPanel.paintAll(progressPanel.getGraphics());
 
 		String[] reconstructedfunctions = fr.getReconstructedFunctionStrings();
@@ -679,7 +678,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 			this.textfields.set(j, textfield);
 		}
 		progressbar.setValue(50);
-		progressbar.setString(String.format(Translate("message.progressbardrawingfunctions"), progressbar.getValue()));
+		progressbar.setString(String.format(Translate("message.progressbar.drawingfunctions"), progressbar.getValue()));
 		progressPanel.paintAll(progressPanel.getGraphics());
 		UpdateWindowSettings();
 		Render();
@@ -787,7 +786,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		FilePath = "";
 		FileSaved = false;
 		FilePathPresent = false;
-		FileName = "Untitled";
+		FileName = Translate("files.untitled"); 
 		empty = true;
 		UpdateWindowSettings();
 		if(settingsframe != null)
@@ -815,7 +814,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 				if(doProgressBar)
 				{
 					progressbar.setValue(progstart + (int) (((double)(i+1)/(double)MaxFunctions) * (100-progstart)));
-					progressbar.setString(String.format(Translate("message.progressbardrawingfunctions"), progressbar.getValue()));
+					progressbar.setString(String.format(Translate("message.progressbar.drawingfunctions"), progressbar.getValue()));
 					progressPanel.paintAll(progressPanel.getGraphics());
 				}
 				continue;
@@ -832,7 +831,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 				if(doProgressBar)
 				{
 					progressbar.setValue(progstart + (int) (((double)(i+1)/(double)MaxFunctions) * (100-progstart)));
-					progressbar.setString(String.format(Translate("message.progressbardrawingfunctions"), progressbar.getValue()));
+					progressbar.setString(String.format(Translate("message.progressbar.drawingfunctions"), progressbar.getValue()));
 					progressPanel.paintAll(progressPanel.getGraphics());
 				}
 				continue;
@@ -848,12 +847,12 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 			if(doProgressBar)
 			{
 				progressbar.setValue(progstart + (int) (((double)(i+1)/(double)MaxFunctions) * (100-progstart)));
-				progressbar.setString(String.format(Translate("message.progressbardrawingfunctions"), progressbar.getValue()));
+				progressbar.setString(String.format(Translate("message.progressbar.drawingfunctions"), progressbar.getValue()));
 				progressPanel.paintAll(progressPanel.getGraphics());
 			}
 		}
 		progressbar.setValue(100);
-		progressbar.setString(String.format(Translate("message.progressbardone"), progressbar.getValue()));
+		progressbar.setString(String.format(Translate("message.progressbar.done"), progressbar.getValue()));
 		progressPanel.paintAll(progressPanel.getGraphics());
 		gframe.Update(functions);
 		this.repaint();
