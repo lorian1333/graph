@@ -1,4 +1,8 @@
 TODO:
-- Add a nicer way to type the functions.
-- Add screenshot support.
-- Add other languages.
+- Add a nicer way to type the functions. (WIP)
+- Add multi-language support:
+	- Finish FileChooser localization in Linux 
+	- Add more languages
+	- Add a way to change the language in settingsframe
+- Make the FileChooser bigger in Linux	
+- Fix bug: Y1=x becomes Y1=x^() when reconstructed
