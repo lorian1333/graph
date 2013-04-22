@@ -113,7 +113,7 @@ public class GraphFrame extends JPanel implements  ActionListener, MouseListener
 	private void InitPopupMenu()
 	{
 		final JPopupMenu menu = new JPopupMenu();
-		JMenuItem screenShotItem = new JMenuItem("Save screenshot");
+		JMenuItem screenShotItem = new JMenuItem(GraphFunctionsFrame.Translate("menu.savescreenshot"));
 		screenShotItem.setName("screenshot");
 		menu.add(screenShotItem);
 		screenShotItem.addActionListener(this);
@@ -152,7 +152,7 @@ public class GraphFrame extends JPanel implements  ActionListener, MouseListener
 			this.settings = settings;
 			if(settings.getXmax() <= settings.getXmin() || settings.getYmax() <= settings.getYmin())
 			{
-				System.out.println("Error in windowsettings");
+				System.out.println(GraphFunctionsFrame.Translate("message.windowsettingserror"));
 				windowerror = true;
 			}
 			else windowerror = false;
@@ -578,7 +578,7 @@ public class GraphFrame extends JPanel implements  ActionListener, MouseListener
 			
 			ImageIO.write(bImg,"png", output);
 			System.out.println("Done");
-			JOptionPane.showMessageDialog(this, "Screenshot saved", "Graph", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(this, GraphFunctionsFrame.Translate("message.screenshotsaved"), "Graph", JOptionPane.INFORMATION_MESSAGE);
 
 		}
 		catch(IOException e)

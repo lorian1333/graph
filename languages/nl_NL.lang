@@ -1,0 +1,81 @@
+menu.file=Bestand
+menu.calculate=Berekenen
+menu.help=Help
+
+file.new=Nieuw
+file.open=Openen
+file.save=Opslaan
+file.saveas=Opslaan als
+file.settings=Instellingen
+file.exit=Afsluiten
+ 
+calc.value=Waarde
+calc.zero=Nulpunt
+calc.min=Minimum
+calc.max=Maximum
+calc.intersect=Snijpunt
+calc.deriv=dy/dx
+
+help.about=Over
+
+buttons.draw=Tekenen
+buttons.specialchars=Speciale tekens
+
+files.allfiles=Alle bestanden
+files.graphfiles=Graph-bestanden
+files.untitled=Naamloos
+
+message.windowsettingserror=Verkeerde window-instellingen
+message.confirmchanges=Wilt u de wijzigingen opslaan in %s?
+message.confirmoverwrite_0=%s bestaat al.
+message.confirmoverwrite_1=Weet u zeker dat u het wilt overschrijven?
+message.error=Fout
+message.progressbardrawingfunctions=Functies tekenen... (%d%%)
+message.progressbardone=Klaar... (%d%%)
+message.screenshotsaved=Screenshot opgeslagen
+color.choosecolor=Kleur kiezen
+
+specialchars.title=Speciale karakters
+
+filechooser.lookin=Zoek in:
+filechooser.savein=Opslaan in:
+filechooser.save=Opslaan
+filechooser.open=Openen
+filechooser.filesoftype=Bestandstype:
+filechooser.upfolder=Een map omhoog
+filechooser.filename=Bestandsnaam:
+filechooser.createnewfolder=Nieuwe map aanmakwn
+filechooser.view=Weergave
+filechooser.cancel=Annuleren
+filechooser.update=Updaten
+filechooser.refresh=Vernieuwen
+filechooser.newfolder=Nieuwe Map
+filechooser.list=Lijst
+filechooser.details=Details
+filechooser.help=Help
+filechooser.viewmenu=Weergavemenu
+
+optionpane.cancel=Annuleren
+optionpane.yes=Ja
+optionpane.no=Nee
+optionpane.ok=Ok
+
+menu.savescreenshot=Screenshot opslaan
+
+settings.guistyle.default=Systeemstandaard
+settings.guistyle.crossplatform=Cross-platform
+
+settings.title=Instellingen
+settings.window=Window
+settings.window.grid=Grid:
+settings.interface=Interface
+settings.interface.lookandfeel=Stijl:
+settings.ok=Ok
+
+calcframe.calculate=Berekenen
+calcframe.lowerlimit=Onderste grens
+calcframe.upperlimit=Bovenste grens
+calcframe.function=Functie
+calcframe.message.calczeroerror=Kan nulpunt niet berekenen
+calcframe.message.calcintersectsamefuncerror=Fout: zelfde functie
+calcframe.message.calcintersecterror=Kan snijdpunt niet berekenen

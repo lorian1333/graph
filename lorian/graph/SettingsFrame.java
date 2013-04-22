@@ -25,8 +25,8 @@ import javax.swing.event.ChangeListener;
 
 public class SettingsFrame extends JFrame implements ActionListener {
 	private static final long serialVersionUID = 3855842044783300106L;
-	private final String[] labels = {"Window", "Xmin:", "Xmax:", "Ymin:", "Ymax:", "Grid:", "Interface", "Look and Feel:" };
-	private final String[] GUIstyles = {"System default", "Cross-platform" };
+	private final String[] labels = {"settings.window", "Xmin:", "Xmax:", "Ymin:", "Ymax:", "settings.window.grid", "settings.interface", "settings.interface.lookandfeel" };
+	private 	  String[] GUIstyles = {"settings.guistyle.default", "settings.guistyle.crossplatform" };
 	private SpinnerModel[] smodels = new SpinnerModel[4];
 	private boolean initialized = false;
 	
@@ -56,8 +56,13 @@ public class SettingsFrame extends JFrame implements ActionListener {
 		});
 		this.setLocationRelativeTo(null);
 		this.setLocation((int) point.getX() + 450, (int) point.getY() + 200);
-		this.setTitle("Settings");
+		this.setTitle(GraphFunctionsFrame.Translate("settings.title"));
 		this.setResizable(false);
+		
+		for(int i=0;i<GUIstyles.length;i++)
+		{
+			GUIstyles[i] = GraphFunctionsFrame.Translate(GUIstyles[i]);
+		}
 		
 		initUI();
 		this.setVisible(true);
@@ -73,7 +78,7 @@ public class SettingsFrame extends JFrame implements ActionListener {
 		int i;
 		for(i=0;i<labels.length;i++)
 		{
-			JLabel label = new JLabel(labels[i]);
+			JLabel label = new JLabel(GraphFunctionsFrame.Translate(labels[i]));
 			
 			if(i==0 || i==6)
 			{
@@ -215,7 +220,7 @@ public class SettingsFrame extends JFrame implements ActionListener {
 			}
 			
 		}
-		JButton button = new JButton("OK");
+		JButton button = new JButton(GraphFunctionsFrame.Translate("settings.ok"));
 		button.setPreferredSize(new Dimension(80, (int) button.getPreferredSize().getHeight()));
 		button.addActionListener(this);
 		panel.add(button);
@@ -244,8 +249,8 @@ public class SettingsFrame extends JFrame implements ActionListener {
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if(e.getActionCommand()=="OK")
-		{
+		if(e.getActionCommand()==GraphFunctionsFrame.Translate("settings.ok"))
+		{  
 			Close();
 			GraphFunctionsFrame.UpdateWindowSettings();
 			GraphFunctionsFrame.UpdateTitle();

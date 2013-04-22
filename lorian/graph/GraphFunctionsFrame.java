@@ -17,7 +17,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
@@ -46,6 +45,8 @@ import lorian.graph.function.Function;
 import lorian.graph.function.MathChars;
 import lorian.graph.function.Util;
 import lorian.graph.fileio.ExtensionFileFilter;
+import lorian.graph.lang.Language;
+
 
 public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyListener, MouseListener, WindowListener {
 	private static final long serialVersionUID = -1090268654275240501L;
@@ -53,6 +54,9 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	public static final String version = "1.0 Beta";
 	public static final short major_version = 0x0001;
 	public static final short minor_version = 0x0000;
+	
+	public static Language language;
+	public static Language lang_en;
 	
 	public static int MaxFunctions = 20;
 	private final Dimension WindowSize = new Dimension(800, 800);
@@ -64,13 +68,21 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	private List<JCheckBox> checkboxes;
 	private List<ParseResultIcon> parseresults;
 	
-	private final String[] buttons = { "Draw", "Special characters"}; 
-	private final String[] calcMenuStrings = { "Value", "Zero", "Minimum", "Maximum", "Intersect", "dy/dx", MathChars.Integral.getCode() + "f(x)dx" };
+	//private final String[] buttons = { "Draw", "Special characters"}; 
+	//private String[] calcMenuStrings = { "Value", "Zero", "Minimum", "Maximum", "Intersect", "dy/dx", MathChars.Integral.getCode() + "f(x)dx" };
+	private final String[] MenuStrings = {"menu.file", "menu.calculate", "menu.help" };
+	private final String[] FileMenuStrings = {"file.new", "file.open", "file.save", "file.saveas", "file.settings", "file.exit" };
+	private final String[] calcMenuStrings = { "calc.value", "calc.zero", "calc.min", "calc.max", "calc.intersect", "calc.deriv",  MathChars.Integral.getCode() + "f(x)dx"};
+	private final String[] HelpMenuStrings = { "help.about" };
+	private final String[] buttons = { "buttons.draw", "buttons.specialchars"}; 
+		
+	
+	
 	private final Color[] defaultColors = { new Color(37, 119, 255), new Color(224,0,0).brighter(), new Color(211,0,224).brighter(), new Color(0,158,224).brighter(), new Color(0,255,90), new Color(221,224,0).brighter(), new Color(224,84,0).brighter() };  
-
+	
 	public static boolean FileSaved = false;
 	public static boolean FilePathPresent = false;
-	public static String FileName = "Untitled";
+	public static String FileName;
 	public static String FilePath;
 	public static final String FileExt = "lgf";
 	
@@ -93,7 +105,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	
 	public GraphFunctionsFrame(boolean applet)
 	{
-		super("Graph v" + version + " - " + FileName + " *");
+		super();
 		textfields = new ArrayList<JTextField>();
 		labels = new ArrayList<JLabel>();
 		checkboxes = new ArrayList<JCheckBox>();
@@ -101,8 +113,10 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		functions = new ArrayList<Function>();
 		settings = new WindowSettings();
 		GraphFunctionsFrame.applet = applet;
+		initLanguages();
 		initUI(false);
-		
+		FileName = Translate("files.untitled");
+		setTitle("Graph v" + version + " - " + FileName + " *");
 		if(!applet)
 		{
 			this.setVisible(true);
@@ -112,7 +126,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	}
 	public GraphFunctionsFrame(boolean applet, boolean forceSmall)
 	{
-		super("Graph v" + version + " - " + FileName + " *");
+		super();
 		textfields = new ArrayList<JTextField>();
 		labels = new ArrayList<JLabel>();
 		checkboxes = new ArrayList<JCheckBox>();
@@ -120,8 +134,10 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		functions = new ArrayList<Function>();
 		settings = new WindowSettings();
 		GraphFunctionsFrame.applet = applet;
+		initLanguages();
 		initUI(forceSmall);
-		
+		FileName = Translate("files.untitled");
+		setTitle("Graph v" + version + " - " + FileName + " *");
 		
 		if(!applet)
 		{
@@ -131,11 +147,124 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		Render();
 
 	}
+	
+	
+	private void initLanguages()
+	{
+		language = new Language();
+		lang_en = new Language();
+		System.out.println("Reading language files...");
+		try {
+			language.readDefault();
+		} catch (IOException e) {
+			System.out.println("Could not read local language file: " + e.getMessage());
+			System.out.println("Switching to English.");
+			
+		}
+		
+		try {
+			lang_en.read("en");
+		} catch (IOException e) {
+			System.out.println("Could not read English language file: " + e.getMessage());
+			System.exit(-1);
+		} 
+		translateOptionPane();
+		translateFileChooser();
+		translateOtherStrings();
+		System.out.println("Done");
+
+	}
+	private void translateFileChooser()
+	{
+		  UIManager.put("FileChooser.lookInLabelText", Translate("filechooser.lookin"));
+		    UIManager.put("FileChooser.saveInLabelText", Translate("filechooser.savein"));
+		    UIManager.put("FileChooser.saveDialogTitleText", Translate("filechooser.save"));
+		    UIManager.put("FileChooser.openDialogTitleText", Translate("filechooser.open"));
+		    UIManager.put("FileChooser.filesOfTypeLabelText", Translate("filechooser.filesoftype"));
+		    UIManager.put("FileChooser.upFolderToolTipText", Translate("filechooser.upfolder"));
+		    UIManager.put("FileChooser.fileNameLabelText",  Translate("filechooser.filename"));
+		    UIManager.put("FileChooser.newFolderToolTipText", Translate("filechooser.newfolder"));
+		    UIManager.put("FileChooser.viewMenuLabelText", Translate("filechooser.view"));
+		    UIManager.put("FileChooser.saveButtonText", Translate("filechooser.save"));
+		    UIManager.put("FileChooser.openButtonText", Translate("filechooser.open"));
+		    UIManager.put("FileChooser.cancelButtonText", Translate("filechooser.cancel"));
+		    UIManager.put("FileChooser.updateButtonText", Translate("filechooser.update"));
+		    UIManager.put("FileChooser.refreshActionLabelText", Translate("filechooser.refresh"));
+		    UIManager.put("FileChooser.newFolderActionLabelText", Translate("filechooser.newfolder"));
+		    UIManager.put("FileChooser.listViewActionLabelText", Translate("filechooser.list"));
+		    UIManager.put("FileChooser.detailsViewActionLabelText", Translate("filechooser.details"));
+		    UIManager.put("FileChooser.helpButtonText", Translate("filechooser.help"));
+		    UIManager.put("FileChooser.saveButtonToolTipText", Translate("filechooser.save"));
+		    UIManager.put("FileChooser.openButtonToolTipText", Translate("filechooser.open"));
+		    UIManager.put("FileChooser.cancelButtonToolTipText", Translate("filechooser.cancel"));
+		    UIManager.put("FileChooser.updateButtonToolTipText", Translate("filechooser.update"));
+		    UIManager.put("FileChooser.helpButtonToolTipText", Translate("filechooser.help"));
+		    UIManager.put("FileChooser.win32.newFolder", Translate("filechooser.newfolder"));
+		    UIManager.put("FileChooser.win32.newFolder.subsequent", Translate("filechooser.newfolder") + " ({0})");
+		    UIManager.put("FileChooser.other.newFolder", Translate("filechooser.newfolder"));
+		    UIManager.put("FileChooser.other.newFolder.subsequent", Translate("filechooser.newfolder") + " ({0})"); 
+		    UIManager.put("FileChooser.listViewButtonToolTipText", Translate("filechooser.list"));
+		    UIManager.put("FileChooser.detailsViewButtonToolTipText", Translate("filechooser.details"));
+		    UIManager.put("FileChooser.viewMenuButtonToolTipText", Translate("filechooser.viewmenu")); 
+		    UIManager.put("FileChooser.acceptAllFileFilterText", Translate("files.allfiles")); 
+	}
+	private void translateOptionPane()
+	{
+		 UIManager.put("OptionPane.cancelButtonText", Translate("optionpane.cancel"));
+		 UIManager.put("OptionPane.noButtonText", Translate("optionpane.no"));
+		 UIManager.put("OptionPane.okButtonText", Translate("optionpane.ok"));
+		 UIManager.put("OptionPane.yesButtonText", Translate("optionpane.yes"));
+	}
+	private void translateOtherStrings()
+	{
+	
+		for(int i=0;i<MenuStrings.length;i++)
+		{
+			MenuStrings[i] = Translate(MenuStrings[i]);
+		}
+		
+		
+		for(int i=0;i<FileMenuStrings.length;i++)
+		{
+			FileMenuStrings[i] = Translate(FileMenuStrings[i]);
+		}
+		
+		// Translate all except integral
+		for(int i=0;i<calcMenuStrings.length-1;i++)
+		{
+			calcMenuStrings[i] = Translate(calcMenuStrings[i]);
+		}
+		
+		for(int i=0;i<HelpMenuStrings.length;i++)
+		{
+			HelpMenuStrings[i] = Translate(HelpMenuStrings[i]);
+		}
+		
+		for(int i=0;i<buttons.length;i++)
+		{
+			buttons[i] = Translate(buttons[i]);
+		}
+		
+		
+	}
 	private Color ChooseColor(Component component, String title, Color initialColor)
 	{
 		return JColorChooser.showDialog(component, title, initialColor);
 	}
 	
+	public static String Translate(String key)
+	{
+		if(language.isAvailable(key))
+		{
+			return language.getValue(key);
+		}
+		else if(lang_en.isAvailable(key))
+		{
+			return lang_en.getValue(key);
+		}
+		else
+			return key;
+	}
 	private static void UpdateGUIStyle()
 	{
 		try
@@ -202,7 +331,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		gframe.UpdateWindowSettings(settings);
 		if(gframe.windowerror)
 		{
-			JOptionPane.showMessageDialog(null, "Invalid window settings", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, Translate("message.windowsettingserror"), Translate("message.error"), JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	public static void UpdateTitle()
@@ -217,30 +346,30 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		JMenuItem aboutItem;
 		
 		menuBar = new JMenuBar();
-		fileMenu = new JMenu("File");
-		calcMenu = new JMenu("Calculate");
-		helpMenu = new JMenu("Help");
+		fileMenu = new JMenu(MenuStrings[0]);
+		calcMenu = new JMenu(MenuStrings[1]);
+		helpMenu = new JMenu(MenuStrings[2]);
 		menuBar.add(fileMenu);
 		menuBar.add(calcMenu);
 		menuBar.add(helpMenu);
 		
-		NewFileItem = new JMenuItem("New");
+		NewFileItem = new JMenuItem(FileMenuStrings[0]);
 		NewFileItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK)); 
 		NewFileItem.addActionListener(this);
 		
-		OpenFileItem = new JMenuItem("Open");
+		OpenFileItem = new JMenuItem(FileMenuStrings[1]);
 		OpenFileItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK)); 
 		OpenFileItem.addActionListener(this);
 		
-		SaveFileItem = new JMenuItem("Save");
+		SaveFileItem = new JMenuItem(FileMenuStrings[2]);
 		SaveFileItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK)); 
 		SaveFileItem.addActionListener(this);
 		
-		SaveFileAsItem = new JMenuItem("Save as");
+		SaveFileAsItem = new JMenuItem(FileMenuStrings[3]);
 		SaveFileAsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK)); 
 		SaveFileAsItem.addActionListener(this);
 		
-		settingsItem = new JMenuItem("Settings");
+		settingsItem = new JMenuItem(FileMenuStrings[4]);
 		settingsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.ALT_MASK)); 
 		settingsItem.addActionListener(this);
 		
@@ -255,7 +384,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		
 		if(!applet)
 		{
-			exitItem = new JMenuItem("Exit");
+			exitItem = new JMenuItem(FileMenuStrings[5]);
 			exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, ActionEvent.ALT_MASK));
 			exitItem.addActionListener(this);
 			fileMenu.addSeparator();
@@ -264,13 +393,13 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		
 		for(int i=0;i<calcMenuStrings.length; i++)
 		{
-			JMenuItem item = new JMenuItem(calcMenuStrings[i]);
+			JMenuItem item = new JMenuItem(language.getValue(calcMenuStrings[i]));
 			item.addActionListener(this);
 			calcMenu.add(item);
 		}
 		
 		
-		aboutItem = new JMenuItem("About");
+		aboutItem = new JMenuItem(HelpMenuStrings[0]);
 		aboutItem.addActionListener(this);
 		helpMenu.add(aboutItem);
 		if(!applet)
@@ -506,7 +635,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	{
 		System.out.println("Opening " + filePath);
 		progressbar.setValue(0);
-
+		//TODO Translate this stuff
 		progressbar.setString(String.format("Opening %s...... (%d%%)", (new File(filePath)).getName(), progressbar.getValue()));
 		progressPanel.setVisible(true);
 		progressPanel.paintAll(progressPanel.getGraphics());
@@ -550,7 +679,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 			this.textfields.set(j, textfield);
 		}
 		progressbar.setValue(50);
-		progressbar.setString(String.format("Drawing functions... (%d%%)", progressbar.getValue()));
+		progressbar.setString(String.format(Translate("message.progressbardrawingfunctions"), progressbar.getValue()));
 		progressPanel.paintAll(progressPanel.getGraphics());
 		UpdateWindowSettings();
 		Render();
@@ -573,7 +702,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		 else
 			 openFile = new JFileChooserWithConfirmation(new File(FilePath));
 		 
-		 FileFilter openFilter = new ExtensionFileFilter("Graph files", new String[] { FileExt });
+		 FileFilter openFilter = new ExtensionFileFilter(Translate("files.graphfiles"), new String[] { FileExt });
 		 openFile.setFileFilter(openFilter);
 		 
 		 int openOption = openFile.showOpenDialog(this);
@@ -597,7 +726,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 			 saveFile = new JFileChooserWithConfirmation(new File(FilePath));
 		 
 	
-		 FileFilter saveFilter = new ExtensionFileFilter("Graph files", new String[] { FileExt });
+		 FileFilter saveFilter = new ExtensionFileFilter(Translate("files.graphfiles"), new String[] { FileExt });
 		 saveFile.setFileFilter(saveFilter);
 		 
 		 int saveOption = saveFile.showSaveDialog(this);
@@ -618,7 +747,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	private boolean ConfirmFileChanges()
 	{
 		
-		int n= JOptionPane.showConfirmDialog (this, String.format("Do you want to save changes to %s?", FileName), "Graph", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+		int n= JOptionPane.showConfirmDialog (this, String.format(Translate("message.confirmchanges"), FileName), "Graph", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 		
 		if(n == JOptionPane.YES_OPTION)
 		{
@@ -686,7 +815,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 				if(doProgressBar)
 				{
 					progressbar.setValue(progstart + (int) (((double)(i+1)/(double)MaxFunctions) * (100-progstart)));
-					progressbar.setString(String.format("Drawing functions... (%d%%)", progressbar.getValue()));
+					progressbar.setString(String.format(Translate("message.progressbardrawingfunctions"), progressbar.getValue()));
 					progressPanel.paintAll(progressPanel.getGraphics());
 				}
 				continue;
@@ -703,7 +832,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 				if(doProgressBar)
 				{
 					progressbar.setValue(progstart + (int) (((double)(i+1)/(double)MaxFunctions) * (100-progstart)));
-					progressbar.setString(String.format("Drawing functions... (%d%%)", progressbar.getValue()));
+					progressbar.setString(String.format(Translate("message.progressbardrawingfunctions"), progressbar.getValue()));
 					progressPanel.paintAll(progressPanel.getGraphics());
 				}
 				continue;
@@ -719,12 +848,12 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 			if(doProgressBar)
 			{
 				progressbar.setValue(progstart + (int) (((double)(i+1)/(double)MaxFunctions) * (100-progstart)));
-				progressbar.setString(String.format("Drawing functions... (%d%%)", progressbar.getValue()));
+				progressbar.setString(String.format(Translate("message.progressbardrawingfunctions"), progressbar.getValue()));
 				progressPanel.paintAll(progressPanel.getGraphics());
 			}
 		}
 		progressbar.setValue(100);
-		progressbar.setString(String.format("Done... (%d%%)", progressbar.getValue()));
+		progressbar.setString(String.format(Translate("message.progressbardone"), progressbar.getValue()));
 		progressPanel.paintAll(progressPanel.getGraphics());
 		gframe.Update(functions);
 		this.repaint();
@@ -763,7 +892,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 					charframe.Restore();
 			}
 			
-			else if(buttonname.equalsIgnoreCase("new"))
+			else if(buttonname.equalsIgnoreCase(FileMenuStrings[0])) //new
 			{
 				System.out.println("Creating new file...");
 				if(!FileSaved && !empty)
@@ -777,7 +906,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 				ClearAll();
 				UpdateTitle();
 			}
-			else if(buttonname.equalsIgnoreCase("open"))
+			else if(buttonname.equalsIgnoreCase(FileMenuStrings[1]))
 			{
 				System.out.println("Opening file...");
 				if(!FileSaved && !empty)
@@ -791,7 +920,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 				ShowOpenFileDialog();
 				UpdateTitle();
 			}
-			else if(buttonname.equalsIgnoreCase("save"))
+			else if(buttonname.equalsIgnoreCase(FileMenuStrings[2]))
 			{
 				if(FilePathPresent)
 				{
@@ -804,7 +933,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 				}
 				UpdateTitle();
 			}
-			else if(buttonname.equalsIgnoreCase("save as"))
+			else if(buttonname.equalsIgnoreCase(FileMenuStrings[3]))
 			{
 				System.out.println("Saving file");
 				SaveFileAs();
@@ -812,7 +941,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 				UpdateTitle();
 			}
 			
-			else if (buttonname.equalsIgnoreCase("settings")) 
+			else if (buttonname.equalsIgnoreCase(FileMenuStrings[4])) 
 			{
 				if(settingsframe == null)
 				{
@@ -822,13 +951,15 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 					settingsframe.setVisible(true);
 			}
 			
-			else if (buttonname.equalsIgnoreCase("exit")) 
+			else if (buttonname.equalsIgnoreCase(FileMenuStrings[5])) 
 			{
-				System.exit(0);
+				windowClosing(null);
 			}	
+			//else if(Util.StringArrayGetIndex(calcMenuStrings, language.getName(buttonname).substring(0, 1).toUpperCase() + language.getName(buttonname).substring(1)) != -1)
 			else if(Util.StringArrayGetIndex(calcMenuStrings, buttonname) != -1)
 			{
-	
+
+				//switch(Util.StringArrayGetIndex(calcMenuStrings, language.getName(buttonname).substring(0, 1).toUpperCase() + language.getName(buttonname).substring(1)))
 				switch(Util.StringArrayGetIndex(calcMenuStrings, buttonname))
 				{
 					case 0: // value
@@ -842,7 +973,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 						break;
 					}
 					case 2: // minimum
-					{
+						{
 						calcframe = new CalculateFrame(CalculateFrame.Calculation.MINIMUM);
 						break;
 					}
@@ -871,6 +1002,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 						return;
 					}
 				}
+	
 				gframe.setCalcPanel(calcframe);
 				gframe.setCalcPanelVisible(true);
 			}
@@ -898,7 +1030,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	    {  
 	        JLabel label = ((JLabel)e.getSource());
 	        //label.setBackground(JColorChooser.showDialog(null, "Choose function color", label.getBackground()));
-	        label.setBackground(ChooseColor(null, "Choose function color", label.getBackground()));
+	        label.setBackground(ChooseColor(null, Translate("color.choosecolor"), label.getBackground()));
 	        int funcindex;
 	        String functext = label.getText().substring(1, label.getText().length()-3);
 	        funcindex = Integer.parseInt(functext.trim()) - 1;
