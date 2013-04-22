@@ -1,8 +1,17 @@
 TODO:
-- Add a nicer way to type the functions. (WIP)
+- Add About window
 - Add multi-language support:
 	- Finish FileChooser localization in Linux 
 	- Add more languages
 	- Add a way to change the language in settingsframe
 - Make the FileChooser bigger in Linux	
+- Better color chooser
 - Fix bug: Y1=x becomes Y1=x^() when reconstructed
+
+PLANS:
+- Fullscreen mode
+- Resizable GraphFrame
+- Hide function input panel
+- Better mathemathical input
+- Improve graph rendering
+- 3D Functions (YAY!)
