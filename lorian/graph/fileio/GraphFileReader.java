@@ -73,12 +73,6 @@ public class GraphFileReader {
 				factor.exponentfunc = readFunction(false);
 				break;
 			}
-			case SPECIAL:
-			{
-				factor.value = ds.readDouble();
-				factor.specialfac = readFactor();
-				break;
-			}
 			case FUNCTION:
 			{
 				factor.functionname = readString();
@@ -127,7 +121,6 @@ public class GraphFileReader {
 			int r = ds.read();
 			int g = ds.read();
 			int b = ds.read();
-			//fd.color = new Color(ds.readByte(), ds.readByte(), ds.readByte());
 			fd.color = new Color(r, g, b);
 		}
 		fd.termscount = ds.readInt();
@@ -232,10 +225,21 @@ public class GraphFileReader {
 			}
 			case PARENTHESES:
 			{
-				s += "(";
-				s += reconstructFunction(fd.basefunc);
-				s += ")^";
+				if(fd.value == -1)
+				{
+					s += '-';
+				}
 				
+				if(fd.basefunc.termscount>1)
+				{
+					s += "(";
+					s += reconstructFunction(fd.basefunc);
+					s += ")^";
+				}
+				else
+				{
+					s += reconstructFunction(fd.basefunc) + "^";
+				}
 				if(fd.exponentfunc.termscount==1 && fd.exponentfunc.terms[0].factorscount==1)
 				{
 					s += reconstructFunction(fd.exponentfunc);
@@ -258,21 +262,6 @@ public class GraphFileReader {
 
 				}
 				
-				break;
-			}
-			case SPECIAL:
-			{
-				if(fd.value != 1)
-				{
-					if(Math.rint(fd.value) == fd.value)
-						s += (int) Math.rint(fd.value);
-					else
-						s += fd.value;
-					
-					s += "*";
-				}
-				
-				s += reconstructFactor(fd.specialfac);
 				break;
 			}
 			case FUNCTION:
@@ -305,7 +294,7 @@ public class GraphFileReader {
 	private String reconstructTerm(TermData td)
 	{
 		String s = "";
-		Factor.Type previousType = Factor.Type.SPECIAL;
+		Factor.Type previousType = null;
 		boolean nextNegative=  false;
 		for(int i=0;i<td.factorscount;i++)
 		{
@@ -313,15 +302,15 @@ public class GraphFileReader {
 			
 			if(td.factorscount > 1 && s.trim().length() > 0 && !(previousType == Factor.Type.CONSTANT && (fd.type == Factor.Type.ARGUMENT || fd.type == Factor.Type.FUNCTION || fd.type == Factor.Type.PARENTHESES)))
 			{	
-				if(previousType == fd.type)
+				
+				if((previousType == fd.type || s.trim().length() > 0) && !s.endsWith("*"))
 					s += "*";
-				else if(s.trim().length() > 0)
-					s += "*";
+			
 					
 			}
 			
 			String tmp =  reconstructFactor(fd);
-			if(tmp.startsWith("1/") && s.length() > 0)
+			if(tmp.startsWith("1/") && s.length() > 0 && !s.endsWith("*"))
 				s += "*";
 			
 			if(tmp.equalsIgnoreCase("1"))
@@ -332,19 +321,7 @@ public class GraphFileReader {
 			{
 				if(i < td.factorscount-1)
 				{
-					if(td.factors[i+1].type != Factor.Type.SPECIAL)
-					{
-						nextNegative = !nextNegative;
-					}
-					else 
-					{
-						if(nextNegative)
-						{
-							s += '-';
-							nextNegative = false;
-						}
-						s += tmp;
-					}
+					nextNegative = !nextNegative;
 				}
 				else 
 				{

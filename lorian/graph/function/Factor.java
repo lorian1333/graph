@@ -6,7 +6,7 @@ import java.util.List;
 public class Factor {
 	public enum Type
 	{
-		CONSTANT, ARGUMENT, PARENTHESES, SPECIAL, FUNCTION
+		CONSTANT, ARGUMENT, PARENTHESES, FUNCTION
 	}
 	
 	
@@ -17,7 +17,6 @@ public class Factor {
 	private int index = 0;
 	
 	Function basefunc, exponentfunc;
-	Factor specialfac;
 	String functionname;
 	List<String> functionargs;
 	
@@ -273,14 +272,12 @@ public class Factor {
 	{
 		if(!Util.StringContains(s, '^'))
 		{
-			//exponentfunc.Parse("1");
 			value = 1;
 			return true;
 		} 
 		value = 0;
 		String exponentstr = s.substring(s.indexOf('^')+1);
 		return exponentfunc.Parse(exponentstr);
-		//return true;
 	}
 	private boolean ParseFunction(String s)
 	{
@@ -296,6 +293,7 @@ public class Factor {
 		int ii = Util.StringIndexNotOf(s, "+-");
 		if(s.charAt(0) == '-' || s.charAt(0) == '+')
 		{
+			
 			boolean neg = false;
 			for(int i = 0; i< ii; i++)
 			{
@@ -307,16 +305,16 @@ public class Factor {
 			}
 			if(neg) value = -1;
 			else value = 1;
-			type = Type.SPECIAL;
-			specialfac = new Factor(this.argumentChar);
 			
-			System.out.println("SPECIAL!!!!!!!!");
-			return specialfac.Parse(s.substring(ii));
-		
-			/*
+			//type = Type.SPECIAL;
+			//specialfac = new Factor(this.argumentChar);
+			// Test function: -2^(2x+3)
+			//System.out.println("SPECIAL!!!!!!!!");
+			//return specialfac.Parse(s.substring(ii));
 			type = Type.PARENTHESES;
-			return ParseParentheses(s.substring(ii));
-			*/
+			return ParseExponentX(s.substring(ii));
+			
+			
 		}
 		else
 		{
@@ -348,7 +346,6 @@ public class Factor {
 			}
 			else
 			{
-				System.out.println(s);
 				parsed = ParseOther(s);
 			}
 			return parsed;
@@ -391,10 +388,6 @@ public class Factor {
 		{
 			return value * Math.pow(basefunc.Calc(arg), exponentfunc.Calc(arg));
 		}
-		else if(type == Type.SPECIAL)
-		{
-			return value * specialfac.Calc(arg);
-		}
 		else if(type == Type.FUNCTION)
 		{
 			return MathFunctions.Calculate(functionname, functionargs, arg);
@@ -418,10 +411,12 @@ public class Factor {
 	{
 		return this.value;
 	}
+	/*
 	public Factor getSpecialFac()
 	{
 		return this.specialfac;
 	}
+	*/
 	public String getFunctionName()
 	{
 		return this.functionname;

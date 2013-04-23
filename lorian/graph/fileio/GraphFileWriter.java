@@ -66,12 +66,6 @@ public class GraphFileWriter {
 				writeFunction(f.getExponentFunction());
 				break;
 			}
-			case SPECIAL:
-			{
-				ds.writeDouble(f.getValue());
-				writeFactor(f.getSpecialFac());
-				break;
-			}
 			case FUNCTION:
 			{
 				writeString(f.getFunctionName());
