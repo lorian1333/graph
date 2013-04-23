@@ -212,6 +212,16 @@ public class GraphFrame extends JPanel implements  ActionListener, MouseListener
 			g.drawLine(0, pix, (int) size.getWidth(), pix);
 		}
 	}
+	private void drawPart(Graphics g, double x1, double y1, double x2, double y2)
+	{
+		g.drawLine((int)x1, (int)y1, (int)x2, (int)y2);
+		//Graphics2D g2d = (Graphics2D) g;
+		//QuadCurve2D q = new QuadCurve2D.Double();
+		//q.setCurve(x1, y1, (x1 + 0.5), y1, x2, y2);
+		//Point2D p = new Point2D.Double();
+		
+		//g2d.draw(q);
+	}
 	private void drawFunction(Function f, boolean fill, Graphics g) 
 	{
 		if(f.isEmpty()) return;
@@ -223,6 +233,8 @@ public class GraphFrame extends JPanel implements  ActionListener, MouseListener
 		
 		Point previous = new Point();
 		boolean WaitForRealNumber = false;
+		
+		
 		for(xpix = -1, x = settings.getXmin(); xpix < (int) size.getWidth(); xpix++, x+=step)
 		{
 			y = f.Calc(x);
@@ -235,7 +247,12 @@ public class GraphFrame extends JPanel implements  ActionListener, MouseListener
 				{
 					double tmpY =  f.Calc(tmpX);
 					ypix = (int) ((settings.getYmax() - tmpY) * (size.getHeight() / (settings.getYmax() - settings.getYmin())));
-					g.drawLine(previous.x, previous.y, xpix, ypix);
+					//g.drawLine(previous.x, previous.y, xpix, ypix);
+					//QuadCurve2D q = new QuadCurve2D.Double();
+					//q.setCurve(previous.x, previous.y, (previous.x + 0.5), previous.y, xpix, ypix);
+					//g2d.draw(q);
+					drawPart(g, previous.x, previous.y, xpix, ypix);
+					
 				}
 				
 				previous = null;
@@ -277,7 +294,8 @@ public class GraphFrame extends JPanel implements  ActionListener, MouseListener
 				}
 				else if(Math.abs(xpix - previous.x) < size.getWidth() && Math.abs(ypix - previous.y) < size.getHeight())
 				{
-					g.drawLine(previous.x, previous.y, xpix, ypix);
+					//g.drawLine(previous.x, previous.y, xpix, ypix);
+					drawPart(g, previous.x, previous.y, xpix, ypix);
 				}
 				
 				if(fill && x >= FillLowX - 0.01 && x <= FillUpX + 0.01)
@@ -294,9 +312,11 @@ public class GraphFrame extends JPanel implements  ActionListener, MouseListener
 					else if(y < 0)
 					{
 						if(ypix > size.getHeight())
-							g.drawLine(xpix, (int) size.getHeight(), xpix, this.XaxisY);
+							//g.drawLine(xpix, (int) size.getHeight(), xpix, this.XaxisY);
+							drawPart(g, xpix, (int) size.getHeight(), xpix, this.XaxisY);
 						else
-							g.drawLine(xpix, ypix+1, xpix, this.XaxisY);
+							//g.drawLine(xpix, ypix+1, xpix, this.XaxisY);
+							drawPart(g, xpix, ypix+1, xpix, this.XaxisY);
 					}
 					((Graphics2D) g).setStroke(new BasicStroke(1.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
 					g.setColor(f.getColor());

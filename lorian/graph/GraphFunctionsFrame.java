@@ -116,9 +116,9 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		initLanguages();
 		initUI(false);
 		FileName = Translate("files.untitled");
-		setTitle("Graph v" + version + " - " + FileName + " *");
 		if(!applet)
 		{
+			setTitle(FileName + " * - " + "Graph v" + version);
 			this.setVisible(true);
 		}
 		Render();
@@ -137,10 +137,9 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		initLanguages();
 		initUI(forceSmall);
 		FileName = Translate("files.untitled");
-		setTitle("Graph v" + version + " - " + FileName + " *");
-		
 		if(!applet)
 		{
+			setTitle(FileName + " * - " + "Graph v" + version);
 			this.setVisible(true);
 		}
 		
@@ -337,7 +336,9 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	public static void UpdateTitle()
 	{
 		if(!applet)
-			GraphFunctionsFrame.funcframe.setTitle("Graph v" + version + " - " + FileName + (FileSaved ? "" : " *"));
+			//GraphFunctionsFrame.funcframe.setTitle("Graph v" + version + " - " + FileName + (FileSaved ? "" : " *"));
+			GraphFunctionsFrame.funcframe.setTitle(FileName + (FileSaved ? "" : " *") + " - Graph v" + version );
+			
 	}
 	private void InitMenu()
 	{
