@@ -16,12 +16,12 @@ public class MathFunctions {
 		args.add("1");
 		args.add("1");
 		
-		if(Double.isNaN(Calculate(functionname, args, 1))) return false;
+		if(Double.isNaN(Calculate(functionname, args, 1, 'x'))) return false;
 		else return true;
 	}
-	public static double Calculate(String functionname, List<String> args, double value)
+	public static double Calculate(String functionname, List<String> args, double value, char argumentChar)
 	{	
-		Function f = new Function(); 
+		Function f = new Function(argumentChar); 
 		if(args.size()<1) return Double.NaN;
 		
 		//Goniometric functions
@@ -176,6 +176,12 @@ public class MathFunctions {
 			return Math.pow(f.Calc(value), 1 / g.Calc(value));
 		}
 		
+		//Factorial
+		else if(functionname.equalsIgnoreCase("fac"))
+		{
+			if(!f.Parse(args.get(0))) return Double.NaN;
+			return (double) Calculate.Factorial((int) Math.rint(f.Calc(value)));
+		}
 		// Power
 		else if(functionname.equalsIgnoreCase("pow"))
 		{

@@ -22,33 +22,33 @@ public class Factor {
 	
 	public Factor()
 	{
-		basefunc = new Function();
-		exponentfunc = new Function();
+		basefunc = new Function(argumentChar);
+		exponentfunc = new Function(argumentChar);
 	}
 	public Factor(char argumentChar)
 	{
 		this.argumentChar = argumentChar;
-		basefunc = new Function();
-		exponentfunc = new Function();
+		basefunc = new Function(argumentChar);
+		exponentfunc = new Function(argumentChar);
 	}
 	public Factor(char argumentChar, String s)
 	{
 		this.argumentChar = argumentChar;
-		basefunc = new Function();
-		exponentfunc = new Function();
+		basefunc = new Function(argumentChar);
+		exponentfunc = new Function(argumentChar);
 		Parse(s);
 		
 	}
 	public Factor(String s)
 	{
-		basefunc = new Function();
-		exponentfunc = new Function();
+		basefunc = new Function(argumentChar);
+		exponentfunc = new Function(argumentChar);
 		Parse(s);
 	}
 	
 	private double ParseConstantBetweenParentheses(String s)
 	{
-		Function tmpfunc = new Function();
+		Function tmpfunc = new Function(argumentChar);
 		String forparse = "";
 		boolean neg = false;
 		while(s.charAt(index) == '+' || s.charAt(index) == '-')
@@ -390,7 +390,7 @@ public class Factor {
 		}
 		else if(type == Type.FUNCTION)
 		{
-			return MathFunctions.Calculate(functionname, functionargs, arg);
+			return MathFunctions.Calculate(functionname, functionargs, arg, argumentChar);
 		}
 		else return 0;
 	}
