@@ -132,7 +132,7 @@ public class MathFunctions {
 			else //logBASE
 			{
 				if(args.size()<2) return Double.NaN;
-				Function g = new Function();
+				Function g = new Function(argumentChar);
 				if(!f.Parse(args.get(1)) || !g.Parse(args.get(0)))
 					return Double.NaN;
 				return (Math.log10(f.Calc(value)) / Math.log10(g.Calc(value)));
@@ -171,7 +171,7 @@ public class MathFunctions {
 		else if(functionname.equalsIgnoreCase("root"))
 		{
 			if(args.size()<2) return Double.NaN;
-			Function g = new Function();
+			Function g = new Function(argumentChar);
 			if(!f.Parse(args.get(1)) || !g.Parse(args.get(0))) return Double.NaN;
 			return Math.pow(f.Calc(value), 1 / g.Calc(value));
 		}
@@ -180,13 +180,26 @@ public class MathFunctions {
 		else if(functionname.equalsIgnoreCase("fac"))
 		{
 			if(!f.Parse(args.get(0))) return Double.NaN;
-			return (double) Calculate.Factorial((int) Math.rint(f.Calc(value)));
+			double calcval = f.Calc(value);
+			if(Math.rint(calcval) != calcval) return Double.NaN;
+			return (double) Calculate.Factorial((int) Math.rint(calcval));
 		}
+		else if(functionname.equalsIgnoreCase("bin"))
+		{
+			if(args.size()<2) return Double.NaN;
+			Function g = new Function(argumentChar);;
+			if(!f.Parse(args.get(1)) || !g.Parse(args.get(0))) return Double.NaN;
+			
+			double calcvalf = f.Calc(value), calcvalg = g.Calc(value);
+			if(Math.rint(calcvalf) != calcvalf || Math.rint(calcvalg) != calcvalg) return Double.NaN;
+			return (double) Calculate.BinomialCoefficient((int) Math.rint(calcvalg), (int) Math.rint(calcvalf));
+		}
+		
 		// Power
 		else if(functionname.equalsIgnoreCase("pow"))
 		{
 			if(args.size()<2) return Double.NaN;
-			Function g = new Function();
+			Function g = new Function(argumentChar);;
 			if(!f.Parse(args.get(0)) || !g.Parse(args.get(1))) return Double.NaN;
 			return Math.pow(f.Calc(value), g.Calc(value));
 		}

@@ -208,4 +208,81 @@ public class Calculate {
 		
 		return Double.NaN;
 	}
+	
+	public static int Factorial(int n)
+	{
+		/*
+		int result = 1;
+		if(n == 0) return 1;
+		if(n < 0) return -1;
+		
+		while(n > 0)
+		{
+			result *= n;
+			n--;
+		}
+		return result;
+		*/
+		return (int) Product('i', 1, n, "i");
+	}
+	
+	public static int BinomialCoefficient(int n, int k)
+	{
+		if(k <0 || k > n) return 0;
+		return (Factorial(n) / (Factorial(k) * Factorial (n-k)));
+	}
+	
+	public static double Summation(char index, int start, int stop, String body)
+	{
+		body = body.toLowerCase();
+		index = ("" + index).toLowerCase().charAt(0);
+		Function f = new Function(index);
+		if(!f.Parse(body))
+		{
+			System.out.println("Error parsing '" + body + "'");
+			return Double.NaN;
+		}
+		double sum = 0;
+		for(int i=start; i <= stop; i++)
+		{
+			sum += f.Calc(i);
+		}
+		return sum;
+	}
+	/*
+	 Calculates PI:
+	 Summation('k', 0, 1000, "1/(16^k)(4/(8k+1)-2/(8k+4)-1/(8k+5)-1/(8k+6))") 
+		
+	 Calculates E:
+	 Summation('k', 0, 1000, "1/fac(k)")
+	*/
+	public static double Product(char index, int start, int stop, String body)
+	{
+		body = body.toLowerCase();
+		index = ("" + index).toLowerCase().charAt(0);
+		Function f = new Function(index);
+		if(!f.Parse(body))
+		{
+			System.out.println("Error parsing '" + body + "'");
+			return Double.NaN;
+		}
+		double product = 1;
+		for(int i=start; i <= stop; i++)
+		{
+			product *= f.Calc(i);
+		}
+		return product;
+	}
+	public static void main(String[] args)
+	{
+		//(4+5)^6
+		int x = 4;
+		int y = 5;
+		int n = 6;
+		String bodystr = String.format("bin(%d, k) * %d^(%d-k) * %d^k", n, x, n, y);
+		System.out.println(Summation('k', 0, n, bodystr));
+	}
+	
+	
+	
 }
