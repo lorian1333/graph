@@ -382,7 +382,7 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 			if(Double.isNaN(zeropoint.getX()))
 				resultstr = GraphFunctionsFrame.Translate("calcframe.message.calczeroerror");
 			else
-				resultstr = String.format(GraphFunctionsFrame.Translate("calc.zero") + ": X = %s, Y = %ss", Util.GetString(zeropoint.getX()), Util.GetString(zeropoint.getY()));
+				resultstr = String.format(GraphFunctionsFrame.Translate("calc.zero") + ": X = %s, Y = %s", Util.GetString(zeropoint.getX()), Util.GetString(zeropoint.getY()));
 			resultLabel.setText(resultstr);
 			GraphFunctionsFrame.gframe.ClearVisualPoints();
 			if(!Double.isInfinite(zeropoint.getY()) && !Double.isNaN(zeropoint.getY()))

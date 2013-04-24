@@ -1,9 +1,12 @@
 package lorian.graph.fileio;
 
+import java.awt.Canvas;
 import java.awt.Color;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+
+import javax.print.CancelablePrintJob;
 
 import lorian.graph.GraphFunctionsFrame;
 import lorian.graph.WindowSettings;
@@ -308,7 +311,7 @@ public class GraphFileReader {
 			
 					
 			}
-			
+						
 			String tmp =  reconstructFactor(fd);
 			if(tmp.startsWith("1/") && s.length() > 0 && !s.endsWith("*"))
 				s += "*";
