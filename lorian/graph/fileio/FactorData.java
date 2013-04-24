@@ -9,8 +9,6 @@ public class FactorData {
 	public FunctionData basefunc;
 	public FunctionData exponentfunc;
 	
-	public FactorData specialfac; // type = SPECIAL
-	
 	public String functionname; // type = FUNCTION
 	public int functionargscount;
 	public String[] functionargs_str;
