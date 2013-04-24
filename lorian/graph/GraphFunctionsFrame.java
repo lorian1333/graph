@@ -806,6 +806,22 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 			String text = Util.removeWhiteSpace(textfields.get(i).getText().trim());
 			Function f = new Function();
 			ParseResultIcon parseresult = parseresults.get(i);
+			if(text.toLowerCase().contains("y" + (i+1))) 
+			{
+				System.out.println("Error: Unable to parse function Y" + (i+1));
+				f.clear();
+				f.setDraw(false);
+				functions.add(f);
+				parseresult.setState(ParseResultIcon.State.ERROR);
+				parseresults.set(i, parseresult);
+				if(doProgressBar)
+				{
+					progressbar.setValue(progstart + (int) (((double)(i+1)/(double)MaxFunctions) * (100-progstart)));
+					progressbar.setString(String.format(Translate("message.progressbar.drawingfunctions"), progressbar.getValue()));
+					progressPanel.paintAll(progressPanel.getGraphics());
+				}
+				continue;
+			}
 			if(text.isEmpty()) {
 				f.setDraw(false);
 				functions.add(f);
