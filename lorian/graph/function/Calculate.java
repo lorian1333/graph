@@ -255,7 +255,15 @@ public class Calculate {
 		
 	 Calculates E:
 	 Summation('k', 0, 1000, "1/fac(k)")
-	*/
+	
+	 Binomial of Newton:
+	 //(4+5)^6
+	 int x = 4;
+	 int y = 5;
+	 int n = 6;
+	 String bodystr = String.format("bin(%d, k) * %d^(%d-k) * %d^k", n, x, n, y);
+	 System.out.println(Summation('k', 0, n, bodystr));
+	 */
 	public static double Product(char index, int start, int stop, String body)
 	{
 		body = body.toLowerCase();
@@ -273,16 +281,5 @@ public class Calculate {
 		}
 		return product;
 	}
-	public static void main(String[] args)
-	{
-		//(4+5)^6
-		int x = 4;
-		int y = 5;
-		int n = 6;
-		String bodystr = String.format("bin(%d, k) * %d^(%d-k) * %d^k", n, x, n, y);
-		System.out.println(Summation('k', 0, n, bodystr));
-	}
-	
-	
 	
 }

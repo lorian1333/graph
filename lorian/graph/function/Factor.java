@@ -285,6 +285,8 @@ public class Factor {
 		if(!MathFunctions.functionExists(functionname)) return false;
 		String functionargsstr = s.substring(s.indexOf('(') + 1, s.length()-1);
 		functionargs = SplitArgs(functionargsstr);
+		
+		
 		return true;
 	}
 	
