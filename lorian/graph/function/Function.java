@@ -5,30 +5,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Function {
-	private char argumentChar = 'x';
-	private List<Term> terms;
-	private Color color;
-	private boolean isEmpty = true;
-	private boolean draw = true;
+	protected char argumentChar = 'x';
+	protected List<Term> terms;  
+	protected Color color;
+	protected boolean isEmpty = true;
+	protected boolean draw = true;
+	protected List<Variable> variables;
+	protected String RawInputString = "";
+	
 	public Function()
 	{
 		terms = new ArrayList<Term>();
 		setColor(Color.BLACK);
+		variables = new ArrayList<Variable>();
 	}
 	public Function(char argumentChar)
 	{
-		String s = ""; 
-		s += argumentChar;
-		this.argumentChar = s.toLowerCase().charAt(0);
+		this.argumentChar = ("" + argumentChar).toLowerCase().charAt(0);
 		terms = new ArrayList<Term>();
+		variables = new ArrayList<Variable>();
 		setColor(Color.BLACK);
+		
 	}
 	public Function(char argumentChar, String s)
 	{
-		String ss = ""; 
-		ss += argumentChar;
-		this.argumentChar = ss.toLowerCase().charAt(0);
+		this.argumentChar = ("" + argumentChar).toLowerCase().charAt(0);
 		terms = new ArrayList<Term>();
+		variables = new ArrayList<Variable>();
 		setColor(Color.BLACK);
 		Parse(s);
 	}
@@ -39,7 +42,71 @@ public class Function {
 		Parse(s);
 	}
 	
-	private String PreProcess(String s)
+	public void addVariable(Variable var)
+	{
+		if(var.getVarChar() == '?') return;
+		int i = 0;
+		for(Variable v: variables)
+		{
+			if(v.getVarChar() == var.getVarChar())
+			{
+				variables.set(i, var);
+				return;
+			}
+			i++;
+		}
+		variables.add(var);
+		if(!isEmpty)
+		{
+			terms.clear();
+			isEmpty = true;
+			this.Parse(RawInputString);
+		}
+	}
+	public void setVariableValue(char varchar, double value)
+	{
+		int i = 0;
+		for(Variable v: variables)
+		{
+			if(v.getVarChar() == varchar)
+			{
+				Variable v1 = v;
+				v1.setValue(value);
+				variables.set(i, v1);
+			}
+			i++;
+		}
+		if(!isEmpty)
+		{
+			terms.clear();
+			isEmpty = true;
+			this.Parse(RawInputString);
+		}
+	}
+	public double getVariableValue(char varchar)
+	{
+		int i = 0;
+		for(Variable v: variables)
+		{
+			if(v.getVarChar() == varchar)
+			{
+				variables.get(i).getValue();
+			}
+			i++;
+		}
+		return Double.NaN;
+	}
+	
+	protected String FillInVariables(String s) 
+	{
+		if(variables == null) return s;
+		for(Variable v: variables)
+		{
+			s = Util.StringReplace(s, v.getVarChar(), "(" + v.getValue() + ")");
+		}
+		return s;
+	}
+	protected String PreProcess(String s) 
 	{
 		String ss = s;
 		
@@ -91,7 +158,10 @@ public class Function {
 	{
 		try
 		{
-		s = Util.removeWhiteSpace(s).toLowerCase();
+		RawInputString = s;
+		s = Util.removeWhiteSpace(s);
+		s = FillInVariables(s);
+		s = s.toLowerCase();
 		s = PreProcess(s);
 		String termstr = "";
 		
@@ -160,6 +230,7 @@ public class Function {
 		}
 		catch (Exception e)
 		{
+			e.printStackTrace();
 			return false;
 		}
 	}
@@ -207,4 +278,18 @@ public class Function {
 	public void setDraw(boolean draw) {
 		this.draw = draw;
 	}
+	
+	public static void adasdmain(String[] args)
+	{
+		Function2Var f = new Function2Var();
+		if(!f.Parse("sin(x)*cos(y)"))
+		{
+			System.out.println("zomg error");
+			return;
+		}
+		System.out.println(f.Calc(1, 2));
+		System.out.println(f.Calc(2, 4));
+		System.out.println(f.Calc(9, 3));
+	}
+
 }
