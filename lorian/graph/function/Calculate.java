@@ -1,5 +1,7 @@
 package lorian.graph.function;
 
+import java.util.Locale;
+
 public class Calculate {
 
 	
@@ -157,7 +159,7 @@ public class Calculate {
 			}
 		}
 		double average = (lowersum + uppersum) / 2;
-		average = Util.round(average, 6);
+		average = Util.round(average, 4);
 		return returnRounded(average);
 	}
 	public static double FindLastXBeforeNaN(Function f, double Xstart)
@@ -209,7 +211,7 @@ public class Calculate {
 		return Double.NaN;
 	}
 	
-	public static int Factorial(int n)
+	public static double Factorial(double n)
 	{
 		/*
 		int result = 1;
@@ -223,13 +225,16 @@ public class Calculate {
 		}
 		return result;
 		*/
-		return (int) Product('i', 1, n, "i");
+		//return Product('i', 1, (int) n, "i");
+		return Gamma(n+1);
 	}
 	
 	public static int BinomialCoefficient(int n, int k)
 	{
 		if(k <0 || k > n) return 0;
-		return (Factorial(n) / (Factorial(k) * Factorial (n-k)));
+		
+		double result =  (Factorial(n) / (Factorial(k) * Factorial(n-k) ));
+		return (int) Util.round(result, 0);
 	}
 	
 	public static double Summation(char index, int start, int stop, String body)
@@ -245,7 +250,9 @@ public class Calculate {
 		double sum = 0;
 		for(int i=start; i <= stop; i++)
 		{
-			sum += f.Calc(i);
+			if(!Double.isNaN(f.Calc(i)))
+					sum += f.Calc(i);
+
 		}
 		return sum;
 	}
@@ -263,7 +270,17 @@ public class Calculate {
 	 int n = 6;
 	 String bodystr = String.format("bin(%d, k) * %d^(%d-k) * %d^k", n, x, n, y);
 	 System.out.println(Summation('k', 0, n, bodystr));
-	 */
+	 
+	 Sinus and cosinus:
+	 double x = 1;
+	 int k = 500;
+	 Locale.setDefault(new Locale("en", "US"));
+	 String sin = String.format("((-1)^n*(%f)^(2n+1))/(fac(2n+1))", x);
+	 String cos = String.format("((-1)^n)/(fac(2n))*(%f)^(2n)", x);
+	
+	 System.out.println("Sin: " + Summation('n', 0, k, sin));
+	 System.out.println("Cos: " + Summation('n', 0, k, cos));
+	*/
 	public static double Product(char index, int start, int stop, String body)
 	{
 		body = body.toLowerCase();
@@ -282,4 +299,63 @@ public class Calculate {
 		return product;
 	}
 	
+	// This shit does not work at all!!
+	
+	public static double FresnelS(double arg)
+	{
+		//String argstr = Util.doubleToString(arg);
+		//String bodystr = String.format("(-1)^n*(((%s)^(4n+3))/(fac(2n+1)*(4n+3)))", argstr);
+		//return Calculate.Summation('n', 0, 100, bodystr);
+		 
+		double sum = 0;
+		double arg0 = arg * Math.sqrt(Math.PI / 2.0);
+		for(int n=0;n<100;n++)
+		{
+			sum += (Math.pow(-1, (double) n) * ((Math.pow(arg0, 4*n+3))/((double) Calculate.Factorial(2*n+1) * (4*n+3))));
+		}
+		return sum * Math.sqrt(2.0 / Math.PI);
+		
+
+		
+	}
+	public static double FresnelC(double arg)
+	{
+		/*
+		String argstr = Util.doubleToString(arg);
+		String bodystr = String.format("(-1)^n*(((%s)^(4n+1))/(fac(2n)*(4n+1)))", argstr);
+		return Calculate.Summation('n', 0, 100, bodystr);
+		*/
+		return 1;
+	}
+
+	private static final double g = 7.0;
+	private static final double p[] = {
+		0.99999999999980993, 676.5203681218851, -1259.1392167224028,
+	     771.32342877765313, -176.61502916214059, 12.507343278686905,
+	     //-0.13857109526572012, .0000099843695780195716, .00000015056327351493116
+	     -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7
+	};
+	public static double Gamma(double z)
+	{
+		//return Integral(new Function('t', String.format("t^(%s)*const(e)^(-t)", Util.doubleToString(z-1))), 0, 10);
+		//String zstr = Util.doubleToString(z);
+		//return (1.0/z) * Calculate.Product('n', 1, 100, String.format("(1+(1/n)^%s)/(1+(%s/n))", zstr, zstr));
+		if(z < 0.5)
+			return Math.PI / (Math.sin(Math.PI * z) * Gamma(1-z));
+		else
+		{
+			z -= 1;
+			double x = p[0];
+			for(int i=1; i<(g+2);i++)
+			{
+				x += p[i]/(z+(double)i);
+			}
+			double t = z + g + 0.5;
+			return Math.sqrt(2 * Math.PI) * Math.pow(t, (z+0.5)) * Math.exp(-t) * x;
+		}
+	}
+	public static void main(String[] args)
+	{
+		 System.out.println(Summation('k', 0, 10000, "1/(16^k)(4/(8k+1)-2/(8k+4)-1/(8k+5)-1/(8k+6))"));
+	}
 }

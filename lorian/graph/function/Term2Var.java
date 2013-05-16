@@ -3,59 +3,23 @@ package lorian.graph.function;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Term {
+public class Term2Var extends Term {
+
+	protected char argumentChar2 = 'y';
+	protected List<Factor2Var> factors;
 	
-	protected boolean parsed = false;
-	
-	protected int index = 0;
-	protected char argumentChar = 'x';
-	protected List<Factor> factors;
-	
-	public Term()
+	public Term2Var()
 	{
-		factors = new ArrayList<Factor>();
+		factors = new ArrayList<Factor2Var>();
 	}
-	public Term(char argumentChar)
-	{
+	
+	public Term2Var(char argumentChar,  char argumentChar2) {
 		this.argumentChar = argumentChar;
-		factors = new ArrayList<Factor>();
+		this.argumentChar2 = argumentChar2;
+		factors = new ArrayList<Factor2Var>();
 	}
 	
-	
-	
-	protected String GetEverythingBetweenParentheses(String s)
-	{
-		char ch;
-		int funcdepth = 0;
-		String result = "(";
-		index++;
-		while(index < s.length())
-		{
-			ch = s.charAt(index);
-			if(ch == '(')
-			{
-				funcdepth++;
-			}
-			else if(ch == ')')
-			{
-				if(funcdepth > 0 ) funcdepth--;
-				else if(funcdepth==0)
-				{
-					result += ch;
-					return result;
-				}
-			}
-			result += ch;
-			index++;
-		}
-		return result;
-	}
-	
-	protected String exponentTimesMinusOne(String s)
-	{
-		if(s.trim().length() == 0) return "";
-		return String.format("(%s)^-1", s);
-	}
+	@Override
 	protected List<String> SplitIntoFactors(String s)
 	{
 		List<String> factors = new ArrayList<String>();
@@ -80,7 +44,7 @@ public class Term {
 						else division = false;
 					}
 					
-					else if(ch==argumentChar)
+					else if(ch==argumentChar || ch==argumentChar2)
 					{
 						if(inexponent)
 						{
@@ -157,7 +121,7 @@ public class Term {
 					}
 					else if(ch == '(')
 					{
-						if(!Util.StringContains(newfactor, Util.LowercaseAlphabethWithout(argumentChar)) && !Util.StringContains(newfactor, "^"))
+						if(!Util.StringContains(newfactor, Util.LowercaseAlphabethWithout(argumentChar, argumentChar2)) && !Util.StringContains(newfactor, "^"))
 						{
 							if(newfactor.length() > 0) 
 							{
@@ -193,7 +157,7 @@ public class Term {
 						continue;
 					}
 
-					else if(Util.StringContains("" + ch, Util.LowercaseAlphabethWithout(argumentChar) + "()+-^"))
+					else if(Util.StringContains("" + ch, Util.LowercaseAlphabethWithout(argumentChar, argumentChar2) + "()+-^"))
 					{
 						if(division) newfactor = exponentTimesMinusOne(newfactor);
 						if(newfactor.length() > 0) factors.add(newfactor);
@@ -234,15 +198,15 @@ public class Term {
 		return factors;
 	}
 	
+	@Override
 	public boolean Parse(String s)
 	{
 		s = Util.removeWhiteSpace(s).toLowerCase();
 		boolean result = true;
 		List<String> factorstrs = SplitIntoFactors(s);
-		//System.out.println(factorstrs);
 		for(String factorstr: factorstrs)
 		{
-			Factor factor = new Factor(this.argumentChar);
+			Factor2Var factor = new Factor2Var(this.argumentChar, this.argumentChar2);
 			if(!factor.Parse(factorstr)) { 
 				result = false;
 				factors.add(null);
@@ -254,23 +218,27 @@ public class Term {
 		return result;
 	}
 	
-
+	@Override 
 	public double Calc(double arg)
+	{
+		return Calc(arg, 1);
+	}
+	
+	public double Calc(double arg1, double arg2)
 	{
 		if(!parsed) return 0;
 		double product = 1;
-		for(Factor fac: factors)
+		for(Factor2Var fac: factors)
 		{
-			product *= fac.Calc(arg);
+			product *= fac.Calc(arg1, arg2);
 		}
 		return product;
 		
 	}
 	
-	public List<Factor> getFactors()
+
+	public List<Factor2Var> getFactors2Var()
 	{
 		return this.factors;
 	}
 }
-
-

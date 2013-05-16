@@ -2,6 +2,8 @@ package lorian.graph.function;
 
 import java.awt.Color;
 import java.awt.FontMetrics;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 public class Util {
 	public static String removeWhiteSpace(String s)
@@ -49,6 +51,16 @@ public class Util {
 		for(char ch = 'a'; ch <= 'z'; ch++)
 		{
 			if(ch != character) s += ch;
+		}
+		return s;
+	}
+	
+	public static String LowercaseAlphabethWithout(char character1, char character2)
+	{
+		String s = "";
+		for(char ch = 'a'; ch <= 'z'; ch++)
+		{
+			if(ch != character1 && ch != character2) s += ch;
 		}
 		return s;
 	}
@@ -118,6 +130,12 @@ public class Util {
 		else return new Color((int) (c.getRed() * org + 0xff * white), (int) (c.getGreen() * org + 0xff * white), (int) (c.getBlue() * org + 0xff * white), (int) (0.8 * 0xff));
 	}
 	
+	public static String doubleToString(double d)
+	{
+		NumberFormat f = NumberFormat.getInstance(Locale.US);
+		f.setGroupingUsed(false);
+		return f.format(d);
+	}
 	
 
 }

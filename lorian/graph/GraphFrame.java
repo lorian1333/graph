@@ -235,6 +235,7 @@ public class GraphFrame extends JPanel implements  ActionListener, MouseListener
 		boolean WaitForRealNumber = false;
 		
 		
+		
 		for(xpix = -1, x = settings.getXmin(); xpix < (int) size.getWidth(); xpix++, x+=step)
 		{
 			y = f.Calc(x);

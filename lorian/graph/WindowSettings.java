@@ -13,7 +13,7 @@ public class WindowSettings {
 		setYmax(10);
 		setGrid(false);
 	}
-	public WindowSettings(int Xmin, int Xmax, int Ymin, int Ymax, boolean grid)
+	public WindowSettings(long Xmin, long Xmax, long Ymin, long Ymax, boolean grid)
 	{
 		setXmin(Xmin);
 		setXmax(Xmax);

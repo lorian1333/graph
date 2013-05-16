@@ -10,15 +10,15 @@ public class Factor {
 	}
 	
 	
-	private Type type;
-	private char argumentChar = 'x';
-	private double value = 0;
-	private boolean parsed = false;
-	private int index = 0;
+	protected Type type;
+	protected char argumentChar = 'x';
+	protected double value = 0;
+	protected boolean parsed = false;
+	protected int index = 0;
 	
-	Function basefunc, exponentfunc;
-	String functionname;
-	List<String> functionargs;
+	protected Function basefunc, exponentfunc;
+	protected String functionname;
+	protected List<String> functionargs;
 	
 	public Factor()
 	{
@@ -46,7 +46,7 @@ public class Factor {
 		Parse(s);
 	}
 	
-	private double ParseConstantBetweenParentheses(String s)
+	protected double ParseConstantBetweenParentheses(String s)
 	{
 		Function tmpfunc = new Function(argumentChar);
 		String forparse = "";
@@ -62,7 +62,7 @@ public class Factor {
 		double tmpvalue = tmpfunc.Calc(0);
 		return tmpvalue;
 	}
-	private int getFirstPower(String s)
+	protected int getFirstPower(String s)
 	{
 		char ch;
 		int funcdepth = 0;
@@ -91,7 +91,7 @@ public class Factor {
 		}
 		return -1;
 	}
-	private List<String> SplitArgs(String s)
+	protected List<String> SplitArgs(String s)
 	{
 		char ch;
 		int funcdepth = 0;
@@ -127,7 +127,7 @@ public class Factor {
 		if(arg.length() > 0) args.add(arg);
 		return args;
 	}
-	private boolean ParseConstant(String s)
+	protected boolean ParseConstant(String s)
 	{
 
 		if(!Util.StringContains(s, '^'))
@@ -200,7 +200,7 @@ public class Factor {
 		value = Math.pow(value, exponent);
 		return true;
 	}
-	private String ParseParanthesesBase(String s)
+	protected String ParseParanthesesBase(String s)
 	{
 		char ch;
 		int funcdepth = 0;
@@ -227,12 +227,12 @@ public class Factor {
 		}
 		return result.substring(1, result.length()-1);
 	}
-	private String ParseParanthesesExponent(String s)
+	protected String ParseParanthesesExponent(String s)
 	{
 		index += 2;
 		return s.substring(index);
 	}
-	private boolean ParseParentheses(String s)
+	protected boolean ParseParentheses(String s) // !!!
 	{
 		String basestr = ParseParanthesesBase(s); 
 		if(index == s.length()-1)
@@ -247,7 +247,7 @@ public class Factor {
 		}
 		else return true;
 	}
-	private boolean ParseExponentX(String s)
+	protected boolean ParseExponentX(String s) 
 	{
 		int tmpindex = getFirstPower(s);//s.indexOf('^');
 		String basestr, exponentstr;
@@ -268,7 +268,7 @@ public class Factor {
 		}
 		else return true;
 	}
-	private boolean ParseX(String s)
+	protected boolean ParseX(String s) 
 	{
 		if(!Util.StringContains(s, '^'))
 		{
@@ -279,7 +279,7 @@ public class Factor {
 		String exponentstr = s.substring(s.indexOf('^')+1);
 		return exponentfunc.Parse(exponentstr);
 	}
-	private boolean ParseFunction(String s)
+	protected boolean ParseFunction(String s) 
 	{
 		functionname = s.substring(0, s.indexOf('('));
 		if(!MathFunctions.functionExists(functionname)) return false;
@@ -289,8 +289,8 @@ public class Factor {
 		
 		return true;
 	}
-	
-	private boolean ParseOther(String s)
+	 
+	protected boolean ParseOther(String s)
 	{
 		int ii = Util.StringIndexNotOf(s, "+-");
 		if(s.charAt(0) == '-' || s.charAt(0) == '+')
@@ -397,7 +397,7 @@ public class Factor {
 		else return 0;
 	}
 	
-	public Type getType()
+	public Type getType() 
 	{
 		return this.type;
 	}
@@ -405,7 +405,7 @@ public class Factor {
 	{
 		return this.basefunc;
 	}
-	public Function getExponentFunction()
+	public Function getExponentFunction() 
 	{
 		return this.exponentfunc;
 	}
@@ -413,12 +413,7 @@ public class Factor {
 	{
 		return this.value;
 	}
-	/*
-	public Factor getSpecialFac()
-	{
-		return this.specialfac;
-	}
-	*/
+	
 	public String getFunctionName()
 	{
 		return this.functionname;

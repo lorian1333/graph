@@ -1,5 +1,6 @@
 menu.file=File
 menu.calculate=Calculate
+menu.mode=Mode
 menu.help=Help
 
 file.new=New

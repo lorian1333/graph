@@ -1,11 +1,12 @@
 TODO:
 - Add About window
 - Add multi-language support:
-	- Finish FileChooser localization in Linux 
+	- Finish FileChooser localization in Linux and Mac
 	- Add more languages
 	- Add a way to change the language in settingsframe
 - Make the FileChooser bigger in Linux	
 - Better color chooser
+- Make a nice way to load the 3D libraries
 
 PLANS:
 - Fullscreen mode

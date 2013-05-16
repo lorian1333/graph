@@ -1,9 +1,11 @@
 package lorian.graph;
 
 import java.awt.BorderLayout;
+import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,11 +17,16 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JColorChooser;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -29,6 +36,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
@@ -42,18 +50,24 @@ import lorian.graph.fileio.GraphFileReader;
 import lorian.graph.fileio.GraphFileWriter;
 import lorian.graph.fileio.JFileChooserWithConfirmation;
 import lorian.graph.function.Function;
+import lorian.graph.function.Function2Var;
 import lorian.graph.function.MathChars;
+import lorian.graph.function.PointXYZ;
 import lorian.graph.function.Util;
 import lorian.graph.fileio.ExtensionFileFilter;
 import lorian.graph.lang.Language;
+import lorian.graph.opengl.Graph3D;
+import lorian.graph.opengl.Point3D;
 
 
 public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyListener, MouseListener, WindowListener {
 	private static final long serialVersionUID = -1090268654275240501L;
 	
-	public static final String version = "1.0 Beta";
+	public static final String version = "1.5 Beta";
+	
+	// Only for GraphFileReader and GraphFileWriter
 	public static final short major_version = 0x0001;
-	public static final short minor_version = 0x0000;
+	public static final short minor_version = 0x0005;
 	
 	public static Language language;
 	public static Language lang_en;
@@ -62,6 +76,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	private final Dimension WindowSize = new Dimension(800, 800);
 	private final Dimension WindowSizeSmall = new Dimension(640, 640);
 	public static List<Function> functions;
+	public static List<Function2Var> functions2var;
 	
 	private List<JTextField> textfields;
 	private List<JLabel> labels;
@@ -70,14 +85,14 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	
 	//private final String[] buttons = { "Draw", "Special characters"}; 
 	//private String[] calcMenuStrings = { "Value", "Zero", "Minimum", "Maximum", "Intersect", "dy/dx", MathChars.Integral.getCode() + "f(x)dx" };
-	private final String[] MenuStrings = {"menu.file", "menu.calculate", "menu.help" };
+	private final String[] MenuStrings = {"menu.file", "menu.calculate", "menu.mode", "menu.help" };
 	private final String[] FileMenuStrings = {"file.new", "file.open", "file.save", "file.saveas", "file.settings", "file.exit" };
 	private final String[] calcMenuStrings = { "calc.value", "calc.zero", "calc.min", "calc.max", "calc.intersect", "calc.deriv",  MathChars.Integral.getCode() + "f(x)dx"};
 	private final String[] HelpMenuStrings = { "help.about" };
 	private final String[] buttons = { "buttons.draw", "buttons.specialchars"}; 
 		
-	
-	
+	private String[] old2DTextFieldValues = new String[MaxFunctions];
+	private String[] old3DTextFieldValues = new String[MaxFunctions];
 	private final Color[] defaultColors = { new Color(37, 119, 255), new Color(224,0,0).brighter(), new Color(211,0,224).brighter(), new Color(0,158,224).brighter(), new Color(0,255,90), new Color(221,224,0).brighter(), new Color(224,84,0).brighter() };  
 	
 	public static boolean FileSaved = false;
@@ -90,6 +105,8 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	
 	private static GraphFunctionsFrame funcframe;
 	public static GraphFrame gframe; 
+	public static Graph3D g3d;
+	private JPanel G3DContainer;
 	private CalculateFrame calcframe;
 	private static SettingsFrame settingsframe;
 	private static SpecialCharsFrame charframe;
@@ -97,43 +114,23 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 
 	public JMenuBar menuBar;
 	public static boolean applet = false;
+	private JPanel functionsInputPanel;
 	public JPanel MainPanel;
 	
 	public JProgressBar progressbar;
 	private JPanel progressPanel;
 	private boolean doProgressBar = false;
 	
+	private boolean enable3d = false;
+	
 	public GraphFunctionsFrame(boolean applet)
 	{
-		super();
-		textfields = new ArrayList<JTextField>();
-		labels = new ArrayList<JLabel>();
-		checkboxes = new ArrayList<JCheckBox>();
-		parseresults = new ArrayList<ParseResultIcon>();
-		functions = new ArrayList<Function>();
-		settings = new WindowSettings();
-		GraphFunctionsFrame.applet = applet;
-		initLanguages();
-		initUI(false);
-		FileName = Translate("files.untitled");
-		if(!applet)
-		{
-			setTitle(FileName + " * - " + "Graph v" + version);
-			this.setVisible(true);
-		}
-		Render();
-
+		this(applet, false);
 	}
 	public GraphFunctionsFrame(boolean applet, boolean forceSmall)
 	{
 		super();
-		textfields = new ArrayList<JTextField>();
-		labels = new ArrayList<JLabel>();
-		checkboxes = new ArrayList<JCheckBox>();
-		parseresults = new ArrayList<ParseResultIcon>();
-		functions = new ArrayList<Function>();
-		settings = new WindowSettings();
-		GraphFunctionsFrame.applet = applet;
+		initVars(applet);
 		initLanguages();
 		initUI(forceSmall);
 		FileName = Translate("files.untitled");
@@ -146,7 +143,17 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		Render();
 
 	}
-	
+	private void initVars(boolean applet)
+	{
+		textfields = new ArrayList<JTextField>();
+		labels = new ArrayList<JLabel>();
+		checkboxes = new ArrayList<JCheckBox>();
+		parseresults = new ArrayList<ParseResultIcon>();
+		functions = new ArrayList<Function>();
+		functions2var = new ArrayList<Function2Var>();
+		settings = new WindowSettings();
+		GraphFunctionsFrame.applet = applet;
+	}
 	
 	private void initLanguages()
 	{
@@ -176,36 +183,36 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	private void translateFileChooser()
 	{
 		  UIManager.put("FileChooser.lookInLabelText", Translate("filechooser.lookin"));
-		    UIManager.put("FileChooser.saveInLabelText", Translate("filechooser.savein"));
-		    UIManager.put("FileChooser.saveDialogTitleText", Translate("filechooser.save"));
-		    UIManager.put("FileChooser.openDialogTitleText", Translate("filechooser.open"));
-		    UIManager.put("FileChooser.filesOfTypeLabelText", Translate("filechooser.filesoftype"));
-		    UIManager.put("FileChooser.upFolderToolTipText", Translate("filechooser.upfolder"));
-		    UIManager.put("FileChooser.fileNameLabelText",  Translate("filechooser.filename"));
-		    UIManager.put("FileChooser.newFolderToolTipText", Translate("filechooser.newfolder"));
-		    UIManager.put("FileChooser.viewMenuLabelText", Translate("filechooser.view"));
-		    UIManager.put("FileChooser.saveButtonText", Translate("filechooser.save"));
-		    UIManager.put("FileChooser.openButtonText", Translate("filechooser.open"));
-		    UIManager.put("FileChooser.cancelButtonText", Translate("filechooser.cancel"));
-		    UIManager.put("FileChooser.updateButtonText", Translate("filechooser.update"));
-		    UIManager.put("FileChooser.refreshActionLabelText", Translate("filechooser.refresh"));
-		    UIManager.put("FileChooser.newFolderActionLabelText", Translate("filechooser.newfolder"));
-		    UIManager.put("FileChooser.listViewActionLabelText", Translate("filechooser.list"));
-		    UIManager.put("FileChooser.detailsViewActionLabelText", Translate("filechooser.details"));
-		    UIManager.put("FileChooser.helpButtonText", Translate("filechooser.help"));
-		    UIManager.put("FileChooser.saveButtonToolTipText", Translate("filechooser.save"));
-		    UIManager.put("FileChooser.openButtonToolTipText", Translate("filechooser.open"));
-		    UIManager.put("FileChooser.cancelButtonToolTipText", Translate("filechooser.cancel"));
-		    UIManager.put("FileChooser.updateButtonToolTipText", Translate("filechooser.update"));
-		    UIManager.put("FileChooser.helpButtonToolTipText", Translate("filechooser.help"));
-		    UIManager.put("FileChooser.win32.newFolder", Translate("filechooser.newfolder"));
-		    UIManager.put("FileChooser.win32.newFolder.subsequent", Translate("filechooser.newfolder") + " ({0})");
-		    UIManager.put("FileChooser.other.newFolder", Translate("filechooser.newfolder"));
-		    UIManager.put("FileChooser.other.newFolder.subsequent", Translate("filechooser.newfolder") + " ({0})"); 
-		    UIManager.put("FileChooser.listViewButtonToolTipText", Translate("filechooser.list"));
-		    UIManager.put("FileChooser.detailsViewButtonToolTipText", Translate("filechooser.details"));
-		    UIManager.put("FileChooser.viewMenuButtonToolTipText", Translate("filechooser.viewmenu")); 
-		    UIManager.put("FileChooser.acceptAllFileFilterText", Translate("files.allfiles")); 
+		  UIManager.put("FileChooser.saveInLabelText", Translate("filechooser.savein"));
+		  UIManager.put("FileChooser.saveDialogTitleText", Translate("filechooser.save"));
+		  UIManager.put("FileChooser.openDialogTitleText", Translate("filechooser.open"));
+		  UIManager.put("FileChooser.filesOfTypeLabelText", Translate("filechooser.filesoftype"));
+		  UIManager.put("FileChooser.upFolderToolTipText", Translate("filechooser.upfolder"));
+		  UIManager.put("FileChooser.fileNameLabelText",  Translate("filechooser.filename"));
+		  UIManager.put("FileChooser.newFolderToolTipText", Translate("filechooser.newfolder"));
+		  UIManager.put("FileChooser.viewMenuLabelText", Translate("filechooser.view"));
+		  UIManager.put("FileChooser.saveButtonText", Translate("filechooser.save"));
+		  UIManager.put("FileChooser.openButtonText", Translate("filechooser.open"));
+		  UIManager.put("FileChooser.cancelButtonText", Translate("filechooser.cancel"));
+		  UIManager.put("FileChooser.updateButtonText", Translate("filechooser.update"));
+		  UIManager.put("FileChooser.refreshActionLabelText", Translate("filechooser.refresh"));
+		  UIManager.put("FileChooser.newFolderActionLabelText", Translate("filechooser.newfolder"));
+		  UIManager.put("FileChooser.listViewActionLabelText", Translate("filechooser.list"));
+		  UIManager.put("FileChooser.detailsViewActionLabelText", Translate("filechooser.details"));
+		  UIManager.put("FileChooser.helpButtonText", Translate("filechooser.help"));
+		  UIManager.put("FileChooser.saveButtonToolTipText", Translate("filechooser.save"));
+		  UIManager.put("FileChooser.openButtonToolTipText", Translate("filechooser.open"));
+		  UIManager.put("FileChooser.cancelButtonToolTipText", Translate("filechooser.cancel"));
+		  UIManager.put("FileChooser.updateButtonToolTipText", Translate("filechooser.update"));
+		  UIManager.put("FileChooser.helpButtonToolTipText", Translate("filechooser.help"));
+		  UIManager.put("FileChooser.win32.newFolder", Translate("filechooser.newfolder"));
+		  UIManager.put("FileChooser.win32.newFolder.subsequent", Translate("filechooser.newfolder") + " ({0})");
+		  UIManager.put("FileChooser.other.newFolder", Translate("filechooser.newfolder"));
+		  UIManager.put("FileChooser.other.newFolder.subsequent", Translate("filechooser.newfolder") + " ({0})"); 
+		  UIManager.put("FileChooser.listViewButtonToolTipText", Translate("filechooser.list"));
+		  UIManager.put("FileChooser.detailsViewButtonToolTipText", Translate("filechooser.details"));
+		  UIManager.put("FileChooser.viewMenuButtonToolTipText", Translate("filechooser.viewmenu")); 
+		  UIManager.put("FileChooser.acceptAllFileFilterText", Translate("files.allfiles")); 
 	}
 	private void translateOptionPane()
 	{
@@ -342,17 +349,34 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	}
 	private void InitMenu()
 	{
-		JMenu fileMenu, calcMenu, helpMenu;
+		JMenu fileMenu, calcMenu, modeMenu, helpMenu;
 		JMenuItem NewFileItem,OpenFileItem, SaveFileItem, SaveFileAsItem, settingsItem, exitItem;
 		JMenuItem aboutItem;
 		
 		menuBar = new JMenuBar();
 		fileMenu = new JMenu(MenuStrings[0]);
 		calcMenu = new JMenu(MenuStrings[1]);
-		helpMenu = new JMenu(MenuStrings[2]);
+		modeMenu = new JMenu(MenuStrings[2]);
+		helpMenu = new JMenu(MenuStrings[3]);
 		menuBar.add(fileMenu);
 		menuBar.add(calcMenu);
+		menuBar.add(modeMenu);
 		menuBar.add(helpMenu);
+		
+		JRadioButtonMenuItem toggle2dItem = new JRadioButtonMenuItem("y=f(x)");
+		JRadioButtonMenuItem toggle3dItem = new JRadioButtonMenuItem("z=f(x,y) (ALPHA)");
+		toggle2dItem.setSelected(true);
+		toggle2dItem.setName("toggle2d");
+		toggle3dItem.setName("toggle3d"); 
+		toggle3dItem.addActionListener(this);
+		toggle2dItem.addActionListener(this);
+		
+		ButtonGroup modeGroup = new ButtonGroup();
+		modeGroup.add(toggle2dItem);
+		modeGroup.add(toggle3dItem);
+		
+		modeMenu.add(toggle2dItem);
+		modeMenu.add(toggle3dItem);
 		
 		NewFileItem = new JMenuItem(FileMenuStrings[0]);
 		NewFileItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK)); 
@@ -408,7 +432,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	}
 	private void initUI(boolean forceSmall)
 	{
-		if(applet) MainPanel = new JPanel();
+		MainPanel = new JPanel();
 		
 		boolean small;
 		if(!applet && !forceSmall)
@@ -554,28 +578,35 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		else
 			progressCons.setY(Spring.constant(745));
 			
-		if(applet) MainPanel.setLayout(new BorderLayout());
-		else this.setLayout(new BorderLayout());
+		//if(applet)
+			MainPanel.setLayout(new BorderLayout());
+		//else this.setLayout(new BorderLayout());
 		
 		panel.setPreferredSize(new Dimension(450, 50 + height * (MaxFunctions+1)));
 		
-		if(applet)
-		{
-			MainPanel.add(panel, BorderLayout.WEST);
-			MainPanel.add(new JSeparator(JSeparator.VERTICAL));		
-			MainPanel.add((JPanel) gframe, BorderLayout.EAST);
-		}
+		this.functionsInputPanel = panel;
+		
+		MainPanel.add(functionsInputPanel, BorderLayout.WEST);
+		MainPanel.add(new JSeparator(JSeparator.VERTICAL));		
+		MainPanel.add((JPanel) gframe, BorderLayout.EAST);
+		
+		/*
 		else
 		{
 			this.add(panel, BorderLayout.WEST);
 			this.add(new JSeparator(JSeparator.VERTICAL));		
 			this.add((JPanel) gframe, BorderLayout.EAST);
-		}
+		}*/
+		
+		
 		InitMenu();
 		
 
 		if(!applet)
-			this.pack();
+		{
+			this.add(MainPanel);
+			//this.pack();
+		}	
 		
 		textfields.get(0).requestFocusInWindow();
 		this.setBackground(Color.WHITE);
@@ -598,6 +629,70 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 			this.setLocationRelativeTo(null);
 		}
 		
+	}
+	private void Toggle3D()
+	{	
+		MainPanel.setVisible(false);
+		int i=0;
+		
+		
+		if(enable3d)
+		{
+			if(g3d == null || G3DContainer == null)
+			{
+				g3d = new Graph3D(800, 800);
+			
+				G3DContainer = new JPanel();
+				G3DContainer.setPreferredSize(g3d.getSize());
+				G3DContainer.setSize(g3d.getSize());
+				G3DContainer.add(g3d);
+			}
+			
+			i=0;
+			for(JLabel l: labels)
+			{
+				l.setText("Z" + (i+1) + " = ");
+				i++;
+			}
+			
+			i=0;
+			for(JTextField txt: textfields)
+			{
+				old2DTextFieldValues[i] = txt.getText();
+				txt.setText(old3DTextFieldValues[i]);
+				i++;
+			}
+			
+			MainPanel.removeAll();
+			MainPanel.add(functionsInputPanel, BorderLayout.WEST);
+			MainPanel.add(new JSeparator(JSeparator.VERTICAL));		
+			MainPanel.add(G3DContainer, BorderLayout.EAST);
+		}
+		else
+		{
+			i=0;
+			for(JLabel l: labels)
+			{
+				l.setText("Y" + (i+1) + " = ");
+				i++;
+			}
+			i=0;
+			for(JTextField txt: textfields)
+			{
+				old3DTextFieldValues[i] = txt.getText();
+				txt.setText(old2DTextFieldValues[i]);
+				i++;
+			}
+			MainPanel.removeAll();
+			MainPanel.add(functionsInputPanel, BorderLayout.WEST);
+			MainPanel.add(new JSeparator(JSeparator.VERTICAL));		
+			MainPanel.add(gframe, BorderLayout.EAST);
+		}
+		MainPanel.setVisible(true);
+		this.repaint();
+		this.paintAll(this.getGraphics());
+		
+		Render();
 	}
 	
 	private boolean SaveFile() 
@@ -658,9 +753,9 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		progressbar.setString(String.format(Translate("message.progressbar.opening"), (new File(filePath)).getName(), progressbar.getValue()));
 		progressPanel.paintAll(progressPanel.getGraphics());
 
-		String[] reconstructedfunctions = fr.getReconstructedFunctionStrings();
+		String[] reconstructedfunctions = fr.getFunctionStrings();
 		short[] indexes = fr.getFunctionIndexes();
-		Function[] functions = fr.getReconstructedFunctions();
+		Function[] functions = fr.getFunctions();
 		
 		settings = fr.getWindowSettings();
 		for(int i=0;i<indexes.length; i++)
@@ -797,7 +892,103 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 
 	private void Render()
 	{
-	
+		if(enable3d)
+			Render3D();
+		else 
+			Render2D();
+	}
+	private void Render3D()
+	{
+		System.out.println("Parsing functions... ");
+		
+		int progstart = progressbar.getValue();
+		functions2var.clear();
+		for(int i=0;i<GraphFunctionsFrame.MaxFunctions;i++)
+		{
+			String text = Util.removeWhiteSpace(textfields.get(i).getText().trim());
+			Function2Var f = new Function2Var();
+			ParseResultIcon parseresult = parseresults.get(i);
+			if(text.toLowerCase().contains("z" + (i+1))) 
+			{
+				System.out.println("Error: Unable to parse function Z" + (i+1));
+				f.clear();
+				f.setDraw(false);
+				functions2var.add(f);
+				parseresult.setState(ParseResultIcon.State.ERROR);
+				parseresults.set(i, parseresult);
+				if(doProgressBar)
+				{
+					progressbar.setValue(progstart + (int) (((double)(i+1)/(double)MaxFunctions) * (100-progstart)));
+					progressbar.setString(String.format(Translate("message.progressbar.drawingfunctions"), progressbar.getValue()));
+					progressPanel.paintAll(progressPanel.getGraphics());
+				}
+				continue;
+			}
+			if(text.isEmpty()) {
+				f.setDraw(false);
+				functions2var.add(f);
+				//System.out.println("Z" + (i+1) + " is empty. Skipping.");
+				parseresult.setState(ParseResultIcon.State.EMPTY);
+				parseresults.set(i, parseresult);
+				if(doProgressBar)
+				{
+					progressbar.setValue(progstart + (int) (((double)(i+1)/(double)MaxFunctions) * (100-progstart)));
+					progressbar.setString(String.format(Translate("message.progressbar.drawingfunctions"), progressbar.getValue()));
+					progressPanel.paintAll(progressPanel.getGraphics());
+				}
+				continue;
+			}
+			empty = false;
+			if(!f.Parse(text))
+			{
+				System.out.println("Error: Unable to parse function Z" + (i+1));
+				f.clear();
+				f.setDraw(false);
+				functions2var.add(f);
+				parseresult.setState(ParseResultIcon.State.ERROR);
+				parseresults.set(i, parseresult);
+				if(doProgressBar)
+				{
+					progressbar.setValue(progstart + (int) (((double)(i+1)/(double)MaxFunctions) * (100-progstart)));
+					progressbar.setString(String.format(Translate("message.progressbar.drawingfunctions"), progressbar.getValue()));
+					progressPanel.paintAll(progressPanel.getGraphics());
+				}
+				continue;
+				
+			}
+			Color c = labels.get(i).getBackground();
+			f.setColor(c);
+			f.setDraw(checkboxes.get(i).isSelected());
+			functions2var.add(f);
+			parseresult.setState(ParseResultIcon.State.OK);
+			parseresults.set(i, parseresult);
+			System.out.println("Added function Z" + (i+1) + " with color " + c.getRed() + "," + c.getGreen() + "," + c.getBlue());
+			if(doProgressBar)
+			{
+				progressbar.setValue(progstart + (int) (((double)(i+1)/(double)MaxFunctions) * (100-progstart)));
+				progressbar.setString(String.format(Translate("message.progressbar.drawingfunctions"), progressbar.getValue()));
+				progressPanel.paintAll(progressPanel.getGraphics());
+			}
+		}
+		progressbar.setValue(100);
+		progressbar.setString(String.format(Translate("message.progressbar.done"), progressbar.getValue()));
+		progressPanel.paintAll(progressPanel.getGraphics());
+		
+		
+		g3d.Update(functions2var);
+		
+		this.repaint();
+		
+		/*
+		if(calcframe != null)
+		{
+			calcframe.Update();
+		}
+		*/
+		System.out.println("Done");
+	}
+	private void Render2D()
+	{
 		System.out.println("Parsing functions...");
 		int progstart = progressbar.getValue();
 		functions.clear();
@@ -878,24 +1069,23 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 			calcframe.Update();
 		}
 		System.out.println("Done");
-		
-		//ProgressbarTest();
 	}
 
 	
 	public static void main(String[] args)
 	{
 		System.out.println("Graph v" + GraphFunctionsFrame.version);
-		
+		//System.out.println((new PointXYZ(1, 2, 3)).toString());
 		GraphFunctionsFrame.funcframe = new GraphFunctionsFrame(false);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+	
 		if(e.getSource() instanceof JButton || e.getSource() instanceof JMenuItem)
 		{
-			String buttonname = e.getActionCommand();
 			
+			String buttonname = e.getActionCommand();
 			if(buttonname.equalsIgnoreCase(buttons[0])) //render
 			{
 				Render();
@@ -1022,6 +1212,32 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 				gframe.setCalcPanel(calcframe);
 				gframe.setCalcPanelVisible(true);
 			}
+			else if(buttonname.equalsIgnoreCase("y=f(x)"))
+			{
+				System.out.println("Toggling 3D to OFF");
+				enable3d = false;
+				Toggle3D();
+			}
+			else if(buttonname.startsWith("z=f(x,y)"))
+			{
+				/*
+				JRadioButtonMenuItem cbItem = (JRadioButtonMenuItem) e.getSource();
+				if(cbItem.isSelected())
+				{
+					System.out.println("Toggling 3D to ON");
+					enable3d = true;
+				}
+				else
+				{
+					System.out.println("Toggling 3D to OFF");
+					enable3d = false;
+				}
+				Toggle3D();
+				*/
+				System.out.println("Toggling 3D to ON");
+				enable3d = true;
+				Toggle3D();
+			}
 		}
 		else if(e.getSource() instanceof JCheckBox)
 		{
@@ -1030,6 +1246,8 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 			if(!textfields.get(index).getText().trim().isEmpty()) 
 				Render();
 		}
+		
+		
 	}
 	
 	@Override

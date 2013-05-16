@@ -39,6 +39,7 @@ public class Function {
 	{
 		terms = new ArrayList<Term>();
 		setColor(Color.BLACK);
+		variables = new ArrayList<Variable>();
 		Parse(s);
 	}
 	
@@ -102,7 +103,7 @@ public class Function {
 		if(variables == null) return s;
 		for(Variable v: variables)
 		{
-			s = Util.StringReplace(s, v.getVarChar(), "(" + v.getValue() + ")");
+			s = Util.StringReplace(s, v.getVarChar(), "(" + Util.doubleToString(v.getValue()) + ")");
 		}
 		return s;
 	}
@@ -278,7 +279,11 @@ public class Function {
 	public void setDraw(boolean draw) {
 		this.draw = draw;
 	}
-	
+	@Override
+	public String toString()
+	{
+		return this.RawInputString;
+	}
 	public static void adasdmain(String[] args)
 	{
 		Function2Var f = new Function2Var();

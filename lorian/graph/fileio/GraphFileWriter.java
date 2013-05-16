@@ -4,13 +4,9 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.List;
-
 import lorian.graph.GraphFunctionsFrame;
 import lorian.graph.WindowSettings;
-import lorian.graph.function.Factor;
 import lorian.graph.function.Function;
-import lorian.graph.function.Term;
 
 public class GraphFileWriter {
 	private final byte magic[] = {'L', 'G', 'F'};
@@ -42,70 +38,10 @@ public class GraphFileWriter {
 		ds.writeInt(s.length()); 
 		ds.writeChars(s);
 	}
-	private void writeFactor(Factor f) throws IOException
-	{
-		Factor.Type type = f.getType();
-		ds.write(type.ordinal());
-		
-		switch(type)
-		{
-			case CONSTANT:
-			{
-				ds.writeDouble(f.Calc(0)); 
-				break;
-			}
-			case ARGUMENT:
-			{
-				writeFunction(f.getExponentFunction());
-				break;
-			}
-			case PARENTHESES:
-			{
-				ds.writeDouble(f.getValue());
-				writeFunction(f.getBaseFunction());
-				writeFunction(f.getExponentFunction());
-				break;
-			}
-			case FUNCTION:
-			{
-				writeString(f.getFunctionName());
-				ds.writeInt(f.getFunctionArgs().size());
-				if(f.getFunctionName().equalsIgnoreCase("const") || f.getFunctionName().equalsIgnoreCase("deriv") ||f.getFunctionName().equalsIgnoreCase("dydx"))
-				{
-					for(String arg: f.getFunctionArgs())
-					{
-						writeString(arg);
-					}
-				}
-				else
-				{
-					for(String arg: f.getFunctionArgs())
-					{
-						writeFunction(new Function(arg));
-					}
-				}
-				break;
-			}
-		}
-	}
-	private void writeTerm(Term t) throws IOException 
-	{
-		List<Factor> factors = t.getFactors(); 
-		ds.writeInt(factors.size());
-		for(Factor f: factors)
-		{
-			writeFactor(f);
-		}
-	}
+
 	private void writeFunction(Function f) throws IOException
 	{
-		List<Term> terms = f.getTerms();
-		ds.writeInt(terms.size());
-		for(Term t: terms)
-		{
-			writeTerm(t);
-		}
-		
+		writeString(f.toString());
 	}
 	private void writeFunctionCount() throws IOException
 	{
