@@ -2,8 +2,13 @@ package lorian.graph.function;
 
 import java.awt.Color;
 import java.awt.FontMetrics;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
 import java.text.NumberFormat;
 import java.util.Locale;
+
+import com.jogamp.common.nio.Buffers;
 
 public class Util {
 	public static String removeWhiteSpace(String s)
@@ -137,5 +142,21 @@ public class Util {
 		return f.format(d);
 	}
 	
-
+	private static final int BYTES_PER_FLOAT = Float.SIZE / 8;
+	private static final int BYTES_PER_DOUBLE = Double.SIZE / 8;
+	
+	public static FloatBuffer toFloatBuffer(float[] src)
+	{
+		/*
+		ByteBuffer byteBuffer = ByteBuffer.allocateDirect(src.length * BYTES_PER_FLOAT).order(ByteOrder.nativeOrder());
+		
+		FloatBuffer Buf = byteBuffer.asFloatBuffer();
+		Buf.put(src);
+		Buf.flip();
+		return Buf;
+		*/
+		FloatBuffer buf = Buffers.newDirectFloatBuffer(src);
+		buf.rewind();
+		return buf;
+	}
 }

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
@@ -13,6 +14,7 @@ import javax.media.opengl.GLEventListener;
 import lorian.graph.GraphFunctionsFrame;
 import lorian.graph.WindowSettings3D;
 import lorian.graph.function.Function2Var;
+import lorian.graph.function.Util;
 
 import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.gl2.GLUT;
@@ -39,15 +41,17 @@ class Renderer implements GLEventListener {
 	
 	private int width, height;
 	
-	private List<Function2Var> functions;
+	//private List<Function2Var> functions;
 	private WindowSettings3D settings;
-
+	private List<FunctionRenderData> renderdata;
+	
 	private boolean initedPosition = false;
 	public Renderer()
 	{
 		super();
-		functions = new ArrayList<Function2Var>();
+		//functions = new ArrayList<Function2Var>();
 		settings = new WindowSettings3D();
+		renderdata = new ArrayList<FunctionRenderData>();
 	}
 	private void initGL(GLAutoDrawable gLDrawable, int width, int height) {
 		this.width = width;
@@ -66,7 +70,6 @@ class Renderer implements GLEventListener {
 
 		gl.glMatrixMode(GL2.GL_MODELVIEW); // Select The Modelview Matrix
 		gl.glLoadIdentity();
-
 		gl.glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // White Background
 		gl.glShadeModel(GL2.GL_SMOOTH); // Enable Smooth Shading
 		gl.glEnable(GL2.GL_DEPTH_TEST); // Enables Depth Testing
@@ -86,6 +89,11 @@ class Renderer implements GLEventListener {
 		//gl.glEnable(GL2.GL_MULTISAMPLE);
 		gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
 
+		
+		gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
+		
+
+		
 		if(!initedPosition)
 		{
 			handleMouseWheelInput(60);
@@ -209,6 +217,7 @@ class Renderer implements GLEventListener {
 		//gl.glRotated(90.0, 0.0, 1.0, 0.0);
 		gl.glPopMatrix();
 	}
+	/*
 	private void drawAxisNames(GL2 gl)
 	{
 		TextRenderer renderer = new TextRenderer(new Font("SansSerif", 0, 10));
@@ -238,12 +247,84 @@ class Renderer implements GLEventListener {
 			gl.glVertex3d(p3.getX(), p3.getY(), p3.getZ());
 		gl.glEnd();
 	}
+	*/
+	private void addFunctionToArray(Function2Var f)
+	{
+		FunctionRenderData fdata = new FunctionRenderData();
+		fdata.color = f.getColor();
+		fdata.data = new float[Xlength * Ylength * 3 ];
+		
+		int xpix, ypix, zpix;
+		double x, y, z;
+		double stepX = ((double) (settings.getXmax() - settings.getXmin())) / Xlength;
+		double stepY = ((double) (settings.getYmax() - settings.getYmin())) / Ylength;
+		int i=0;
+		for(xpix = -1, x = settings.getXmin(); xpix < Xlength; xpix++, x += stepX)
+		{
+			for(ypix = -1, y = settings.getYmin(); ypix < Ylength; ypix++, y += stepY)
+			{
+				z = f.Calc(x, y);
+				
+				if(Double.isNaN(z))
+				{
+					continue;
+				}
+				else
+				{
+					
+				}
+				
+				zpix = Zlength - (int) ((settings.getZmax() - z) * (Zlength / (settings.getZmax() - settings.getZmin())));
+				if(xpix > -1 && ypix > -1 && zpix >= 0 && zpix <= Zlength)
+				{
+					/*
+					gl.glBegin(GL2.GL_POINTS);
+						gl.glVertex3d(xpix, zpix, ypix);
+					gl.glEnd();
+						*/	
+					fdata.data[i++] = xpix;
+					fdata.data[i++] = zpix;
+					fdata.data[i++] = ypix;
+							
+							/*
+							previous1.setLocation(xpix, Zlength - (int) ((settings.getZmax() - f.Calc(x, y-stepY)) * (Zlength / (settings.getZmax() - settings.getZmin()))), ypix-1);
+							previous2.setLocation(xpix-1, Zlength - (int) ((settings.getZmax() - f.Calc(x-stepX, y)) * (Zlength / (settings.getZmax() - settings.getZmin()))), ypix);
+							previous3.setLocation(xpix-1, Zlength - (int) ((settings.getZmax() - f.Calc(x-stepX, y-stepY)) * (Zlength / (settings.getZmax() - settings.getZmin()))), ypix-1);
+							drawRect(gl, new Point3D(xpix, zpix, ypix), previous1, previous2, previous3);
+							*/
+				}
+				
+			}
+					
+					
+		}
+		renderdata.add(fdata);
+	}
+	private void drawAllFunctions(GL2 gl)
+	{
+		
+		gl.glPushMatrix();
+		gl.glTranslated(Xlength * -0.5 + 1, Zlength * -0.5, Ylength * -0.5 + 1);
+		gl.glPointSize(5.0f);
+		
+		for(FunctionRenderData f: renderdata)
+		{
+			
+			gl.glColor3d(f.color.getRed() / 255.0, f.color.getGreen() / 255.0, f.color.getBlue() / 255.0);
+			gl.glVertexPointer(3, GL2.GL_FLOAT, 0, Util.toFloatBuffer(f.data));
+			gl.glDrawArrays(GL2.GL_POINTS, 0, f.data.length / 3); 
+			
+		}
+		gl.glPopMatrix();
+		
+	}
 	private void drawFunction(GL2 gl, Function2Var f)
 	{
 		if(f.isEmpty()) return;	
 		gl.glPushMatrix();
 		gl.glTranslated(Xlength * -0.5 + 1, Zlength * -0.5, Ylength * -0.5 + 1);
 		gl.glPointSize(5.0f);
+		
 		Color color = f.getColor();
 		gl.glColor3d(color.getRed() / 255.0, color.getGreen() / 255.0, color.getBlue() / 255.0);
 		
@@ -315,12 +396,15 @@ class Renderer implements GLEventListener {
 		gl.glTranslatef(-camXPos, -camYPos, -camZPos);
 		gl.glRotatef(originXRot, 1.0f, 0.0f, 0f);
 		gl.glRotatef(originYRot, 0.0f, 1.0f, 0.0f);
-		
+		/*
 		for(Function2Var f: functions)
 		{
 			if(!f.isEmpty())
-				drawFunction(gl, f);
+				//drawFunction(gl, f);
+				addFunctionToArray(f);
 		}
+		*/
+		drawAllFunctions(gl);
 		
 		drawAxisCones(gl);
 		drawAxes(gl);
@@ -351,7 +435,13 @@ class Renderer implements GLEventListener {
 	}
 	public void Update(List<Function2Var> functions)
 	{
-		this.functions = functions;
+		//this.functions = functions;
+		renderdata.clear();
+		for(Function2Var f: functions)
+		{
+			if(!f.isEmpty())
+				addFunctionToArray(f);
+		}
 	}
 	public void UpdateWindowSettings(WindowSettings3D windowsettings)
 	{

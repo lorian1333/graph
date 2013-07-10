@@ -111,9 +111,21 @@ public class Function {
 	{
 		String ss = s;
 		
+		// Prevent messing up
+		ss = ss.replace("const(pi)", "coip"); 
+		ss = ss.replace("const(e)", "cof"); 
+		
 		// Constants
 		ss = Util.StringReplace(ss, MathChars.Pi.getCode(), "const(pi)");
-		ss = Util.StringReplace(ss, MathChars.e.getCode(), "const(e)");
+		//ss = Util.StringReplace(ss, MathChars.e.getCode(), "const(e)");
+		
+		ss = Util.StringReplace(ss, 'e', "const(e)");
+		ss = ss.replace("pi", "const(pi)"); 
+		
+		// Invert changes
+		ss = ss.replace("coip", "const(pi)"); 
+		ss = ss.replace("cof", "const(e)"); 
+		
 		
 		// Fractions
 		ss = Util.StringReplace(ss, MathChars.Frac_OneThird.getCode(), "(1/3)");
@@ -152,6 +164,7 @@ public class Function {
 		ss = Util.StringReplace(ss, MathChars.Root_3.getCode(), "cbrt");
 		ss = Util.StringReplace(ss, MathChars.Root_4.getCode(), "4rt");
 		
+	
 		return ss;
 	}
 	

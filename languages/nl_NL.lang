@@ -29,6 +29,7 @@ message.windowsettingserror=Verkeerde window-instellingen
 message.confirmchanges=Wilt u de wijzigingen opslaan in %s?
 message.confirmoverwrite_0=%s bestaat al.
 message.confirmoverwrite_1=Weet u zeker dat u het wilt overschrijven?
+message.fileopenerror=Kan bestand %s niet openen
 message.error=Fout
 message.progressbar.opening=%s openen... (%d%%)
 message.progressbar.drawingfunctions=Functies tekenen... (%d%%)

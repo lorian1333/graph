@@ -1,6 +1,7 @@
 package lorian.graph.function;
 
 import java.util.Locale;
+import java.util.Random;
 
 public class Calculate {
 
@@ -356,6 +357,113 @@ public class Calculate {
 	}
 	public static void main(String[] args)
 	{
-		 System.out.println(Summation('k', 0, 10000, "1/(16^k)(4/(8k+1)-2/(8k+4)-1/(8k+5)-1/(8k+6))"));
+		 //System.out.println(Summation('k', 0, 10000, "1/(16^k)(4/(8k+1)-2/(8k+4)-1/(8k+5)-1/(8k+6))"));
+		int player_wins=0;
+		int dealer_wins=0;
+		int draw=0;
+		int rounds = 100000;
+		Random r = new Random();
+		
+		//0=black,1=red
+		for(int i=0;i<rounds;i++)
+		{
+			int player_order[] = new int[3];
+			int dealer_order[] = new int[3];
+			int player_points=0,dealer_points=0;
+			int cards[] = new int[52];
+			
+			r.setSeed(System.currentTimeMillis());
+			
+			int amount_black = 0, amount_red = 0;
+			for(int j=0;j<52;j++)
+			{
+				if(amount_black < 26 && amount_red < 26)
+				{
+					int color = Math.abs(r.nextInt() % 2);
+					if(color==0) amount_black++;
+					else amount_red++;
+				    cards[j] = color; 
+				}
+				else if(amount_black == 26)
+				{
+					amount_red++;
+					cards[j] = 1;
+				}
+				else if(amount_red == 26)
+				{
+					amount_black++;
+					cards[j] = 0;
+				}
+			}
+
+			boolean d = false;
+			while(player_order == dealer_order || !d)
+			{
+				player_order[0] = Math.abs(r.nextInt() % 2);
+				player_order[1] = Math.abs(r.nextInt() % 2);
+				player_order[2] = Math.abs(r.nextInt() % 2);
+				
+				
+				dealer_order[0] = Math.abs(r.nextInt() % 2);
+				dealer_order[1] = player_order[0];
+				dealer_order[2] = player_order[1];
+				
+				
+				/*
+				dealer_order[0] = player_order[0];
+				dealer_order[1] = player_order[1];
+				dealer_order[2] = (player_order[2]==1?0:1);
+				*/
+				
+				/*
+				dealer_order[0] = player_order[2];
+				dealer_order[1] = player_order[1];
+				dealer_order[2] = player_order[0];
+				*/
+
+				d = true;
+			}
+			int last_three[] = new int[3];
+			int reset_c=0;
+			for(int j=0;j<52;j++)
+			{
+				if(reset_c < 3)
+				{
+					last_three[reset_c++] = cards[j];
+					continue;
+				}
+				
+				if(last_three[0] == player_order[0] && last_three[1] == player_order[1] && last_three[2] == player_order[2])
+				{
+					player_points++;
+					reset_c=1;
+					last_three[0] = cards[j];
+				}
+				else if(last_three[0] == dealer_order[0] && last_three[1] == dealer_order[1] && last_three[2] == dealer_order[2])
+				{
+					dealer_points++;
+					reset_c=1;
+					last_three[0] = cards[j];
+				}
+				else
+				{
+					last_three[0] = last_three[1];
+					last_three[1] = last_three[2];
+					last_three[2] = cards[j];
+				}
+			}
+				
+			//System.out.printf("Player points: %d, dealer points: %d\n", player_points, dealer_points);
+			if(player_points > dealer_points)
+				player_wins++;
+			else if(dealer_points > player_points)
+				dealer_wins++;
+			else
+				draw++;
+		}
+		
+		//System.out.printf("Draw: %d\nPlayer wins: %d\nDealer wins: %d\n", draw, player_wins, dealer_wins);
+		//System.out.printf("Draw: %f%%\nPlayer: %f%%\nDealer: %f%%\n", (double) draw / (double) rounds * 100, (double) player_wins / (double) rounds * 100, (double) dealer_wins / (double) rounds * 100);
+		System.out.printf("Player: %.2f%%\nDealer: %.2f%%\n",  (double) player_wins / (double) (rounds-draw) * 100, (double) dealer_wins / (double) (rounds-draw) * 100);
 	}
 }

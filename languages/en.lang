@@ -29,6 +29,7 @@ message.windowsettingserror=Invalid windowsettings
 message.confirmchanges=Do you want to save changes to %s?
 message.confirmoverwrite_0=%s already exists.
 message.confirmoverwrite_1=Are you sure you want to overwrite it?
+message.fileopenerror=Could not open %s
 message.error=Error
 message.progressbar.opening=Opening %s... (%d%%)
 message.progressbar.drawingfunctions=Drawing functions... (%d%%)

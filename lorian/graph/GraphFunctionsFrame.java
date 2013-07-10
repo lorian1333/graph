@@ -737,12 +737,18 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		GraphFileReader fr = new GraphFileReader(filePath);
 		try
 		{
-			if(!fr.read()) return false;
+			if(!fr.read())
+			{
+				progressPanel.setVisible(false);
+				JOptionPane.showMessageDialog(this, String.format(Translate("message.fileopenerror"), (new File(filePath)).getName()), Translate("message.error"), JOptionPane.ERROR_MESSAGE);
+				return false;
+			}
+			
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(this, "Could not open " + (new File(filePath)).getName(), "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, String.format(Translate("message.fileopenerror"), (new File(filePath)).getName()), Translate("message.error"), JOptionPane.ERROR_MESSAGE);
 			progressPanel.setVisible(false);
 			return false;
 		}
