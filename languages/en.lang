@@ -18,6 +18,7 @@ calc.intersect=Intersect
 calc.deriv=dy/dx
 
 help.about=About
+
 buttons.draw=Draw
 buttons.specialchars=Special characters
 

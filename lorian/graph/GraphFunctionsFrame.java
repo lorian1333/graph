@@ -17,6 +17,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
@@ -83,8 +84,6 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	private List<JCheckBox> checkboxes;
 	private List<ParseResultIcon> parseresults;
 	
-	//private final String[] buttons = { "Draw", "Special characters"}; 
-	//private String[] calcMenuStrings = { "Value", "Zero", "Minimum", "Maximum", "Intersect", "dy/dx", MathChars.Integral.getCode() + "f(x)dx" };
 	private final String[] MenuStrings = {"menu.file", "menu.calculate", "menu.mode", "menu.help" };
 	private final String[] FileMenuStrings = {"file.new", "file.open", "file.save", "file.saveas", "file.settings", "file.exit" };
 	private final String[] calcMenuStrings = { "calc.value", "calc.zero", "calc.min", "calc.max", "calc.intersect", "calc.deriv",  MathChars.Integral.getCode() + "f(x)dx"};
@@ -162,10 +161,9 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		System.out.println("Reading language files...");
 		try {
 			language.readDefault();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			System.out.println("Could not read local language file: " + e.getMessage());
 			System.out.println("Switching to English.");
-			
 		}
 		
 		try {

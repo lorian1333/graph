@@ -1,9 +1,13 @@
 package lorian.graph.lang;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,13 +38,38 @@ public class LangFileReader {
 		value = line.substring(i+1);
 		items.add(new Item(name, value)); 
 	}
-	public void read() throws IOException
+	public void read() throws IOException, UnsupportedEncodingException
 	{
 		InputStream is = getClass().getResourceAsStream(filename);
-		if(is == null) return;
-		BufferedReader br = new BufferedReader(new InputStreamReader(is)); 
-		
+		if(is == null) throw new FileNotFoundException(filename + " does not exist");
 		String line;
+		BufferedReader br = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8"))); 
+		
+		/*
+		String filename_msg = filename.substring(filename.lastIndexOf('/')+1);
+		//BufferedReader br_tmp = new BufferedReader(new InputStreamReader(is));
+		if(line.substring(0, 3).equalsIgnoreCase(new String(new char[] { 0xEF, 0xBB, 0xBF } ))) // the UTF-8 BOM
+		{
+			line = line.substring(3);
+			System.out.println(filename_msg + " has an UTF-8 encoding: OK");
+			br = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8"))); 
+		}
+		else if(line.substring(0, 2).equalsIgnoreCase(new String(new char[] { 0xFE, 0xFF } ))) // UTF-16 Big Endian
+		{
+			System.out.println(filename_msg + " has an UTF-16 (Big Endian) encoding: not supported");
+			throw new UnsupportedEncodingException(".lang files should use UTF-8 encoding");
+		}
+		else if(line.substring(0, 2).equalsIgnoreCase(new String(new char[] { 0xFE, 0xFF } ))) // UTF-16 Little Endian
+		{
+			System.out.println(filename_msg + " has an UTF-16 (Little Endian) encoding: not supported");
+			throw new UnsupportedEncodingException(".lang files should use UTF-8 encoding");
+		}
+		else
+		{
+			System.out.println("Could not detect encoding of " + filename_msg);
+			br = new BufferedReader(new InputStreamReader(is));
+		}
+	*/
 		while((line = br.readLine()) != null)
 		{
 			parseItem(line);
