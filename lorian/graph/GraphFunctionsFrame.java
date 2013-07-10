@@ -847,8 +847,12 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	}
 	private boolean ConfirmFileChanges()
 	{
-		
-		int n= JOptionPane.showConfirmDialog (this, String.format(Translate("message.confirmchanges"), FileName), "Graph", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+		int n;
+		if(this.isFocused())
+			n = JOptionPane.showConfirmDialog(this, String.format(Translate("message.confirmchanges"), FileName), "Graph", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+		else
+			n = JOptionPane.showConfirmDialog(null, String.format(Translate("message.confirmchanges"), FileName), "Graph", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+
 		
 		if(n == JOptionPane.YES_OPTION)
 		{
