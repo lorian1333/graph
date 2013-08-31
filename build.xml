@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Graph" default="run">
+
+	<path id="graph.classpath">
+		<pathelement location="lib/gluegen-rt.jar" />
+		<pathelement location="lib/jogl-all.jar" />
+		<pathelement location="lib/swt-win64-4.3.jar" />
+		<pathelement location="lib/jar-in-jar-loader.jar" />
+	</path>
+	<target name="compile">
+		<mkdir dir="build/classes" />
+		<javac includeantruntime="false" srcdir="./src" destdir="build/classes">
+			<classpath refid="graph.classpath" />
+		</javac>
+	</target>
+
+	<target name="jar" depends="compile" >
+		<jar destfile="build/graph.jar" basedir="build/classes" >
+			<manifest>
+				<attribute name="Main-Class" value="lorian.graph.GraphMain" />
+			</manifest>
+			<zipfileset excludes="META-INF/*.MF,version.txt" src="lib/jar-in-jar-loader.jar" />
+			<fileset dir="./src" includes="res/**" />
+			<fileset dir="./src" includes="languages/**" />
+			
+			<fileset dir="./lib" includes="gluegen-*.jar" />
+			<fileset dir="./lib" includes="jogl-*.jar" />
+		
+			<fileset dir="./lib" includes="swt-*-4.3.jar" />
+		</jar> 
+		
+	</target>
+	
+	<target name="run" depends="jar">
+		<java jar="build/graph.jar" fork="true" />
+	</target>
+
+	<target name="clean">
+		<delete dir="build" />
+	</target>
+
+</project>

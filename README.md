@@ -1,1 +1,1 @@
-Graph draws mathmatical functions and more, like e.g. the TI-84. This page serves as a backup of this WIP project.
+Graph is a mathematical program to plot function graphs and do calculations.
