@@ -1,17 +1,12 @@
 TODO:
-- Switch to SWT for the GUI with Swing fallback
 - Add multi-language support:
 	- Add more languages
 	  --> I need translators!
 	- Add a way to change the language in settingsframe
-- Better color chooser
-  --> Make own custom ColorChooser
 - Think about what to do with the 'Special characters' window
-- Make 3D Functions nicer
+- Make 3D Functions nicer 
 
 PLANS:
-- Fullscreen mode
-- Resizable GraphFrame
 - Hide function input panel
 - Better mathemathical input
 - Improve graph rendering
