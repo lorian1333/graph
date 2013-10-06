@@ -25,7 +25,7 @@ public class GraphMain {
 		
 		boolean use_swing = false;
 		boolean load_libs = true;
-		String foreLangName = null; 
+		String forceLangName = null; 
 		for(int i = 0; i < args.length; i++)
 		{
 			String arg = args[i];
@@ -41,7 +41,7 @@ public class GraphMain {
 			{
 				if(i+1 < args.length)
 				{
-					foreLangName = args[++i];
+					forceLangName = args[++i];
 				}
 			}
 			else if(arg.equalsIgnoreCase("-no-libs"))
@@ -72,7 +72,7 @@ public class GraphMain {
 			GraphFunctionsFrame.funcframe = new GraphFunctionsFrame(false, false, false);
 		else
 		{
-			new GraphSwtFrame(new Display(), foreLangName);
+			new GraphSwtFrame(new Display(), forceLangName);
 		}
 	}
 
