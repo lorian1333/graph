@@ -1,9 +1,11 @@
-build/
-*~
 .*
+*~
 *.class
+*.old
+bin/*
+build*/*
+logo.psd
 
 # Package Files #
 *.jar
-*.war
-*.ear
+
