@@ -7,19 +7,31 @@ public class GraphApplet extends JApplet {
 	@Override
 	public void init()
 	{
-		GraphFunctionsFrame gfframe;
+		/*
+		try {
+			GraphMain.applet_Init();
+		} catch (Throwable e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, e.getMessage(), "Launching Applet Failed", 0);
+			return;
+		}
+		*/
+		
+		GraphFunctionsFrame gfframe = new GraphFunctionsFrame(true, false, false); 
+		/*
 		String smallVal = this.getParameter("small");
 		if(smallVal == null ) 
 			gfframe = new GraphFunctionsFrame(true);
 		else if(smallVal.equalsIgnoreCase("true"))
 		{
-			gfframe = new GraphFunctionsFrame(true, true);
+			gfframe = new GraphFunctionsFrame(true, true, true);
 		}
 		else
 		{
 			gfframe = new GraphFunctionsFrame(true);
 		}
-			
+		*/
+		
 		this.setJMenuBar(gfframe.menuBar);
 		this.add(gfframe.MainPanel);
 	}

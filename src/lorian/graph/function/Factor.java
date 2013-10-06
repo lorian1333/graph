@@ -280,14 +280,13 @@ public class Factor {
 		return exponentfunc.Parse(exponentstr);
 	}
 	protected boolean ParseFunction(String s) 
-	{
+	{	
 		functionname = s.substring(0, s.indexOf('('));
 		if(!MathFunctions.functionExists(functionname)) return false;
 		String functionargsstr = s.substring(s.indexOf('(') + 1, s.length()-1);
 		functionargs = SplitArgs(functionargsstr);
 		
-		
-		return true;
+		return MathFunctions.testArgs(functionname, functionargs, argumentChar);
 	}
 	 
 	protected boolean ParseOther(String s)
@@ -374,7 +373,7 @@ public class Factor {
 	}
 	public double Calc(double arg)
 	{
-		if(!parsed )return Double.NaN;
+		if(!parsed) return Double.NaN;
 		
 		if(type == Type.CONSTANT)
 		{
@@ -402,7 +401,7 @@ public class Factor {
 		return this.type;
 	}
 	public Function getBaseFunction()
-	{
+	{ 
 		return this.basefunc;
 	}
 	public Function getExponentFunction() 

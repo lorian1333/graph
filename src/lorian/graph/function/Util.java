@@ -4,9 +4,13 @@ import java.awt.Color;
 import java.awt.FontMetrics;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.text.NumberFormat;
 import java.util.Locale;
+
+import lorian.graph.GraphFunctionsFrame;
 
 import com.jogamp.common.nio.Buffers;
 
@@ -114,7 +118,7 @@ public class Util {
 	public static String GetString(double d)
 	{
 		if(Double.isInfinite(d)) return "" + MathChars.Infinity.getCode();
-		else if(Double.isNaN(d)) return "NaN";
+		else if(Double.isNaN(d)) return String.format("(%s)", GraphFunctionsFrame.Translate("message.complexnumber")); 
 		else if(d == Math.rint(d)) return "" + (int) d;
 		else return "" + round(d, 6);
 	}
@@ -134,7 +138,7 @@ public class Util {
 			return new Color((int) (c.getRed() * org + 0xff * white), (int) (c.getGreen() * org + 0xff * white), (int) (c.getBlue() * org + 0xff * white));
 		else return new Color((int) (c.getRed() * org + 0xff * white), (int) (c.getGreen() * org + 0xff * white), (int) (c.getBlue() * org + 0xff * white), (int) (0.8 * 0xff));
 	}
-	
+
 	public static String doubleToString(double d)
 	{
 		NumberFormat f = NumberFormat.getInstance(Locale.US);
@@ -144,7 +148,18 @@ public class Util {
 	
 	private static final int BYTES_PER_FLOAT = Float.SIZE / 8;
 	private static final int BYTES_PER_DOUBLE = Double.SIZE / 8;
-	
+	public static IntBuffer toIntBuffer(int[] src)
+	{
+		IntBuffer buf = Buffers.newDirectIntBuffer(src);
+		buf.rewind();
+		return buf;
+	}
+	public static DoubleBuffer toDoubleBuffer(double[] src)
+	{
+		DoubleBuffer buf = Buffers.newDirectDoubleBuffer(src);
+		buf.rewind();
+		return buf;
+	}
 	public static FloatBuffer toFloatBuffer(float[] src)
 	{
 		/*

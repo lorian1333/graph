@@ -3,29 +3,77 @@ package lorian.graph;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
+import lorian.graph.fileio.GraphFileWriter;
+import lorian.graph.function.Function;
+import lorian.graph.function.Function2Var;
+import lorian.graph.function.ParameterFunction;
+
 import org.eclipse.jdt.internal.jarinjarloader.*;
+import org.eclipse.swt.widgets.Display;
 
 public class GraphMain {
 	private static String sSwtVersion = "4.3";
 
 	public static void main(String[] args) throws Throwable {
 		System.out.println("Graph v" + GraphFunctionsFrame.version);
-
-		try {
-			ClassLoader cl = getClassloader();
-			Thread.currentThread().setContextClassLoader(cl);
-		} catch (JarinJarLoadFailed ex) {
-			String reason = ex.getMessage();
-			System.err.println("Launch failed: " + reason);
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-			JOptionPane.showMessageDialog(null, reason, "Launching UI Failed", 0);
-			return;
+		
+		boolean use_swing = false;
+		boolean load_libs = true;
+		String foreLangName = null; 
+		for(int i = 0; i < args.length; i++)
+		{
+			String arg = args[i];
+			if(arg.equalsIgnoreCase("-swt"))
+			{
+				use_swing = false;
+			}
+			else if(arg.equalsIgnoreCase("-swing"))
+			{
+				use_swing = true;
+			}
+			else if(arg.equalsIgnoreCase("-language"))
+			{
+				if(i+1 < args.length)
+				{
+					foreLangName = args[++i];
+				}
+			}
+			else if(arg.equalsIgnoreCase("-no-libs"))
+			{
+				load_libs = false;
+			}
 		}
-
-		GraphFunctionsFrame.funcframe = new GraphFunctionsFrame(false);
+		
+		if(load_libs)
+		{
+			try {
+				ClassLoader cl = getClassloader();
+				Thread.currentThread().setContextClassLoader(cl);
+			} catch (JarinJarLoadFailed ex) {
+				String reason = ex.getMessage();
+				System.err.println("Launch failed: " + reason);
+				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+				JOptionPane.showMessageDialog(null, "Launch failed: " + reason, "Launching UI Failed", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+		}
+		else
+		{
+			System.out.println("Warning: Not loading any libraries.");
+		}
+		
+		if(use_swing)
+			GraphFunctionsFrame.funcframe = new GraphFunctionsFrame(false, false, false);
+		else
+		{
+			new GraphSwtFrame(new Display(), foreLangName);
+		}
 	}
 
 	private static ClassLoader getClassloader() throws GraphMain.JarinJarLoadFailed {
@@ -33,7 +81,7 @@ public class GraphMain {
 		String gluegenFileName = getGluegenJarName();
 		String joglFileName = getJoglJarName();
 
-		System.out.printf("%s\n%s\n%s\n", swtFileName, gluegenFileName, joglFileName); 
+		
 		try {
 			//URL[] allNativeJarsUrl = new URL[] { new URL("rsrc:" + swtFileName), new URL("rsrc:" + gluegenFileName), new URL("rsrc:" + joglFileName) };
 
@@ -70,6 +118,7 @@ public class GraphMain {
 		}
 		String swtFileNameArchPart = System.getProperty("os.arch").toLowerCase().contains("64") ? "64" : "32";
 		String swtFileName = "swt-" + swtFileNameOsPart + swtFileNameArchPart + "-" + sSwtVersion + ".jar";
+		System.out.printf("Loading %s...\n", swtFileName);
 		return swtFileName;
 	}
 
@@ -82,6 +131,7 @@ public class GraphMain {
 		}
 		String gluegenFileNameArchPart = System.getProperty("os.arch").toLowerCase().contains("64") ? "amd64" : "i586";
 		String gluegenFileName = "gluegen-rt-natives-" + gluegenFileNameOsPart + "-" + gluegenFileNameArchPart + ".jar";
+		System.out.printf("Loading %s...\n", gluegenFileName);
 		return gluegenFileName;
 	}
 
@@ -94,6 +144,7 @@ public class GraphMain {
 		}
 		String joglFileNameArchPart = System.getProperty("os.arch").toLowerCase().contains("64") ? "amd64" : "i586";
 		String joglFileName = "jogl-all-natives-" + joglFileNameOsPart + "-" + joglFileNameArchPart + ".jar";
+		System.out.printf("Loading %s...\n", joglFileName);
 		return joglFileName;
 	}
 

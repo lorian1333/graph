@@ -9,8 +9,9 @@ public class MathFunctions {
 
 	public static boolean functionExists(String functionname)
 	{
+		
 		// Exceptions where the test below does not apply
-		if(functionname.equalsIgnoreCase("log") || functionname.equalsIgnoreCase("gamma") || functionname.equalsIgnoreCase("const") || functionname.toLowerCase().charAt(0) == 'y') return true;
+		if(functionname.equalsIgnoreCase("log") || functionname.equalsIgnoreCase("sec")  || functionname.equalsIgnoreCase("gamma") || functionname.equalsIgnoreCase("const") || functionname.toLowerCase().charAt(0) == 'y') return true;
 		
 		List<String> args = new ArrayList<String>();
 		args.add("1");
@@ -23,6 +24,26 @@ public class MathFunctions {
 	{
 		if(functionname.equalsIgnoreCase("deriv") || functionname.equalsIgnoreCase("dydx") || functionname.toLowerCase().charAt(0) == 'y') return false;
 		return functionExists(functionname);
+	}
+	public static boolean testArgs(String functionname, List<String> args, char argumentChar)
+	{
+		if(functionname.equalsIgnoreCase("const")) return true;
+		boolean ret = true;
+		for(String arg: args)
+		{
+			ret = ret && new Function(argumentChar).Parse(arg);
+		}
+		return ret;
+	}
+	public static boolean testArgs2Var(String functionname, List<String> args, char argumentChar, char argumentChar2)
+	{
+		if(functionname.equalsIgnoreCase("const")) return true;
+		boolean ret = true;
+		for(String arg: args)
+		{
+			ret = ret && new Function2Var(argumentChar, argumentChar2).Parse(arg);
+		}
+		return ret;
 	}
 	public static double Calculate2Var(String functionname, List<String> args, double value1, double value2, char argumentChar, char argumentChar2)
 	{
@@ -321,7 +342,7 @@ public class MathFunctions {
 			return 1 / Math.sinh(f.Calc(value));
 		}
 		
-		// Logaritms
+		// Logarithms
 		else if(functionname.equalsIgnoreCase("log"))
 		{
 			if(args.size()==1) //10log;
@@ -433,6 +454,7 @@ public class MathFunctions {
 		// Other functions
 		else if(functionname.charAt(0) == 'y')
 		{
+			//GraphSwtFrame.)
 			int funcindex;
 			try
 			{
@@ -443,8 +465,23 @@ public class MathFunctions {
 				return Double.NaN;
 			}
 			if(!f.Parse(args.get(0))) return Double.NaN;
-			if(GraphFunctionsFrame.functions.size() <= funcindex) return Double.NaN;
-			return GraphFunctionsFrame.functions.get(funcindex).Calc(f.Calc(value)); 
+			List<Function> functions = GraphFunctionsFrame.gframe.getFunctions();
+			if(functions.size() <= funcindex) return Double.NaN;
+			return functions.get(funcindex).Calc(f.Calc(value));
+			
+		}
+		
+		else if(functionname.equalsIgnoreCase("sgn"))
+		{
+			if(!f.Parse(args.get(0))) return Double.NaN;
+			double val = f.Calc(value);
+			return val > 0 ? 1 : val < 0 ? -1 : 0;
+		}
+		else if(functionname.equalsIgnoreCase("h"))
+		{
+			if(!f.Parse(args.get(0))) return Double.NaN;
+			double val = f.Calc(value);
+			return val < 0 ? 0 : val == 0 ? 0.5 : 1;
 		}
 		
 		// Derivative

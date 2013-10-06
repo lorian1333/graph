@@ -1,18 +1,11 @@
 package lorian.graph;
 
 import java.awt.BorderLayout;
-import java.awt.Canvas;
-import java.awt.Checkbox;
-import java.awt.CheckboxGroup;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.GridLayout;
 import java.awt.Image;
-import java.awt.Menu;
-import java.awt.MenuBar;
-import java.awt.MenuItem;
 import java.awt.Panel;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -24,18 +17,12 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
@@ -58,16 +45,12 @@ import javax.swing.SpringLayout;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileFilter;
-import javax.swing.filechooser.FileNameExtensionFilter;
-
 import org.eclipse.swt.*;
 import org.eclipse.swt.awt.SWT_AWT;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 import lorian.graph.fileio.GraphFileReader;
@@ -83,18 +66,21 @@ import lorian.graph.opengl.Graph3D;
 
 public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyListener, MouseListener, WindowListener {
 	private static final long serialVersionUID = -1090268654275240501L;
+	public static final String appname = "Graph";
 	public static final String version = "1.8.0 Beta";
 
+	public static String current_lang_name = "";
+	
 	// Only for GraphFileReader and GraphFileWriter
 	public static final short major_version = 0x0001;
-	public static final short minor_version = 0x0005;
+	public static final short minor_version = 0x0008;
 
 	protected static Language language;
 	protected static Language lang_en;
 
-	protected static int MaxFunctions = 20;
-	private final Dimension WindowSize = new Dimension(800, 800);
-	private final Dimension WindowSizeSmall = new Dimension(640, 640);
+	public static int MaxFunctions = 15;
+	public static final Dimension WindowSize = new Dimension(800, 810);
+	protected static final Dimension WindowSizeSmall = new Dimension(640, 640);
 	public static List<Function> functions;
 	public static List<Function2Var> functions2var;
 
@@ -107,13 +93,21 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		OS_LINUX, OS_WINDOWS, OS_MAC, OS_SOLARIS, OS_UNIX, OS_UNKNOWN;
 	}
 
+	public static enum Mode {
+		MODE_FUNC, MODE_3DFUNC, MODE_PARAMETER;
+	}
+	
 	public static OperatingSystem OS;
 
-	private final String[] MenuStrings = { "menu.file", "menu.calculate", "menu.mode", "menu.help" };
-	private final String[] FileMenuStrings = { "file.new", "file.open", "file.save", "file.saveas", "file.settings", "file.exit" };
-	private final String[] calcMenuStrings = { "calc.value", "calc.zero", "calc.min", "calc.max", "calc.intersect", "calc.deriv", MathChars.Integral.getCode() + "f(x)dx" };
-	private final String[] HelpMenuStrings = { "help.about" };
-	private final String[] buttons = { "buttons.draw", "buttons.specialchars" };
+	protected final String[] MenuStrings = { "menu.file", "menu.calculate", "menu.mode" , "menu.view", "menu.help" };
+	protected final String[] FileMenuStrings = { "file.new", "file.open", "file.save", "file.saveas", /* "file.settings", */ "file.exit" };
+	protected final String[] calcMenuStrings_func = { "calc.value", "calc.zero", "calc.min", "calc.max", "calc.intersect", "calc.deriv", MathChars.Integral.getCode() + "f(x)dx" };
+	protected final String[] calcMenuStrings_3dfunc = { "(Moet ik nog toevoegen)" };
+	protected final String[] calcMenuStrings_par = {  "calc.value", "calc.deriv", "calc.dydt", "calc.dxdt"  };
+	protected final String[] viewMenuStrings = { "view.windowsettings" };
+	
+	protected final String[] HelpMenuStrings = { "help.about" };
+	protected final String[] buttons = { "buttons.draw" , "buttons.specialchars" };
 
 	private String[] old2DTextFieldValues = new String[MaxFunctions];
 	private String[] old3DTextFieldValues = new String[MaxFunctions];
@@ -125,14 +119,16 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	protected static String FilePath;
 	protected static final String FileExt = "lgf";
 
-	private boolean empty = true;
-
+	protected static boolean NoChangesMade = true;
+  
 	public Shell shell;
 	
-	
 	protected static GraphFunctionsFrame funcframe;
-	protected static GraphFrame gframe;
-	protected static Graph3D g3d;
+	
+	public static GraphFrame gframe;
+	public static Graph3D g3d;
+	public static GraphParameter gparam;
+	
 	private JPanel G3DContainer;
 	private CalculateFrame calcframe;
 	private static SettingsFrame settingsframe;
@@ -153,31 +149,40 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	protected static boolean use_swt = false;
 
 	public GraphFunctionsFrame(boolean applet) {
-		this(applet, false);
+		this(applet, false, false);
 	}
 
-	public GraphFunctionsFrame(boolean applet, boolean forceSmall) {
+	public GraphFunctionsFrame(boolean applet, boolean forceSmall, boolean useSwt) {
+		
 		super();
+		use_swt = useSwt;
 		detectOS();
-		initVars(applet);
 		initLanguages();
-		initUI(forceSmall);
+		initVars(applet);
 		FileName = Translate("files.untitled");
+		
+		if (!use_swt) {
 
-		if (use_swt) {
-			initWindow_swt();
-		}
-
-		else {
+			initUI(forceSmall);
 			if (!applet) {
 				setTitle(FileName + " * - " + "Graph v" + version);
 				try {
 					List<Image> icons = new ArrayList<Image>();
+			
 					icons.add(ImageIO.read(GraphFunctionsFrame.class.getResource("/res/icon16.png")));
+					icons.add(ImageIO.read(GraphFunctionsFrame.class.getResource("/res/icon22.png")));
+					icons.add(ImageIO.read(GraphFunctionsFrame.class.getResource("/res/icon24.png")));
 					icons.add(ImageIO.read(GraphFunctionsFrame.class.getResource("/res/icon32.png")));
+					icons.add(ImageIO.read(GraphFunctionsFrame.class.getResource("/res/icon36.png")));			
+					icons.add(ImageIO.read(GraphFunctionsFrame.class.getResource("/res/icon48.png")));	
 					icons.add(ImageIO.read(GraphFunctionsFrame.class.getResource("/res/icon64.png")));
+					icons.add(ImageIO.read(GraphFunctionsFrame.class.getResource("/res/icon72.png")));
+					icons.add(ImageIO.read(GraphFunctionsFrame.class.getResource("/res/icon96.png")));
 					icons.add(ImageIO.read(GraphFunctionsFrame.class.getResource("/res/icon128.png")));
+					icons.add(ImageIO.read(GraphFunctionsFrame.class.getResource("/res/icon192.png")));
+					icons.add(ImageIO.read(GraphFunctionsFrame.class.getResource("/res/icon256.png"))); 
 					this.setIconImages(icons);
+					
 				} catch (IOException e) {
 
 					e.printStackTrace();
@@ -188,58 +193,44 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 
 			Render();
 		}
-	}
 
+	}
 	
-	private void initWindow_swt() {
-
-		final Display display = new Display();
-		shell = new Shell(display, SWT.SHELL_TRIM & (~SWT.RESIZE));
-		shell.setLayout(new FillLayout());
-		shell.setSize(1250, 823);
-
-		Composite composite = new Composite(shell, SWT.NO_BACKGROUND | SWT.EMBEDDED);
-
-		/* Create and setting up frame */
-		Frame frame = SWT_AWT.new_Frame(composite);
-		Panel panel = new Panel(new BorderLayout());
-
-		frame.add(panel);
-		JRootPane root = new JRootPane();
-		panel.add(root);
-		java.awt.Container contentPane = root.getContentPane();
-
-		// contentPane.setLayout(new GridLayout(2,2));
-		contentPane.add(MainPanel);
-
-		shell.open();
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch())
-				display.sleep();
-		}
-		display.dispose();
-	}
 
 	private void initVars(boolean applet) {
-		textfields = new ArrayList<JTextField>();
-		labels = new ArrayList<JLabel>();
-		checkboxes = new ArrayList<JCheckBox>();
-		parseresults = new ArrayList<ParseResultIcon>();
+		if(!use_swt)
+		{
+			textfields = new ArrayList<JTextField>();
+			labels = new ArrayList<JLabel>();
+			checkboxes = new ArrayList<JCheckBox>();
+			parseresults = new ArrayList<ParseResultIcon>();
+			GraphFunctionsFrame.applet = applet;
+		}
 		functions = new ArrayList<Function>();
 		functions2var = new ArrayList<Function2Var>();
-		settings = new WindowSettings();
-		GraphFunctionsFrame.applet = applet;
+		settings = new WindowSettings(false);
+		
 	}
 
-	private void initLanguages() {
+	protected void initLanguages() {
 		language = new Language();
 		lang_en = new Language();
 		System.out.println("Reading language files...");
 		try {
-			language.readDefault();
+			if(current_lang_name.equals(""))
+				language.readDefault();
+			else 
+				language.read(current_lang_name);
+			
+			//current_lang_name = language.
 		} catch (Exception e) {
-			System.out.println("Could not read local language file: " + e.getMessage());
+			if(current_lang_name.equals("")) 
+				System.out.println("Could not find or read local language file: " + e.getMessage());
+			else
+				System.out.println("Could not find or read language file '" + current_lang_name + "': " + e.getMessage());
+			
 			System.out.println("Switching to English.");
+			current_lang_name = "en";
 		}
 
 		try {
@@ -248,8 +239,11 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 			System.out.println("Could not read English language file: " + e.getMessage());
 			System.exit(-1);
 		}
-		translateOptionPane();
-		translateFileChooser();
+		if(!use_swt)
+		{
+			translateOptionPane();
+			translateFileChooser();
+		}
 		translateOtherStrings();
 		System.out.println("Done");
 
@@ -307,10 +301,24 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		}
 
 		// Translate all except integral
-		for (int i = 0; i < calcMenuStrings.length - 1; i++) {
-			calcMenuStrings[i] = Translate(calcMenuStrings[i]);
+		for (int i = 0; i < calcMenuStrings_func.length - 1; i++) {
+			calcMenuStrings_func[i] = Translate(calcMenuStrings_func[i]);
 		}
 
+		for(int i = 0; i < calcMenuStrings_3dfunc.length; i++)
+		{
+			calcMenuStrings_3dfunc[i] = Translate(calcMenuStrings_3dfunc[i]);
+		}
+		
+		for(int i = 0; i < calcMenuStrings_par.length; i++)
+		{
+			calcMenuStrings_par[i] = Translate(calcMenuStrings_par[i]);
+		}
+		
+		for(int i=0; i < viewMenuStrings.length; i++) {
+			viewMenuStrings[i] = Translate(viewMenuStrings[i]);
+		}
+		
 		for (int i = 0; i < HelpMenuStrings.length; i++) {
 			HelpMenuStrings[i] = Translate(HelpMenuStrings[i]);
 		}
@@ -318,6 +326,8 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		for (int i = 0; i < buttons.length; i++) {
 			buttons[i] = Translate(buttons[i]);
 		}
+
+		
 
 	}
 
@@ -331,7 +341,10 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		} else if (lang_en.isAvailable(key)) {
 			return lang_en.getValue(key);
 		} else
+		{
+			System.out.println("Warning: Unable to find a translation for key '" + key + "'");
 			return key;
+		}
 	}
 
 	private static void UpdateGUIStyle() {
@@ -366,7 +379,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	  }
 	  
 
-	private static void detectOS() {
+	protected static void detectOS() {
 		String osname = System.getProperty("os.name").toLowerCase();
 		String arch = getArch(System.getProperty("os.arch"));
 		String JvmArch = getArch(System.getProperty("sun.arch.data.model"));
@@ -394,7 +407,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		System.out.printf(" %s\n", arch);
 		if(!arch.equals(JvmArch))
 		{
-			System.out.println("JVM running in " + JvmArch);
+			System.out.println("JVM running in " + JvmArch + " mode.");
 		}
 
 	}
@@ -452,7 +465,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		menuBar.add(helpMenu);
 
 		JRadioButtonMenuItem toggle2dItem = new JRadioButtonMenuItem("y=f(x)");
-		JRadioButtonMenuItem toggle3dItem = new JRadioButtonMenuItem("z=f(x,y) (ALPHA)");
+		JRadioButtonMenuItem toggle3dItem = new JRadioButtonMenuItem("z=f(x,y)");
 		toggle2dItem.setForeground(new Color(0, 0, 0));
 		toggle3dItem.setForeground(new Color(0, 0, 0));
 
@@ -487,7 +500,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		SaveFileAsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK));
 		SaveFileAsItem.addActionListener(this);
 
-		settingsItem = new JMenuItem(FileMenuStrings[4]);
+		settingsItem = new JMenuItem(Translate("file.settings"));
 		settingsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.ALT_MASK));
 		settingsItem.addActionListener(this);
 
@@ -499,15 +512,15 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		fileMenu.add(settingsItem);
 
 		if (!applet) {
-			exitItem = new JMenuItem(FileMenuStrings[5]);
+			exitItem = new JMenuItem(FileMenuStrings[4]);
 			exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, ActionEvent.ALT_MASK));
 			exitItem.addActionListener(this);
 			fileMenu.addSeparator();
 			fileMenu.add(exitItem);
 		}
 
-		for (int i = 0; i < calcMenuStrings.length; i++) {
-			JMenuItem item = new JMenuItem(language.getValue(calcMenuStrings[i]));
+		for (int i = 0; i < calcMenuStrings_func.length; i++) {
+			JMenuItem item = new JMenuItem(language.getValue(calcMenuStrings_func[i]));
 			item.addActionListener(this);
 			calcMenu.add(item);
 		}
@@ -625,15 +638,17 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		}
 
 		JPanel buttonpanel = new JPanel();
+		
 		for (int i = 0; i < buttons.length; i++) {
 			JButton button = new JButton(buttons[i]);
+			button = new JButton(buttons[i]);
 			button.setFont(button.getFont().deriveFont(13.0f));
 			button.addActionListener(this);
 			buttonpanel.add(button);
 		}
 		SpringLayout.Constraints buttonPanelCons = layout.getConstraints(buttonpanel);
-		buttonPanelCons.setX(Spring.constant(50));
-		buttonPanelCons.setY(Spring.constant(10 + height * MaxFunctions));
+		buttonPanelCons.setX(Spring.constant(65));
+		buttonPanelCons.setY(Spring.constant(5 + height * MaxFunctions));
 		panel.add(buttonpanel);
 
 		progressPanel = new JPanel();
@@ -642,7 +657,6 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		progressbar.setValue(0);
 		progressbar.setPreferredSize(new Dimension(300, 20));
 		progressbar.setStringPainted(true);
-		// progressbar.setVisible(false);
 
 		progressPanel.add(progressbar);
 		progressPanel.setVisible(false);
@@ -654,7 +668,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		if (small)
 			progressCons.setY(Spring.constant(height * MaxFunctions + 50));
 		else
-			progressCons.setY(Spring.constant(745));
+			progressCons.setY(Spring.constant(785));
 
 		// if(applet)
 		MainPanel.setLayout(new BorderLayout());
@@ -706,9 +720,10 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		int i = 0;
 
 		if (enable3d) {
-			if (g3d == null || G3DContainer == null) {
-				g3d = new Graph3D(800, 800);
-
+				
+			if (1 == 1) { //(g3d == null || G3DContainer == null) {
+				
+				g3d = new Graph3D(WindowSize.width, WindowSize.height, new WindowSettings3D(-10, 10, -10, 10, -10, 10, false));
 				G3DContainer = new JPanel();
 				G3DContainer.setPreferredSize(g3d.getSize());
 				G3DContainer.setSize(g3d.getSize());
@@ -760,7 +775,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		Render();
 		System.out.println("Saving to " + FilePath);
 		GraphFileWriter fw = new GraphFileWriter(FilePath);
-		fw.setWindowSettings(settings);
+		fw.setWindowSettings_func(settings);
 
 		int i = 0;
 		for (Function f : functions) {
@@ -773,7 +788,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 			boolean result = fw.write();
 			System.out.println("Done");
 			FileSaved = result;
-			empty = false;
+			NoChangesMade = false;
 			return result;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -783,7 +798,8 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	}
 
 	private boolean OpenFile(String filePath) {
-		System.out.println("Opening " + filePath);
+		System.out.println("Loading " + filePath);
+		
 		progressbar.setValue(0);
 		progressbar.setString(String.format(Translate("message.progressbar.opening"), (new File(filePath)).getName(), progressbar.getValue()));
 		progressPanel.setVisible(true);
@@ -791,8 +807,8 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		GraphFileReader fr = new GraphFileReader(filePath);
 		try {
 			if (!fr.read()) {
-				progressPanel.setVisible(false);
 				JOptionPane.showMessageDialog(this, String.format(Translate("message.fileopenerror"), (new File(filePath)).getName()), Translate("message.error"), JOptionPane.ERROR_MESSAGE);
+				progressPanel.setVisible(false);
 				return false;
 			}
 
@@ -800,6 +816,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(this, String.format(Translate("message.fileopenerror"), (new File(filePath)).getName()), Translate("message.error"), JOptionPane.ERROR_MESSAGE);
 			progressPanel.setVisible(false);
+
 			return false;
 		}
 		doProgressBar = false;
@@ -809,11 +826,11 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		progressbar.setString(String.format(Translate("message.progressbar.opening"), (new File(filePath)).getName(), progressbar.getValue()));
 		progressPanel.paintAll(progressPanel.getGraphics());
 
-		String[] reconstructedfunctions = fr.getFunctionStrings();
+		String[] reconstructedfunctions = fr.getFunctionStrings_func();
 		short[] indexes = fr.getFunctionIndexes();
-		Function[] functions = fr.getFunctions();
+		Function[] functions = fr.getFunctions_func_arr();
 
-		settings = fr.getWindowSettings();
+		settings = fr.getWindowSettings_func();
 		for (int i = 0; i < indexes.length; i++) {
 			if (reconstructedfunctions[i].trim().equalsIgnoreCase(""))
 				continue;
@@ -835,8 +852,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		UpdateWindowSettings();
 		Render();
 
-		progressPanel.setVisible(false);
-
+		progressPanel.setVisible(false);		
 		FilePath = filePath;
 		FilePathPresent = true;
 		FileName = (new File(filePath)).getName();
@@ -850,6 +866,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		FileDialog opendialog = new FileDialog(shell, SWT.OPEN);
 		opendialog.setFilterNames(new String[] { Translate("files.graphfiles") });
 		opendialog.setFilterExtensions(new String[] { String.format("*.%s", FileExt) });
+		shell.forceActive();
 		String filepath = opendialog.open();
 		if (filepath == null) {
 			System.out.println("Canceled by user.");
@@ -891,13 +908,14 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		FileDialog savedialog = new FileDialog(shell, SWT.SAVE);
 		savedialog.setFilterNames(new String[] { Translate("files.graphfiles") });
 		savedialog.setFilterExtensions(new String[] { String.format("*.%s", FileExt) });
+		shell.forceActive();
 		FilePath = savedialog.open();
 		if (FilePath == null) {
 			shell.dispose();
 			display.dispose();
 			return false;
 		}
-
+		
 		shell.dispose();
 		display.dispose();
 
@@ -966,12 +984,12 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 			label.setBackground(defaultColors[i % defaultColors.length]);
 		}
 
-		settings = new WindowSettings();
+		settings = new WindowSettings(false);
 		FilePath = "";
 		FileName = Translate("files.untitled");
 		FileSaved = false;
 		FilePathPresent = false;
-		empty = true;
+		NoChangesMade = true;
 		UpdateWindowSettings();
 		UpdateTitle();
 		if (settingsframe != null)
@@ -979,7 +997,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		Render();
 	}
 
-	private void Render() {
+	public void Render() {
 		if (enable3d)
 			Render3D();
 		else
@@ -1022,7 +1040,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 				}
 				continue;
 			}
-			empty = false;
+			NoChangesMade = false;
 			if (!f.Parse(text)) {
 				System.out.println("Error: Unable to parse function Z" + (i + 1));
 				f.clear();
@@ -1051,14 +1069,17 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 				progressPanel.paintAll(progressPanel.getGraphics());
 			}
 		}
-		progressbar.setValue(100);
-		progressbar.setString(String.format(Translate("message.progressbar.done"), progressbar.getValue()));
-		progressPanel.paintAll(progressPanel.getGraphics());
-
+		
 		g3d.Update(functions2var);
 
 		this.repaint();
 
+		
+		progressbar.setValue(100);
+		progressbar.setString(String.format(Translate("message.progressbar.done"), progressbar.getValue()));
+		progressPanel.paintAll(progressPanel.getGraphics());
+
+	
 		/*
 		 * if(calcframe != null) { calcframe.Update(); }
 		 */
@@ -1067,6 +1088,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 
 	private void Render2D() {
 		System.out.println("Parsing functions...");
+
 		int progstart = progressbar.getValue();
 		functions.clear();
 		for (int i = 0; i < GraphFunctionsFrame.MaxFunctions; i++) {
@@ -1100,7 +1122,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 				}
 				continue;
 			}
-			empty = false;
+			NoChangesMade = false;
 			if (!f.Parse(text)) {
 				System.out.println("Error: Unable to parse function Y" + (i + 1));
 				f.clear();
@@ -1129,14 +1151,16 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 				progressPanel.paintAll(progressPanel.getGraphics());
 			}
 		}
-		progressbar.setValue(100);
-		progressbar.setString(String.format(Translate("message.progressbar.done"), progressbar.getValue()));
-		progressPanel.paintAll(progressPanel.getGraphics());
+		
 		gframe.Update(functions);
 		this.repaint();
 		if (calcframe != null) {
 			calcframe.Update();
 		}
+		
+		//progressbar.setValue(100);
+		//progressbar.setString(String.format(Translate("message.progressbar.done"), progressbar.getValue()));
+		//progressPanel.paintAll(progressPanel.getGraphics());
 		System.out.println("Done");
 	}
 
@@ -1162,7 +1186,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 			else if (buttonname.equalsIgnoreCase(FileMenuStrings[0])) // new
 			{
 				System.out.println("Creating new file...");
-				if (!FileSaved && !empty) {
+				if (!FileSaved && !NoChangesMade) {
 					if (!ConfirmFileChanges()) {
 						System.out.println("New file canceled by user");
 						return;
@@ -1172,7 +1196,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 				UpdateTitle();
 			} else if (buttonname.equalsIgnoreCase(FileMenuStrings[1])) {
 				System.out.println("Opening file...");
-				if (!FileSaved && !empty) {
+				if (!FileSaved && !NoChangesMade) {
 					if (!ConfirmFileChanges()) {
 						System.out.println("Canceled by user");
 						return;
@@ -1195,25 +1219,25 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 				UpdateTitle();
 			}
 
-			else if (buttonname.equalsIgnoreCase(FileMenuStrings[4])) {
-				if (settingsframe == null) {
+			else if (buttonname.equalsIgnoreCase(Translate("file.settings"))) {
+				if (settingsframe == null) { 
 					settingsframe = new SettingsFrame(this.getLocation());
-				} else
+				} else 
 					settingsframe.setVisible(true);
 			}
 
-			else if (buttonname.equalsIgnoreCase(FileMenuStrings[5])) {
+			else if (buttonname.equalsIgnoreCase(FileMenuStrings[4])) {
 				windowClosing(null);
 			}
 			// else if(Util.StringArrayGetIndex(calcMenuStrings,
 			// language.getName(buttonname).substring(0, 1).toUpperCase() +
 			// language.getName(buttonname).substring(1)) != -1)
-			else if (Util.StringArrayGetIndex(calcMenuStrings, buttonname) != -1) {
+			else if (Util.StringArrayGetIndex(calcMenuStrings_func, buttonname) != -1) {
 
 				// switch(Util.StringArrayGetIndex(calcMenuStrings,
 				// language.getName(buttonname).substring(0, 1).toUpperCase() +
 				// language.getName(buttonname).substring(1)))
-				switch (Util.StringArrayGetIndex(calcMenuStrings, buttonname)) {
+				switch (Util.StringArrayGetIndex(calcMenuStrings_func, buttonname)) {
 				case 0: // value
 				{
 					calcframe = new CalculateFrame(CalculateFrame.Calculation.VALUE);
@@ -1272,7 +1296,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 				enable3d = true;
 				Toggle3D();
 			} else if (buttonname.equalsIgnoreCase(HelpMenuStrings[0])) {
-				GraphAboutDialog.open(this.getLocation(), this.getSize());
+				GraphAboutDialog.open_swing(this.getLocation(), this.getSize());
 			}
 		} else if (e.getSource() instanceof JCheckBox) {
 			JCheckBox source = (JCheckBox) e.getSource();
@@ -1311,14 +1335,14 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	public void keyTyped(KeyEvent e) {
 		if ((e.getKeyChar() >= 'a' && e.getKeyChar() <= 'z') || (e.getKeyChar() >= 'A' && e.getKeyChar() <= 'Z') || (e.getKeyChar() >= '0' && e.getKeyChar() <= '9') || e.getKeyChar() == '(' || e.getKeyChar() == ')' || e.getKeyChar() == '^' || e.getKeyChar() == ' ' || e.getKeyChar() == 0x08) {
 			FileSaved = false;
-			empty = false;
+			NoChangesMade = false;
 			UpdateTitle();
 		}
 	}
 
 	@Override
 	public void windowClosing(WindowEvent e) {
-		if (!FileSaved && !empty) {
+		if (!FileSaved && !NoChangesMade) {
 			if (ConfirmFileChanges())
 				System.exit(0);
 		} else

@@ -56,7 +56,7 @@ public class Term {
 		if(s.trim().length() == 0) return "";
 		return String.format("(%s)^-1", s);
 	}
-	protected List<String> SplitIntoFactors(String s)
+	protected List<String> SplitIntoFactors(String s) throws StringIndexOutOfBoundsException
 	{
 		List<String> factors = new ArrayList<String>();
 		char ch;
@@ -234,11 +234,19 @@ public class Term {
 		return factors;
 	}
 	
-	public boolean Parse(String s)
+	public boolean Parse(String s) 
 	{
 		s = Util.removeWhiteSpace(s).toLowerCase();
 		boolean result = true;
-		List<String> factorstrs = SplitIntoFactors(s);
+		List<String> factorstrs;
+		try
+		{
+			factorstrs = SplitIntoFactors(s);
+		}
+		catch (StringIndexOutOfBoundsException e)
+		{
+			return false;
+		}
 		//System.out.println(factorstrs);
 		for(String factorstr: factorstrs)
 		{

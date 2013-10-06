@@ -1,7 +1,11 @@
 package lorian.graph.opengl;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -9,13 +13,19 @@ import java.util.Random;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.GLDrawable;
 import javax.media.opengl.GLEventListener;
+import javax.media.opengl.glu.GLU;
+
+import org.eclipse.swt.opengl.GLData;
 
 import lorian.graph.GraphFunctionsFrame;
 import lorian.graph.WindowSettings3D;
 import lorian.graph.function.Function2Var;
 import lorian.graph.function.Util;
 
+import com.jogamp.newt.Screen;
+import com.jogamp.opengl.util.awt.Screenshot;
 import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.gl2.GLUT;
 
@@ -45,31 +55,51 @@ class Renderer implements GLEventListener {
 	private WindowSettings3D settings;
 	private List<FunctionRenderData> renderdata;
 	
-	private boolean initedPosition = false;
+	private boolean initedPosition = false, initedGL = false, toImage = false;
+	private BufferedImage screenShot;
+	
+	private List<Function2Var> functions;
+	
 	public Renderer()
 	{
 		super();
 		//functions = new ArrayList<Function2Var>();
 		settings = new WindowSettings3D(-10, 10, -10, 10, -10, 10, false);
+		
 		renderdata = new ArrayList<FunctionRenderData>();
 	}
-	private void initGL(GLAutoDrawable gLDrawable, int width, int height) {
+	private void initGL(GLAutoDrawable gLDrawable,  int width, int height) {
+		System.out.println("Initting OpenGL: " + width + ", " + height);
 		this.width = width;
 		this.height = height;
-				
+		Graph3D.resizeG3D(new Dimension(this.width, this.height));
+		 
 		final GL2 gl = gLDrawable.getGL().getGL2();
-		gl.glViewport(0, 0, width, height);
+		
+		//gl.glViewport(0, 0, width, height);
+		//gl.glViewport(0, 0, (height-(width))>0? width:(int)(height),  (width-(height))>0? height:(int)(width));
+		
+		//float ratio = (float) width / (float) height;
+		//gl.glViewport(0, 0, (height-(width/ratio))>0? width:(int)(height*ratio),  (width-(height*ratio))>0? height:(int)(width/ratio));
+		
+		
 
 		gl.glMatrixMode(GL2.GL_PROJECTION); // Select The Projection Matrix
 		gl.glLoadIdentity();
 
+
 		float aspectRatio = (width > height) ? (float) (width) / (float) (height) : (float) (height) / (float) (width);
+		//float aspectRatio = (viewPortWidth > viewPortHeight) ? (float) (viewPortWidth) / (float) (viewPortHeight) : (float) (viewPortHeight) / (float) (viewPortWidth);
+		
+		
+		
 		float fH = (float) (Math.tan((float) (fieldOfView / 360.0f * Math.PI)) * near);
 		float fW = fH * aspectRatio;
 		gl.glFrustum(-fW, fW, -fH, fH, near, far);
 
 		gl.glMatrixMode(GL2.GL_MODELVIEW); // Select The Modelview Matrix
 		gl.glLoadIdentity();
+		//GLU glu = new GLU();
 		gl.glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // White Background
 		gl.glShadeModel(GL2.GL_SMOOTH); // Enable Smooth Shading
 		gl.glEnable(GL2.GL_DEPTH_TEST); // Enables Depth Testing
@@ -91,14 +121,12 @@ class Renderer implements GLEventListener {
 
 		
 		gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
-		
-
-		
 		if(!initedPosition)
 		{
 			handleMouseWheelInput(60);
 			initedPosition = true;
 		}
+		
 	}
 
 	public void drawAxes(GL2 gl) {
@@ -250,14 +278,15 @@ class Renderer implements GLEventListener {
 	*/
 	private void addFunctionToArray(Function2Var f)
 	{
+		if(!f.drawOn()) return;
 		FunctionRenderData fdata = new FunctionRenderData();
 		fdata.color = f.getColor();
-		fdata.data = new float[Xlength * Ylength * 3 / 2 ];
+		fdata.data = new double[Xlength * Ylength * 3 / 2];//new float[Xlength * Ylength * 3 / 2];
 		
-		int xpix, ypix, zpix;
+		double xpix, ypix, zpix;
 		double x, y, z;
 		
-		// Use 2 pixels instead of 1 per step makes the graph more accurate
+		// Use 2 pixels 
 		double stepX = ((double) (settings.getXmax() - settings.getXmin())) / (Xlength / 2);
 		double stepY = ((double) (settings.getYmax() - settings.getYmin())) / (Ylength / 2);
 		int i=0;
@@ -275,7 +304,7 @@ class Renderer implements GLEventListener {
 				{
 					
 				}
-				zpix = Zlength - (int) ((settings.getZmax() - z) * (Zlength / (settings.getZmax() - settings.getZmin())));
+				zpix = (double) Zlength - ((settings.getZmax() - z) * (Zlength / (settings.getZmax() - settings.getZmin())));
 				if(xpix > -1 && ypix > -1 && zpix >= 0 && zpix <= Zlength)
 				{
 					/*
@@ -286,7 +315,8 @@ class Renderer implements GLEventListener {
 					fdata.data[i++] = xpix;
 					fdata.data[i++] = zpix;
 					fdata.data[i++] = ypix;
-							
+						
+				
 							/*
 							previous1.setLocation(xpix, Zlength - (int) ((settings.getZmax() - f.Calc(x, y-stepY)) * (Zlength / (settings.getZmax() - settings.getZmin()))), ypix-1);
 							previous2.setLocation(xpix-1, Zlength - (int) ((settings.getZmax() - f.Calc(x-stepX, y)) * (Zlength / (settings.getZmax() - settings.getZmin()))), ypix);
@@ -299,6 +329,7 @@ class Renderer implements GLEventListener {
 					
 					
 		}
+		fdata.dataLength = i;
 		renderdata.add(fdata);
 	}
 	private void drawAllFunctions(GL2 gl)
@@ -310,10 +341,11 @@ class Renderer implements GLEventListener {
 		
 		for(FunctionRenderData f: renderdata)
 		{
-			
 			gl.glColor3d(f.color.getRed() / 255.0, f.color.getGreen() / 255.0, f.color.getBlue() / 255.0);
-			gl.glVertexPointer(3, GL2.GL_FLOAT, 0, Util.toFloatBuffer(f.data));
-			gl.glDrawArrays(GL2.GL_POINTS, 0, f.data.length / 3); 
+			//gl.glVertexPointer(3, GL2.GL_FLOAT, 0, Util.toFloatBuffer(f.data));
+			gl.glVertexPointer(3, GL2.GL_DOUBLE, 0, Util.toDoubleBuffer(f.data)); 
+			
+			gl.glDrawArrays(GL2.GL_POINTS, 0, (int) (f.dataLength / 3)); 
 			
 		}
 		gl.glPopMatrix();
@@ -385,13 +417,13 @@ class Renderer implements GLEventListener {
 		
 	}
 	public void display(GLAutoDrawable gLDrawable) {
-		// System.out.println("display() called");
+		//System.out.println("display() called");
 
 		final GL2 gl = gLDrawable.getGL().getGL2();
 		
 		gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT); 
 		gl.glLoadIdentity();
-
+		
 		gl.glRotatef(camXRot, 1.0f, 0.0f, 0f);
 		gl.glRotatef(camYRot, 0.0f, 1.0f, 0.0f);
 		gl.glTranslatef(-camXPos, -camYPos, -camZPos);
@@ -411,6 +443,11 @@ class Renderer implements GLEventListener {
 		drawAxes(gl);
 		//drawAxisNames(gl);
 		
+		if(toImage)
+		{
+			//System.out.println("width=" + width + ", height=" + height);
+			toImage(gl, width, width);
+		}
 	
 	}
 
@@ -421,13 +458,27 @@ class Renderer implements GLEventListener {
 	public void init(GLAutoDrawable gLDrawable) {
 		//System.out.println("init() called");
 		GL2 gl = gLDrawable.getGL().getGL2();
-		gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		gl.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 		gl.glShadeModel(GL2.GL_SMOOTH);
 	}
 
 	public void reshape(GLAutoDrawable gLDrawable, int x, int y, int width, int height) {
 		//System.out.println("reshape() called: x = " + x + ", y = " + y + ", width = " + width + ", height = " + height);
-		initGL(gLDrawable, width, height);
+		if(!initedGL)
+		{
+			GL2 gl = gLDrawable.getGL().getGL2();
+			float ratio = (float) width / (float) height;
+			gl.glViewport(0, 0, (height-(width/ratio))>0? width:(int)(height*ratio),  (width-(height*ratio))>0? height:(int)(width/ratio));
+			initGL(gLDrawable, width, width);
+			initedGL = true;
+			
+		}
+		else
+		{
+			GL2 gl = gLDrawable.getGL().getGL2();
+			float ratio = (float) this.width / (float) this.height;
+			gl.glViewport(0, 0, (height-(width/ratio))>0? width:(int)(height*ratio),  (width-(height*ratio))>0? height:(int)(width/ratio));
+		}
 
 	}
 
@@ -436,7 +487,7 @@ class Renderer implements GLEventListener {
 	}
 	public void Update(List<Function2Var> functions)
 	{
-		//this.functions = functions;
+		this.functions = functions;
 		renderdata.clear();
 		for(Function2Var f: functions)
 		{
@@ -447,7 +498,61 @@ class Renderer implements GLEventListener {
 	public void UpdateWindowSettings(WindowSettings3D windowsettings)
 	{
 		this.settings = windowsettings;
+		Xlength = (int) (5 * (settings.getXmax() - settings.getXmin()));
+		Ylength = (int) (5 * (settings.getYmax() - settings.getYmin()));
+		Zlength = (int) (5 * (settings.getZmax() - settings.getZmin()));
+		
+		renderdata.clear();
+		if(functions != null)
+		{
+			for(Function2Var f: functions)
+			{
+				if(!f.isEmpty())
+					addFunctionToArray(f);
+			}
+		}
 	}
+	public void setToImageFlag()
+	{
+		toImage = true;
+	}
+	public BufferedImage getScreenShot()
+	{
+		
+		return screenShot;
+	}
+	public boolean screenShotReady()
+	{
+		return screenShot != null;
+	}
+	private void toImage(GL2 gl, int w, int h) {
+
+		
+		screenShot =  Screenshot.readToBufferedImage(0, 0, w, h, false);
+		/*
+	    gl.glReadBuffer(GL.GL_FRONT); // or GL.GL_BACK
+
+	    ByteBuffer glBB = ByteBuffer.allocate(3 * (w+1) * (h+1)); 
+	    gl.glPixelStorei(GL2.GL_UNPACK_ALIGNMENT, 1);
+	    gl.glReadPixels(0, 0, w, h, GL2.GL_BGR, GL2.GL_UNSIGNED_BYTE, glBB);
+
+	    BufferedImage bi = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+	    int[] bd = ((DataBufferInt) bi.getRaster().getDataBuffer()).getData();
+
+	    for (int y = 0; y < h+1; y++) {
+	        for (int x = 0; x < w+1; x++) {
+	            int b = 2 * glBB.get();
+	            int g = 2 * glBB.get();
+	            int r = 2 * glBB.get();
+
+	            bd[(h - y - 1) * w + x] = (r << 16) | (g << 8) | b | 0xFF000000;
+	        }
+	    }
+	    toImage = false;
+	    screenShot = bi;
+	    */
+	}
+	
 	public void handleMouseInputLeftClick(int mouseDX, int mouseDY)
 	{
 		
@@ -468,6 +573,7 @@ class Renderer implements GLEventListener {
 		//System.out.println(originYRot);
 	}
 	public void handleMouseInputRightClick(int mouseDX, int mouseDY) {
+		/*
 		float vertMouseSensitivity = 5.0f;
 		float horizMouseSensitivity = 5.0f;
 
@@ -479,7 +585,7 @@ class Renderer implements GLEventListener {
 
 		if (camXRot > 90f)
 			camXRot = 90f;
-		
+		*/
 
 	}
 	private void moveCamera(int delta)

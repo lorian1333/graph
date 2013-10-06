@@ -40,9 +40,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
-public class GraphFrame extends JPanel implements ActionListener, MouseListener, MouseMotionListener {
+public class GraphParameter extends JPanel implements ActionListener, MouseListener, MouseMotionListener {
 	private static final long serialVersionUID = -741311884013992607L;
-	private List<Function> functions;
+	private List<ParameterFunction> functions;
 	private List<GraphPiece[]> all_pieces;
 
 	private List<VisualPoint> vpoints;
@@ -51,9 +51,9 @@ public class GraphFrame extends JPanel implements ActionListener, MouseListener,
 	private Image pointimg, movablepointimg;
 	private int MovingVPointIndex = -1;
 	private int MovingPointIndex = -1;
-	private Point MouseStart;
 
-	private WindowSettings settings;
+
+	private WindowSettingsParameter settings;
 	private int YaxisX, XaxisY;
 	private Dimension size;
 
@@ -64,8 +64,7 @@ public class GraphFrame extends JPanel implements ActionListener, MouseListener,
 
 	private int FillFunctionIndex = -1;
 	private double FillLowX = 0, FillUpX = 0;
- 
-	public GraphFrame(List<Function> functions, WindowSettings settings, Dimension size) {
+	public GraphParameter(List<ParameterFunction> functions, WindowSettingsParameter settings, Dimension size) {
 		super();
 		this.size = size;
 		this.functions = functions;
@@ -95,7 +94,7 @@ public class GraphFrame extends JPanel implements ActionListener, MouseListener,
 		InitCalcPanel();
 		CalculateAxes();
 	}
-	public GraphFrame(List<Function> functions, WindowSettings settings, Dimension size, boolean initScreenshotMenuAndCalcpanel)
+	public GraphParameter(List<ParameterFunction> functions, WindowSettingsParameter settings, Dimension size, boolean initScreenshotMenuAndCalcpanel)
 	{
 		super();
 		this.size = size;
@@ -152,8 +151,6 @@ public class GraphFrame extends JPanel implements ActionListener, MouseListener,
 		this.add(CalcPanel);
 
 		SpringLayout.Constraints cons = layout.getConstraints(CalcPanel);
-		// cons.setX(Spring.constant((int) (size.getWidth() -
-		// CalcPanel.getPreferredSize().getWidth())));
 		cons.setX(Spring.constant(0));
 		cons.setY(Spring.constant((int) (size.getHeight() - CalcPanel.getPreferredSize().getHeight()) + 10));
 	}
@@ -204,15 +201,14 @@ public class GraphFrame extends JPanel implements ActionListener, MouseListener,
 		windowerror = false;
 	}
 
-	public void UpdateWindowSettings(WindowSettings settings) {
+	public void UpdateWindowSettings(WindowSettingsParameter settings) {
 		this.settings = settings;
 		if (settings.getXmax() <= settings.getXmin() || settings.getYmax() <= settings.getYmin()) {
 			System.out.println(GraphFunctionsFrame.Translate("message.windowsettingserror"));
 			windowerror = true;
-			this.repaint();
-			return;
 		} else
 			windowerror = false;
+		
 		CalculateAxes();
 		recalculateFunctions();
 		recalculateMovableVisualPoints();
@@ -290,7 +286,6 @@ public class GraphFrame extends JPanel implements ActionListener, MouseListener,
 	 * if(pix==0) continue; //grid g.setColor(gridColor); g.drawLine(0, pix,
 	 * (int) size.getWidth(), pix); } }
 	 */
-	
 
 	private void drawCalcPanelBorders(Graphics g) {
 		g.setColor(Color.BLACK);
@@ -453,6 +448,7 @@ public class GraphFrame extends JPanel implements ActionListener, MouseListener,
 	private void recalculateFunctions() {
 		all_pieces.clear();
 		for (int i = 0; i < functions.size(); i++) {
+			if(functions.get(i) == null) continue;
 			if (functions.get(i).drawOn() && !functions.get(i).isEmpty()) {
 				calculateFunction(functions.get(i), (i == this.FillFunctionIndex));
 			} else
@@ -460,69 +456,28 @@ public class GraphFrame extends JPanel implements ActionListener, MouseListener,
 		}
 	}
 
-	private void calculateFunction(Function f, boolean fill) {
+	private void calculateFunction(ParameterFunction f, boolean fill) {
 		if (f.isEmpty())
 			return;
 
-		List<GraphFrame.GraphPiece> pieces = new ArrayList<GraphFrame.GraphPiece>();
+		List<GraphParameter.GraphPiece> pieces = new ArrayList<GraphParameter.GraphPiece>();
 		List<Point> points = new ArrayList<Point>();
 
 		int xpix, ypix;
+		PointXY xy;
 		boolean inNaN = false;
-		double x, y;
 		double step = ((double) (settings.getXmax() - settings.getXmin())) / size.getWidth();
-
-		Point previous = new Point();
+		Point previous = null;//new Point();
 		boolean WaitForRealNumber = false;
+		
 
-		for (xpix = -1, x = settings.getXmin(); xpix < (int) size.getWidth(); xpix++, x += step) {
-			y = f.Calc(x);
-			if (Double.isNaN(y)) {
-				if (inNaN)
-					continue;
-				inNaN = true;
-				double tmpX = Calculate.FindLastXBeforeNaN(f, x - step);
-				if (!Double.isNaN(tmpX)) {
-					double tmpY = f.Calc(tmpX);
-					ypix = (int) ((settings.getYmax() - tmpY) * (size.getHeight() / (settings.getYmax() - settings.getYmin())));
-					if (previous != null)
-						points.add(new Point(previous));
-						points.add(new Point(xpix, ypix));
-
-				}
-
-				previous = null;
-				if (!WaitForRealNumber) {
-					WaitForRealNumber = true;
-				}
-				continue;
-			} else {
-				if (inNaN) {
-					double tmpX = Calculate.FindFirstXAfterNaN(f, x - step);
-					if (!Double.isNaN(tmpX)) {
-						double tmpY = f.Calc(tmpX);
-						ypix = (int) ((settings.getYmax() - tmpY) * (size.getHeight() / (settings.getYmax() - settings.getYmin())));
-						if (previous != null)
-							points.add(new Point(previous));
-						pieces.add(new GraphPiece(points.toArray(new Point[points.size()])));
-						points.clear();
-
-						if (previous == null)
-							previous = new Point();
-						previous.setLocation(xpix, ypix);
-					}
-
-					inNaN = false;
-					continue;
-
-				}
-
-				if (WaitForRealNumber)
-					WaitForRealNumber = false;
-
-			}
-
-			ypix = (int) ((settings.getYmax() - y) * (size.getHeight() / (settings.getYmax() - settings.getYmin())));
+		
+		for (double t = f.getTmin(); t < f.getTmax(); t += settings.getTstep()) {
+			xy = f.Calc(t);
+			
+			xpix = YaxisX + (int) (xy.getX() * (size.getWidth() / (settings.getXmax() - settings.getXmin())));
+			ypix = (int) ((settings.getYmax() - xy.getY()) * (size.getHeight() / (settings.getYmax() - settings.getYmin())));
+			
 			if (xpix > -1) {
 				if (previous == null) {
 					pieces.add(new GraphPiece(points.toArray(new Point[points.size()])));
@@ -533,8 +488,6 @@ public class GraphFrame extends JPanel implements ActionListener, MouseListener,
 				}
 			}
 			
-			
-			
 			if (previous == null)
 				previous = new Point();
 			previous.setLocation(xpix, ypix);
@@ -543,15 +496,16 @@ public class GraphFrame extends JPanel implements ActionListener, MouseListener,
 			points.add(previous);
 		pieces.add(new GraphPiece(points.toArray(new Point[points.size()])));
 		this.all_pieces.add(pieces.toArray(new GraphPiece[pieces.size()]));
-
+		
 	}
 
-	private void drawFunctionFromData(Function f, int functionIndex, boolean fill, Graphics g) {
+	private void drawFunctionFromData(ParameterFunction f, int functionIndex, boolean fill, Graphics g) {
+		
 		if (f.isEmpty() || all_pieces.size() == 0)
 			return;
 		if(all_pieces.get(functionIndex).length == 0)
 			return;
-		
+		/*
 		if (fill) {
 			g.setColor(Util.lighter(f.getColor(), true));
 			((Graphics2D) g).setStroke(new BasicStroke(1.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL));
@@ -562,22 +516,15 @@ public class GraphFrame extends JPanel implements ActionListener, MouseListener,
 			double x;
 			for(x = FillLowX; xpix < xMax; xpix++, x+= step)
 			{
-				if(!Double.isNaN(f.Calc(x)))
-				{
-					ypix = (int) size.getHeight() - (int) (((f.Calc(x) - settings.getYmin()) / (settings.getYmax() - settings.getYmin()) * size.getHeight()));
-					g.drawLine(xpix, ypix, xpix, XaxisY);
-				}
+				ypix = (int) size.getHeight() - (int) (((f.Calc(x) - settings.getYmin()) / (settings.getYmax() - settings.getYmin()) * size.getHeight()));		
+				g.drawLine(xpix, ypix, xpix, XaxisY);
 			}
 			((Graphics2D) g).setStroke(new BasicStroke(1.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
 		}
+		*/
 		
 		g.setColor(f.getColor());
 
-		
-		
-	
-
-		
 		for (GraphPiece piece : all_pieces.get(functionIndex)) {
 			if(piece.do_not_draw) continue;
 			
@@ -585,9 +532,10 @@ public class GraphFrame extends JPanel implements ActionListener, MouseListener,
 			for (int i = 1; i < piece.points.length; i++) {
 				Point p = piece.points[i];
 				Point prev = piece.points[i - 1];
-			
 				g.drawLine(prev.x, prev.y, p.x, p.y);
 			}
+			
+		
 		}
 		
 		g.setColor(Color.BLACK);
@@ -600,27 +548,25 @@ public class GraphFrame extends JPanel implements ActionListener, MouseListener,
 		super.paintComponent(g);
 
 		if (!clearOnlyCorner) {
-	
+			((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g.clearRect(0, 0, (int) this.getWidth(), (int) this.getHeight());
+
 			if (windowerror)
 				return;
 			CalculateAxes();
 
-			
-			g.clearRect(0, 0, (int) this.getWidth(), (int) this.getHeight());
-			
-
+			((Graphics2D) g).setStroke(new BasicStroke(1.3f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
+			for (int i = 0; i < functions.size(); i++) {
+				if(functions.get(i) == null) continue;
+				if (functions.get(i).drawOn()) {
+					drawFunctionFromData(functions.get(i), i, (i == this.FillFunctionIndex), g);
+					// drawFunction(functions.get(i), (i ==
+					// this.FillFunctionIndex), g);
+				}
+			}
 			((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 			((Graphics2D) g).setStroke(new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
 			drawAxes(g);
-			
-			((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-			((Graphics2D) g).setStroke(new BasicStroke(1.3f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
-			for (int i = 0; i < functions.size(); i++) {
-				if (functions.get(i).drawOn()) {
-					drawFunctionFromData(functions.get(i), i, (i == this.FillFunctionIndex), g);
-				}
-			}
-			
 
 			if (vpointsVisible) {
 				drawVisualPoints(g);
@@ -650,13 +596,17 @@ public class GraphFrame extends JPanel implements ActionListener, MouseListener,
 			SetFillFunctionIndex(-1);
 	}
 
-	public void Update(List<Function> functions) {
+	public void Update(List<ParameterFunction> functions) {
 		this.functions = functions;
+		if(settings.AutoCalcTStep())
+		{
+			settings.setTstep(((double) (settings.getXmax() - settings.getXmin())) / size.getWidth());
+		}
 		recalculateFunctions();
 		this.repaint();
 	}
 
-	public void Update(int functionindex, Function function) {
+	public void Update(int functionindex, ParameterFunction function) {
 		this.functions.set(functionindex, function);
 		recalculateFunctions();
 		this.repaint();
@@ -879,9 +829,13 @@ public class GraphFrame extends JPanel implements ActionListener, MouseListener,
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
+		/*
+		// System.out.println(e.getPoint());
 		if (this.MovingVPointIndex == -1 || this.vpoints.size() == 0 || movablevpointsfrozen)
 			return;
 		int deltax = (int) (MouseStart.getX() - e.getPoint().getX());
+		// System.out.println(deltax);
+		// return;
 
 		double add = (deltax / size.getWidth()) * (settings.getXmax() - settings.getXmin()) * -1 * 0.5;
 
@@ -909,17 +863,16 @@ public class GraphFrame extends JPanel implements ActionListener, MouseListener,
 		MouseStart = e.getPoint();
 
 		this.repaint();
-
+		*/
 	}
 
-	public List<Function> getFunctions() {
+	public List<ParameterFunction> getFunctions() {
 		return functions;
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
 		int i = 0;
-		MouseStart = e.getPoint();
 		for (Point p : vmovablepoints) {
 			if (e.getPoint().getX() < p.getX() || e.getPoint().getX() > p.getX() + 25 || e.getPoint().getY() < p.getY() || e.getPoint().getY() > p.getY() + 25) {
 				i++;
@@ -927,7 +880,6 @@ public class GraphFrame extends JPanel implements ActionListener, MouseListener,
 			}
 			MovingPointIndex = i;
 			MovingVPointIndex = GetMovableVisualPointIndex(i);
-			MouseStart = e.getPoint();
 			return;
 		}
 
@@ -966,7 +918,6 @@ public class GraphFrame extends JPanel implements ActionListener, MouseListener,
 	public void mouseReleased(MouseEvent e) {
 		MovingVPointIndex = -1;
 		MovingPointIndex = -1;
-		MouseStart = null;
 	}
 
 	@Override

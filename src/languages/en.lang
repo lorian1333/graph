@@ -1,6 +1,7 @@
 menu.file=File
 menu.calculate=Calculate
 menu.mode=Mode
+menu.view=View
 menu.help=Help
 
 file.new=New
@@ -16,10 +17,16 @@ calc.min=Minimum
 calc.max=Maximum
 calc.intersect=Intersect
 calc.deriv=dy/dx
+calc.dydt=dy/dt
+calc.dxdt=dx/dt
+
+
+view.windowsettings=Window settings
 
 help.about=About
 
-buttons.draw=Draw
+buttons.draw=Plot
+buttons.close=Close
 buttons.specialchars=Special characters
 
 files.allfiles=All files
@@ -37,7 +44,9 @@ message.progressbar.opening=Opening %s... (%d%%)
 message.progressbar.drawingfunctions=Drawing functions... (%d%%)
 message.progressbar.done=Done... (%d%%)
 message.screenshotsaved=Screenshot saved
+message.complexnumber=complex number
 color.choosecolor=Choose color
+color.color=Color
 
 specialchars.title=Special characters
 
@@ -71,6 +80,8 @@ settings.guistyle.crossplatform=Cross-platform
 
 settings.title=Settings
 settings.window=Window
+settings.window.autocalcy=Auto calculate Y:
+settings.window.autocalctstep=Auto calculate Tstep:
 settings.window.grid=Grid:
 settings.interface=Interface
 settings.interface.lookandfeel=Look and feel:
@@ -80,12 +91,33 @@ calcframe.calculate=Calculate
 calcframe.lowerlimit=Lower limit
 calcframe.upperlimit=Upper limit
 calcframe.function=Function
+calcframe.functionnumber=Functie %d
 calcframe.message.calczeroerror=Could not calculate zero
 calcframe.message.calcintersectsamefuncerror=Cannot intersect same function
+calcframe.message.calcdydxerror=Could not calculate dy/dx on X = %s
+calcframe.message.calcdydxerror.par=Could not calculate d%c/d%c on T = %s
 calcframe.message.calcintersecterror=Could not calculate intersection
+calcframe.message.nosolutions=No solutions for X = %s 
+calcframe.message.nosolutions.par=No solutions for T = %s
+calcframe.message.calculating=Calculating... 
+calcframe.again=Again
 
 about.title=About %s
-about.description=A mathematical program to plot function graphs\n and do calculations.
-about.close=Close
+about.description=
 about.credits=Credits
 about.license=License
+
+tooltip.changefunctioncolor=Click to change the color of function %c%d
+tooltip.changefunctioncolor.par=Click to change the color or Tmin/Tmax of function P%d
+tooltip.changefunctionvisibility=Make function %c%d visible
+tooltip.enterfunctionequotation=Enter here the equotation of function %c%d
+tooltip.functionparsedsuccessfully=Function %c%d was parsed successfully
+tooltip.functionparseerror=Function %c%d could not be parsed
+
+tooltip.changefunctioncolor.par=Click to change the color of function %c%d/%c%d
+tooltip.changefunctionvisibility.par=Make function %c%d/%c%d visible
+
+colorchooser.functioncolor.title=Color for function %c%d
+colorchooser.functioncolor.title.par=Color for function %c%d/%c%d
+
+tmintmax.title=Tmin/Tmax of function P%d

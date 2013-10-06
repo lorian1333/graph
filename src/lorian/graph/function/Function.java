@@ -114,6 +114,7 @@ public class Function {
 		// Prevent messing up
 		ss = ss.replace("const(pi)", "coip"); 
 		ss = ss.replace("const(e)", "cof"); 
+		ss = ss.replace("sec", "soc"); 
 		
 		// Constants
 		ss = Util.StringReplace(ss, MathChars.Pi.getCode(), "const(pi)");
@@ -125,7 +126,7 @@ public class Function {
 		// Invert changes
 		ss = ss.replace("coip", "const(pi)"); 
 		ss = ss.replace("cof", "const(e)"); 
-		
+		ss = ss.replace("soc", "sec"); 
 		
 		// Fractions
 		ss = Util.StringReplace(ss, MathChars.Frac_OneThird.getCode(), "(1/3)");
@@ -167,7 +168,17 @@ public class Function {
 	
 		return ss;
 	}
-	
+	protected boolean checkForUnclosedParentheses(String s)
+	{
+		int depth = 0;
+		for(char ch: s.toCharArray())
+		{
+			if(ch == '(') depth++;
+			else if(ch == ')') depth--;
+			if(depth < 0) return false;
+		}
+		return depth == 0;
+	}
 	public boolean Parse(String s)
 	{
 		try
@@ -177,6 +188,9 @@ public class Function {
 		s = FillInVariables(s);
 		s = s.toLowerCase();
 		s = PreProcess(s);
+		
+		if(!checkForUnclosedParentheses(s)) return false;
+		
 		String termstr = "";
 		
 		int start=0,index=0;
@@ -274,9 +288,9 @@ public class Function {
 		try
 		{
 			double sum = 0;
-			for(int i = 0; i < terms.size(); i++)
+			for(Term term: terms)
 			{
-				sum += terms.get(i).Calc(arg);
+				sum += term.Calc(arg);
 			}
 			return sum;
 		}
@@ -291,6 +305,10 @@ public class Function {
 	}
 	public void setDraw(boolean draw) {
 		this.draw = draw;
+	}
+	public String getInputString()
+	{
+		return this.RawInputString;
 	}
 	@Override
 	public String toString()

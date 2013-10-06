@@ -1,7 +1,5 @@
 package lorian.graph.function;
 
-
-
 public class Factor2Var extends Factor {
 
 	public enum Type
@@ -66,8 +64,7 @@ public class Factor2Var extends Factor {
 		String functionargsstr = s.substring(s.indexOf('(') + 1, s.length()-1);
 		functionargs = SplitArgs(functionargsstr);
 		
-		
-		return true;
+		return MathFunctions.testArgs2Var(functionname, functionargs, argumentChar, argumentChar2);
 	}
 	
 	@Override
@@ -105,8 +102,42 @@ public class Factor2Var extends Factor {
 		String exponentstr = s.substring(s.indexOf('^')+1);
 		return exponentfunc.Parse(exponentstr);
 	}
-	
-
+	@Override
+	protected boolean ParseOther(String s)
+	{
+		int ii = Util.StringIndexNotOf(s, "+-");
+		if(s.charAt(0) == '-' || s.charAt(0) == '+')
+		{
+			
+			boolean neg = false;
+			for(int i = 0; i< ii; i++)
+			{
+				if(s.charAt(i) == '+' || s.charAt(i) == '-')
+				{
+					if(s.charAt(i) == '-') neg = !neg;
+				}
+				else return false;
+			}
+			if(neg) value = -1;
+			else value = 1;
+			
+			//type = Type.SPECIAL;
+			//specialfac = new Factor(this.argumentChar);
+			// Test function: -2^(2x+3)
+			//System.out.println("SPECIAL!!!!!!!!");
+			//return specialfac.Parse(s.substring(ii));
+			type = Type.PARENTHESES;
+			return ParseExponentX(s.substring(ii));
+			
+			
+		}
+		else
+		{
+			type = Type.PARENTHESES;
+			value = 1;
+			return ParseExponentX(s);
+		}
+	}
 	
 	@Override
 	public boolean Parse(String s)
@@ -193,9 +224,6 @@ public class Factor2Var extends Factor {
 		{
 			return value * Math.pow(basefunc.Calc(arg1, arg2), exponentfunc.Calc(arg1, arg2));
 		}
-		
-		// TODO Add function support
-		
 		else if(type == Type.FUNCTION)
 		{
 			return MathFunctions.Calculate2Var(functionname, functionargs, arg1, arg2, argumentChar, argumentChar2);

@@ -1,32 +1,32 @@
 package lorian.graph;
 
 public class WindowSettings3D extends WindowSettings {
-	private long Zmin, Zmax;
+	private double Zmin, Zmax;
 	
 	public WindowSettings3D()
 	{
-		super();
+		super(false);
 		setZmin(-10);
 		setZmax(10);
 		setGrid(false);
 	}
-	public WindowSettings3D(long Xmin, long Xmax, long Ymin, long Ymax, long Zmin, long Zmax, boolean grid)
+	public WindowSettings3D(double Xmin, double Xmax, double Ymin, double Ymax, double Zmin, double Zmax, boolean grid)
 	{
-		super(Xmin, Xmax, Ymin, Ymax, grid);
+		super(Xmin, Xmax, Ymin, Ymax, grid, false);
 		setZmin(Zmin);
 		setZmax(Zmax);
 	}
 	
-	public long getZmin() {
+	public double getZmin() {
 		return Zmin;
 	}
-	public void setZmin(long zmin) {
+	public void setZmin(double zmin) {
 		Zmin = zmin;
 	}
-	public long getZmax() {
+	public double getZmax() {
 		return Zmax;
 	}
-	public void setZmax(long zmax) {
+	public void setZmax(double zmax) {
 		Zmax = zmax;
 	}
 	

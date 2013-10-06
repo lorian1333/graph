@@ -1,5 +1,7 @@
 menu.file=Bestand
 menu.calculate=Berekenen
+menu.mode=Mode
+menu.view=Beeld
 menu.help=Help
 
 file.new=Nieuw
@@ -15,10 +17,15 @@ calc.min=Minimum
 calc.max=Maximum
 calc.intersect=Snijpunt
 calc.deriv=dy/dx
+calc.dydt=dy/dt
+calc.dxdt=dx/dt
+
+view.windowsettings=Vensterinstellingen
 
 help.about=Over
 
 buttons.draw=Tekenen
+buttons.close=Sluiten
 buttons.specialchars=Speciale tekens
 
 files.allfiles=Alle bestanden
@@ -36,7 +43,9 @@ message.progressbar.opening=%s openen... (%d%%)
 message.progressbar.drawingfunctions=Functies tekenen... (%d%%)
 message.progressbar.done=Klaar... (%d%%)
 message.screenshotsaved=Screenshot opgeslagen
+message.complexnumber=complex getal
 color.choosecolor=Kleur kiezen
+color.color=Kleur
 
 specialchars.title=Speciale karakters
 
@@ -70,21 +79,42 @@ settings.guistyle.crossplatform=Cross-platform
 
 settings.title=Instellingen
 settings.window=Window
+settings.window.autocalcy=Bereken Y automatisch:
+settings.window.autocalctstep=Bereken Tstep automatisch:
 settings.window.grid=Grid:
 settings.interface=Interface
-settings.interface.lookandfeel=Thema:
-settings.ok=Ok
 
 calcframe.calculate=Berekenen
 calcframe.lowerlimit=Onderste grens
 calcframe.upperlimit=Bovenste grens
 calcframe.function=Functie
+calcframe.functionnumber=Functie %d
 calcframe.message.calczeroerror=Kan nulpunt niet berekenen
 calcframe.message.calcintersectsamefuncerror=Fout: zelfde functie
 calcframe.message.calcintersecterror=Kan snijdpunt niet berekenen
+calcframe.message.calcdydxerror=Kan dy/dx niet berekenen op X = %s
+calcframe.message.calcderiverror=Kan d%c/d%c niet berekenen op T = %s
+calcframe.message.nosolutions=Geen oplossingen voor X = %s
+calcframe.message.nosolutions.par=Geen oplossingen voor T = %s
+calcframe.message.calculating=Berekenen... 
+calcframe.again=Opnieuw
 
 about.title=Over %s
 about.description=Een wiskundig programma om functiegrafieken\n te plotten en berekeningen uit te voeren.
-about.close=Sluiten
 about.credits=Met dank aan
 about.license=Licentie
+
+tooltip.changefunctioncolor=Klik om de kleur van functie %c%d te veranderen
+tooltip.changefunctioncolor.par=Klik om de kleur of Tmin/Tmax van functie P%d te veranderen
+tooltip.changefunctionvisibility=Maak functie %c%d zichtbaar
+tooltip.enterfunctionequotation=Voer hier de vergelijking in voor functie %c%d
+tooltip.functionparsedsuccessfully=Functie %c%d is succesvol gelezen
+tooltip.functionparseerror=Functie %c%d kon niet goed worden gelezen
+
+tooltip.changefunctioncolor.par=Klik om de kleur van functie %c%d/%c%d te veranderen
+tooltip.changefunctionvisibility.par=Maak functie %c%d/%c%d zichtbaar
+
+colorchooser.functioncolor.title=Kleur voor functie %c%d
+colorchooser.functioncolor.title.par=Kleur voor functie %c%d/%c%d
+
+tmintmax.title=Tmin/Tmax van functie P%d

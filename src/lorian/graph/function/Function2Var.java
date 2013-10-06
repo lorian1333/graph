@@ -50,6 +50,9 @@ public class Function2Var extends Function {
 		s = FillInVariables(s); 
 		s = s.toLowerCase();
 		s = PreProcess(s);
+		
+		if(!checkForUnclosedParentheses(s)) return false;
+		
 		String termstr = "";
 		
 		int start=0,index=0;
@@ -133,9 +136,9 @@ public class Function2Var extends Function {
 		try
 		{
 			double sum = 0;
-			for(int i = 0; i < terms.size(); i++)
+			for(Term2Var term: terms)
 			{
-				sum += terms.get(i).Calc(arg1, arg2);
+				sum += term.Calc(arg1, arg2);
 			}
 			return sum;
 		}

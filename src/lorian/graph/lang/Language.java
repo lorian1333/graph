@@ -9,6 +9,8 @@ import java.net.URL;
 import java.util.Locale;
 
 public class Language  {
+	private String langName;
+	
 	private LangFileReader reader;
 	public void readDefault() throws IOException
 	{
@@ -28,6 +30,7 @@ public class Language  {
 			catch (FileNotFoundException e1)
 			{
 				//System.out.println(locale.getLanguage() + "_" + locale.getCountry() + ".lang is not available. Trying to get " + locale.getLanguage() + " from another country...");
+				langName = locale.getLanguage();
 				read_other_country(locale.getLanguage());
 			}
 		}
@@ -39,6 +42,7 @@ public class Language  {
 	public void read(String langcode) throws IOException
 	{
 		reader = new LangFileReader("/languages/" + langcode + ".lang");
+		langName = langcode;
 		reader.read();
 	}
 	private void read_other_country(String langcode) throws IOException
@@ -64,6 +68,7 @@ public class Language  {
 	private void read(String langcode, String countrycode) throws IOException
 	{
 		reader = new LangFileReader("/languages/" + langcode + "_" + countrycode.toUpperCase() + ".lang");
+		langName = langcode + "_" + countrycode.toUpperCase();
 		reader.read();
 	}
 	
@@ -79,6 +84,11 @@ public class Language  {
 	public String getName(String value)
 	{
 		return reader.getName(value);
+	}
+	
+	public String getLangName()
+	{
+		return langName;
 	}
 	
 }

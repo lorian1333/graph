@@ -9,7 +9,7 @@
 	</path>
 	<target name="compile">
 		<mkdir dir="build/classes" />
-		<javac includeantruntime="false" srcdir="./src" destdir="build/classes">
+		<javac source="1.6" target="1.6" includeantruntime="false" srcdir="./src" destdir="build/classes">
 			<classpath refid="graph.classpath" />
 		</javac>
 	</target>

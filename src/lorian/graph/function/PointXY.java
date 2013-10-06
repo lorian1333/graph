@@ -32,7 +32,7 @@ public class PointXY {
 	@Override
 	public String toString()
 	{
-		return String.format("%s[x=%f,y=%f]", this.getClass().getName(), X, Y);
+		return String.format("%s[x=%s,y=%s]", this.getClass().getName(), Util.GetString(X), Util.GetString(Y));
 	}
 	
 }

@@ -3,6 +3,7 @@ package lorian.graph.opengl;
 import java.awt.Color;
 
 public class FunctionRenderData {
-	public float[] data;
+	public double[] data;
+	public long dataLength;
 	public Color color;
 }
