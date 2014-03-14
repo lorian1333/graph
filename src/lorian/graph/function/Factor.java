@@ -283,10 +283,21 @@ public class Factor {
 	{	
 		functionname = s.substring(0, s.indexOf('('));
 		if(!MathFunctions.functionExists(functionname)) return false;
-		String functionargsstr = s.substring(s.indexOf('(') + 1, s.length()-1);
-		functionargs = SplitArgs(functionargsstr);
+		//String functionargsstr = s.substring(s.indexOf('(') + 1, s.length()-1);
 		
-		return MathFunctions.testArgs(functionname, functionargs, argumentChar);
+		if(s.length()-1 == s.indexOf(')'))
+		{
+			String functionargsstr = s.substring(s.indexOf('(') + 1, s.length()-1);
+			functionargs = SplitArgs(functionargsstr);
+			return MathFunctions.testArgs(functionname, functionargs, argumentChar);
+		}
+		else
+		{
+			type = Type.PARENTHESES;
+			value = 1;
+			return ParseExponentX(s);
+		}
+		
 	}
 	 
 	protected boolean ParseOther(String s)

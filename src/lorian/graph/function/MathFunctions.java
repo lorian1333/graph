@@ -29,9 +29,12 @@ public class MathFunctions {
 	{
 		if(functionname.equalsIgnoreCase("const")) return true;
 		boolean ret = true;
-		for(String arg: args)
+		if(args != null)
 		{
-			ret = ret && new Function(argumentChar).Parse(arg);
+			for(String arg: args)
+			{
+				ret = ret && new Function(argumentChar).Parse(arg);
+			}
 		}
 		return ret;
 	}

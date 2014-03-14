@@ -11,6 +11,13 @@ public class VisualPoint {
 	private int functionIndex;
 	private List<VisualPointLocationChangeListener> listeners;
 	
+	protected VisualPoint()
+	{
+		setMovable(false);
+		setShowCoordinates(false);
+		setLabel("");
+		setFunctionIndex(-1);
+	}
 	public VisualPoint(PointXY p, boolean movable)
 	{
 		listeners = new ArrayList<VisualPointLocationChangeListener>();

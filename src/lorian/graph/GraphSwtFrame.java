@@ -881,11 +881,14 @@ public class GraphSwtFrame implements SelectionListener {
 			betweenAccolades.setLayout(betweenAccoladesLayout);
 
 			final Label functionNameX = new Label(betweenAccolades, SWT.NO_FOCUS);
+			functionNameX.setText("X   = ");
+			/*
 			if (numFunction < 10)
 				functionNameX.setText("X" + numFunction + "   = ");
 			else
 				functionNameX.setText("X" + numFunction + " = ");
-
+			*/
+			
 			final Text inputTextX = new Text(betweenAccolades, SWT.SINGLE | SWT.BORDER);
 			Font textFont = inputTextX.getFont();
 			int bigfont_size = textFont.getFontData()[0].getHeight() + 2;
@@ -927,11 +930,13 @@ public class GraphSwtFrame implements SelectionListener {
 			functionParseResultX.update();
 
 			final Label functionNameY = new Label(betweenAccolades, SWT.NO_FOCUS);
+			functionNameY.setText("Y   = ");
+			/*
 			if (numFunction < 10)
 				functionNameY.setText("Y" + numFunction + "   = ");
 			else
 				functionNameY.setText("Y" + numFunction + " = ");
-			
+			*/
 			//functionName.setMenu();
 			final Menu menu = new Menu(functionName);
 			MenuItem item = new MenuItem(menu, SWT.PUSH);

@@ -36,7 +36,9 @@ public class ParameterFunction {
 	}
 	public boolean Parse(String xtext, String ytext)
 	{
-		return ParseX(xtext) && ParseY(ytext);
+		parseOkX = funcX.Parse(xtext);
+		parseOkY = funcY.Parse(ytext);
+		return parseOkX && parseOkY;
 	}
 	public boolean ParseX(String s)
 	{

@@ -450,7 +450,11 @@ public class WindowSettingsPanelSwt extends Dialog {
 		final Shell shell = new Shell(getParent(), SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
 		 
 		final ParameterFunction function = new ParameterFunction();
-		
+		if(oldT != null)
+		{
+			function.setTmin(oldT[0]);
+			function.setTmax(oldT[1]);
+		}
 		GridLayout shellLayout = new GridLayout(1, false);
 		shellLayout.verticalSpacing = 0;
 		shell.setLayout(shellLayout); 
@@ -463,22 +467,20 @@ public class WindowSettingsPanelSwt extends Dialog {
 		layout.marginRight = 10;
 		comp.setLayout(layout);
 		
-		xMin = addSpinner(comp, "Tmin:", oldT != null ? oldT[0] : 0);
+		xMin = addSpinner(comp, "Tmin:", function.getTmin());
 		xMin.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				function.setTmin(xMin.getSelection() / Math.pow(10, 4));
 				xMax.setMinimum(xMin.getSelection()+(int)Math.pow(10, 4));
-				
 			}
 		});
-		xMax = addSpinner(comp, "Tmax:", oldT != null ? oldT[1] : 10);
+		xMax = addSpinner(comp, "Tmax:", function.getTmax());
 		xMax.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				function.setTmax(xMax.getSelection() / Math.pow(10, 4));
 				xMin.setMaximum(xMax.getSelection()-(int)Math.pow(10, 4));
-				
 			}
 		});
 		

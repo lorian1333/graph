@@ -245,26 +245,39 @@ class Renderer implements GLEventListener {
 		//gl.glRotated(90.0, 0.0, 1.0, 0.0);
 		gl.glPopMatrix();
 	}
-	/*
-	private void drawAxisNames(GL2 gl)
+	
+	private void drawWindowSettings(GL2 gl)
 	{
-		TextRenderer renderer = new TextRenderer(new Font("SansSerif", 0, 10));
-		renderer.begin3DRendering();
+		gl.glPushMatrix();
 		
+		TextRenderer renderer = new TextRenderer(new Font("Arial", 0, 30));
 		
-		renderer.setColor(new Color(0, 54, 0xff)); // Blue
+		renderer.beginRendering(width, height);
+		renderer.setSmoothing(true);
+		renderer.setUseVertexArrays(true);
+	
+		String xline = String.format("X: [%s, %s]", Util.doubleToString(settings.getXmin()), Util.doubleToString(settings.getXmax()));
+		String yline = String.format("Y: [%s, %s]", Util.doubleToString(settings.getYmin()), Util.doubleToString(settings.getYmax()));
+		String zline = String.format("Z: [%s, %s]", Util.doubleToString(settings.getZmin()), Util.doubleToString(settings.getZmax()));
 		
-		renderer.draw("Z", 0, 0);
-		
+
+		int x = (int) (width - Math.max(Math.max(renderer.getBounds(xline).getWidth(), renderer.getBounds(yline).getWidth()), renderer.getBounds(zline).getWidth()));
+		int xh =  (int) renderer.getBounds(xline).getHeight(), yh =  (int) renderer.getBounds(yline).getHeight(), zh =  (int) renderer.getBounds(zline).getHeight();
 		renderer.setColor(new Color(220, 0, 0)); // Red
-		renderer.draw("X", 0, 10);
-		
+		renderer.draw(xline, x, xh + yh + zh + 6);
+
 		renderer.setColor(new Color(60, 0xff, 0)); // Light green
-		renderer.draw("Y", 0, 20);
+		renderer.draw(yline, x, yh + zh + 4);
+
+		renderer.setColor(new Color(0, 54, 0xff)); // Blue
+		renderer.draw(zline, x, zh + 2);
 		
-		renderer.end3DRendering();
+		renderer.endRendering();
+		
+		gl.glPopMatrix();
 		
 	}
+	/*
 	private void drawRect(GL2 gl, Point3D p1, Point3D p2, Point3D p3, Point3D p4)
 	{
 		gl.glBegin(GL2.GL_POLYGON);
@@ -281,18 +294,18 @@ class Renderer implements GLEventListener {
 		if(!f.drawOn()) return;
 		FunctionRenderData fdata = new FunctionRenderData();
 		fdata.color = f.getColor();
-		fdata.data = new double[Xlength * Ylength * 3 / 2];//new float[Xlength * Ylength * 3 / 2];
+		fdata.data = new double[Xlength * Ylength * 3 ];//new float[Xlength * Ylength * 3 / 2];
 		
 		double xpix, ypix, zpix;
 		double x, y, z;
 		
 		// Use 2 pixels 
-		double stepX = ((double) (settings.getXmax() - settings.getXmin())) / (Xlength / 2);
-		double stepY = ((double) (settings.getYmax() - settings.getYmin())) / (Ylength / 2);
+		double stepX = ((double) (settings.getXmax() - settings.getXmin())) / (Xlength );
+		double stepY = ((double) (settings.getYmax() - settings.getYmin())) / (Ylength );
 		int i=0;
-		for(xpix = -1, x = settings.getXmin(); xpix < Xlength; xpix+=2, x += stepX)
+		for(xpix = -1, x = settings.getXmin(); xpix < Xlength; xpix+=1, x += stepX)
 		{
-			for(ypix = -1, y = settings.getYmin(); ypix < Ylength; ypix+=2, y += stepY)
+			for(ypix = -1, y = settings.getYmin(); ypix < Ylength; ypix+=1, y += stepY)
 			{
 				z = f.Calc( settings.getXmin() + settings.getXmax()-x , y);
 				
@@ -351,6 +364,7 @@ class Renderer implements GLEventListener {
 		gl.glPopMatrix();
 		
 	}
+	/*
 	private void drawFunction(GL2 gl, Function2Var f)
 	{
 		if(f.isEmpty()) return;	
@@ -401,12 +415,6 @@ class Renderer implements GLEventListener {
 					gl.glEnd();
 					
 					
-					/*
-					previous1.setLocation(xpix, Zlength - (int) ((settings.getZmax() - f.Calc(x, y-stepY)) * (Zlength / (settings.getZmax() - settings.getZmin()))), ypix-1);
-					previous2.setLocation(xpix-1, Zlength - (int) ((settings.getZmax() - f.Calc(x-stepX, y)) * (Zlength / (settings.getZmax() - settings.getZmin()))), ypix);
-					previous3.setLocation(xpix-1, Zlength - (int) ((settings.getZmax() - f.Calc(x-stepX, y-stepY)) * (Zlength / (settings.getZmax() - settings.getZmin()))), ypix-1);
-					drawRect(gl, new Point3D(xpix, zpix, ypix), previous1, previous2, previous3);
-					*/
 				}
 				
 			}
@@ -416,6 +424,7 @@ class Renderer implements GLEventListener {
 		gl.glPopMatrix();
 		
 	}
+	*/
 	public void display(GLAutoDrawable gLDrawable) {
 		//System.out.println("display() called");
 
@@ -429,25 +438,21 @@ class Renderer implements GLEventListener {
 		gl.glTranslatef(-camXPos, -camYPos, -camZPos);
 		gl.glRotatef(originXRot, 1.0f, 0.0f, 0f);
 		gl.glRotatef(originYRot, 0.0f, 1.0f, 0.0f);
-		/*
-		for(Function2Var f: functions)
-		{
-			if(!f.isEmpty())
-				//drawFunction(gl, f);
-				addFunctionToArray(f);
-		}
-		*/
+
 		drawAllFunctions(gl);
 		
 		drawAxisCones(gl);
 		drawAxes(gl);
-		//drawAxisNames(gl);
+		drawWindowSettings(gl);
+		
+		
 		
 		if(toImage)
 		{
 			//System.out.println("width=" + width + ", height=" + height);
 			toImage(gl, width, width);
 		}
+
 	
 	}
 

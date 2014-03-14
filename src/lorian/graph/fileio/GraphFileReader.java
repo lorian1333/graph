@@ -269,14 +269,15 @@ public class GraphFileReader {
 		for(int i=0;i<functionCount_par;i++)
 		{
 			ParameterFunction f = new ParameterFunction();
-			if(!(fstrings[i][0].isEmpty() || fstrings[i][1].isEmpty())) f.Parse(fstrings[i][0], fstrings[i][1]);
+			if(!(fstrings[i][0].isEmpty() || fstrings[i][1].isEmpty())) 
+				f.Parse(fstrings[i][0], fstrings[i][1]);
 			f.setColor(this.functiondata_par[i].color);
 			f.setDraw(this.functiondata_par[i].draw);
 			functions.put(this.functiondata_par[i].index, f);
 		}
 		return functions;
 	}
-	
+	/*
 	@Deprecated
 	public short[] getFunctionIndexes()
 	{
@@ -303,5 +304,5 @@ public class GraphFileReader {
 			functions[i] = f;
 		}
 		return functions;
-	}
+	} */
 }

@@ -67,7 +67,7 @@ import lorian.graph.opengl.Graph3D;
 public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyListener, MouseListener, WindowListener {
 	private static final long serialVersionUID = -1090268654275240501L;
 	public static final String appname = "Graph";
-	public static final String version = "1.8.0 Beta";
+	public static final String version = "1.8.1 Beta";
 
 	public static String current_lang_name = "";
 	
@@ -825,9 +825,10 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		progressbar.setValue(20);
 		progressbar.setString(String.format(Translate("message.progressbar.opening"), (new File(filePath)).getName(), progressbar.getValue()));
 		progressPanel.paintAll(progressPanel.getGraphics());
-
+		
+		/*
 		String[] reconstructedfunctions = fr.getFunctionStrings_func();
-		short[] indexes = fr.getFunctionIndexes();
+		short[] indexes = fr.getf
 		Function[] functions = fr.getFunctions_func_arr();
 
 		settings = fr.getWindowSettings_func();
@@ -846,6 +847,9 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 			this.labels.set(j, label);
 			this.textfields.set(j, textfield);
 		}
+		*/
+		System.err.println("GraphFunctionsFrame.OpenFile: Unimplementend!");
+		
 		progressbar.setValue(50);
 		progressbar.setString(String.format(Translate("message.progressbar.drawingfunctions"), progressbar.getValue()));
 		progressPanel.paintAll(progressPanel.getGraphics());

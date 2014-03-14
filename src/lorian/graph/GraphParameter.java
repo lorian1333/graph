@@ -555,6 +555,11 @@ public class GraphParameter extends JPanel implements ActionListener, MouseListe
 				return;
 			CalculateAxes();
 
+			((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+			((Graphics2D) g).setStroke(new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
+			drawAxes(g);
+			
+			((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			((Graphics2D) g).setStroke(new BasicStroke(1.3f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
 			for (int i = 0; i < functions.size(); i++) {
 				if(functions.get(i) == null) continue;
@@ -564,9 +569,7 @@ public class GraphParameter extends JPanel implements ActionListener, MouseListe
 					// this.FillFunctionIndex), g);
 				}
 			}
-			((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-			((Graphics2D) g).setStroke(new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
-			drawAxes(g);
+			
 
 			if (vpointsVisible) {
 				drawVisualPoints(g);
