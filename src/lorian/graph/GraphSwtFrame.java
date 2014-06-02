@@ -48,6 +48,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.ColorDialog;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
@@ -58,6 +59,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.swt.graphics.Color;
 
 public class GraphSwtFrame implements SelectionListener {
@@ -1471,16 +1473,16 @@ public class GraphSwtFrame implements SelectionListener {
 		
 		backupInputData();
 		currentMode = newMode;
-		Point shellSize = shell.getSize();
-		Point shellLocation = shell.getLocation();
-		boolean shellIsMaximized = shell.getMaximized();
 
-		shell.dispose();
-		initShell();
+		
+		for(Control c: shell.getChildren())
+			c.dispose();
+		initUI();
+		
+		shell.layout();
+		
 		System.out.println("Switching to mode " + newMode);
-		shell.setSize(shellSize);
-		shell.setLocation(shellLocation);
-		shell.setMaximized(shellIsMaximized);
+
 		if(GraphFunctionsFrame.NoChangesMade)
 		{
 			Plot();
