@@ -67,7 +67,7 @@ import lorian.graph.opengl.Graph3D;
 public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyListener, MouseListener, WindowListener {
 	private static final long serialVersionUID = -1090268654275240501L;
 	public static final String appname = "Graph";
-	public static final String version = "1.8.1 Beta";
+	public static final String version = "1.8.2 Beta";
 
 	public static String current_lang_name = "";
 	
