@@ -4,6 +4,7 @@ import java.awt.GraphicsEnvironment;
 
 import lorian.graph.GraphFunctionsFrame.Mode;
 import lorian.graph.function.ParameterFunction;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -29,7 +30,7 @@ public class WindowSettingsPanelSwt extends Dialog {
 	private WindowSettingsParameter settings_par;
 	
 	private Spinner xMin, xMax, yMin, yMax, zMin, zMax; //, tStep, tMin, tMax; 
-	private Button autoCalcY, autoCalcTstep, grid;
+	private Button autoCalcY, grid;
 	
 	private Mode mode;
 	private GraphSwtFrame swtFrame;
@@ -136,6 +137,12 @@ public class WindowSettingsPanelSwt extends Dialog {
 						settings_func.setXmin(xMin.getSelection() / Math.pow(10, 4));
 						xMax.setMinimum(xMin.getSelection()+(int)Math.pow(10, 4));
 						swtFrame.updateWindowSettings_func(settings_func);
+						if(settings_func.autoCalcY())
+						{
+							settings_func = GraphFunctionsFrame.gframe.getWindowSettings();
+							yMin.setSelection((int) (settings_func.getYmin() * Math.pow(10, 4)));
+							yMax.setSelection((int) (settings_func.getYmin() * Math.pow(10, 4)));
+						}
 					}
 				});
 				xMax = addSpinner(comp, "Xmax:", settings_func.getXmax());
@@ -145,6 +152,12 @@ public class WindowSettingsPanelSwt extends Dialog {
 						settings_func.setXmax(xMax.getSelection() / Math.pow(10, 4));
 						xMin.setMaximum(xMax.getSelection()-(int)Math.pow(10, 4));
 						swtFrame.updateWindowSettings_func(settings_func);
+						if(settings_func.autoCalcY())
+						{
+							settings_func = GraphFunctionsFrame.gframe.getWindowSettings();
+							yMin.setSelection((int) (settings_func.getYmin() * Math.pow(10, 4)));
+							yMax.setSelection((int) (settings_func.getYmin() * Math.pow(10, 4)));
+						}
 					}
 				});
 				yMin = addSpinner(comp, "Ymin:", settings_func.getYmin());
@@ -167,7 +180,7 @@ public class WindowSettingsPanelSwt extends Dialog {
 				});
 				yMin.setEnabled(!settings_func.autoCalcY());
 				yMax.setEnabled(!settings_func.autoCalcY());
-				grid = addCheckBox(comp, GraphFunctionsFrame.Translate("settings.window.grid"), settings_func.gridOn());
+				grid = addCheckBox(comp, GraphFunctionsFrame.localize("settings.window.grid"), settings_func.gridOn());
 				grid.addSelectionListener(new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
@@ -175,7 +188,7 @@ public class WindowSettingsPanelSwt extends Dialog {
 						swtFrame.updateWindowSettings_func(settings_func);
 					}
 				});
-				autoCalcY = addCheckBox(comp, GraphFunctionsFrame.Translate("settings.window.autocalcy"), settings_func.autoCalcY());
+				autoCalcY = addCheckBox(comp, GraphFunctionsFrame.localize("settings.window.autocalcy"), settings_func.autoCalcY());
 				autoCalcY.addSelectionListener(new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
@@ -354,7 +367,7 @@ public class WindowSettingsPanelSwt extends Dialog {
 				});
 				yMin.setEnabled(!settings_par.autoCalcY());
 				yMax.setEnabled(!settings_par.autoCalcY());
-				grid = addCheckBox(comp, GraphFunctionsFrame.Translate("settings.window.grid"), settings_par.gridOn());
+				grid = addCheckBox(comp, GraphFunctionsFrame.localize("settings.window.grid"), settings_par.gridOn());
 				grid.addSelectionListener(new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
@@ -362,7 +375,7 @@ public class WindowSettingsPanelSwt extends Dialog {
 						swtFrame.updateWindowSettings_par(settings_par);
 					}
 				});
-				autoCalcY = addCheckBox(comp, GraphFunctionsFrame.Translate("settings.window.autocalcy"), settings_par.autoCalcY());
+				autoCalcY = addCheckBox(comp, GraphFunctionsFrame.localize("settings.window.autocalcy"), settings_par.autoCalcY());
 				autoCalcY.addSelectionListener(new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
@@ -397,7 +410,7 @@ public class WindowSettingsPanelSwt extends Dialog {
 		
 		GridData data = new GridData(SWT.CENTER, SWT.TOP, true, false);
 		Button okButton = new Button(wsettingsShell, SWT.PUSH);
-		okButton.setText(GraphFunctionsFrame.Translate("optionpane.ok")); 
+		okButton.setText(GraphFunctionsFrame.localize("optionpane.ok")); 
 		data.widthHint = 70;
 		okButton.setLayoutData(data);
 		okButton.addSelectionListener(new SelectionAdapter() {
@@ -421,7 +434,7 @@ public class WindowSettingsPanelSwt extends Dialog {
 		
 		//wsettingsShell.setMinimumSize(325, 260);
 		wsettingsShell.setImages(parent.getImages());
-		wsettingsShell.setText(GraphFunctionsFrame.Translate("view.windowsettings"));
+		wsettingsShell.setText(GraphFunctionsFrame.localize("view.windowsettings"));
 		
 		java.awt.Rectangle clientArea = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[0].getDefaultConfiguration().getBounds();
 		Rectangle rect = wsettingsShell.getBounds();
@@ -486,7 +499,7 @@ public class WindowSettingsPanelSwt extends Dialog {
 		
 		GridData data = new GridData(SWT.CENTER, SWT.TOP, true, false);
 		Button okButton = new Button(shell, SWT.PUSH);
-		okButton.setText(GraphFunctionsFrame.Translate("optionpane.ok"));
+		okButton.setText(GraphFunctionsFrame.localize("optionpane.ok"));
 		data.widthHint = 70;
 		okButton.setLayoutData(data);
 		okButton.addSelectionListener(new SelectionAdapter() {
@@ -497,7 +510,7 @@ public class WindowSettingsPanelSwt extends Dialog {
 			}
 		});
 		
-		shell.setText(String.format(GraphFunctionsFrame.Translate("tmintmax.title"), numFunction));
+		shell.setText(String.format(GraphFunctionsFrame.localize("tmintmax.title"), numFunction));
 		shell.pack();
 		
 		java.awt.Rectangle clientArea = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[0].getDefaultConfiguration().getBounds();

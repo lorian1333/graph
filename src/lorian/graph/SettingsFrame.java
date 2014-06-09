@@ -56,12 +56,12 @@ public class SettingsFrame extends JFrame implements ActionListener {
 		});
 		this.setLocationRelativeTo(null);
 		this.setLocation((int) point.getX() + 450, (int) point.getY() + 200);
-		this.setTitle(GraphFunctionsFrame.Translate("settings.title"));
+		this.setTitle(GraphFunctionsFrame.localize("settings.title"));
 		this.setResizable(false);
 		
 		for(int i=0;i<GUIstyles.length;i++)
 		{
-			GUIstyles[i] = GraphFunctionsFrame.Translate(GUIstyles[i]);
+			GUIstyles[i] = GraphFunctionsFrame.localize(GUIstyles[i]);
 		}
 		
 		initUI();
@@ -78,7 +78,7 @@ public class SettingsFrame extends JFrame implements ActionListener {
 		int i;
 		for(i=0;i<labels.length;i++)
 		{
-			JLabel label = new JLabel(GraphFunctionsFrame.Translate(labels[i]));
+			JLabel label = new JLabel(GraphFunctionsFrame.localize(labels[i]));
 			
 			if(i==0 || i==6)
 			{
@@ -220,7 +220,7 @@ public class SettingsFrame extends JFrame implements ActionListener {
 			}
 			
 		}
-		JButton button = new JButton(GraphFunctionsFrame.Translate("settings.ok"));
+		JButton button = new JButton(GraphFunctionsFrame.localize("settings.ok"));
 		button.setPreferredSize(new Dimension(80, (int) button.getPreferredSize().getHeight()));
 		button.addActionListener(this);
 		panel.add(button);
@@ -249,7 +249,7 @@ public class SettingsFrame extends JFrame implements ActionListener {
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if(e.getActionCommand()==GraphFunctionsFrame.Translate("settings.ok"))
+		if(e.getActionCommand()==GraphFunctionsFrame.localize("settings.ok"))
 		{  
 			Close();
 			GraphFunctionsFrame.UpdateWindowSettings();

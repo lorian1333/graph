@@ -11,7 +11,7 @@ public class SpecialCharsFrame extends JFrame {
 	{
 		this.setLocationRelativeTo(null);
 		this.setLocation((int) point.getX() + 450, (int) point.getY() + 200);
-		this.setTitle(GraphFunctionsFrame.Translate("specialchars.title"));
+		this.setTitle(GraphFunctionsFrame.localize("specialchars.title"));
 		this.setResizable(false); 
 		this.setSize(300, 300);
 		Restore();

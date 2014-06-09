@@ -31,10 +31,10 @@ buttons.specialchars=Special characters
 
 files.allfiles=All files
 files.graphfiles=Graph files
-files.pngimage=PNG Afbeelding
+files.pngimage=PNG Image
 files.untitled=Untitled
 
-message.windowsettingserror=Invalid windowsettings
+message.windowsettingserror=Invalid window settings
 message.confirmchanges=Do you want to save changes to %s?
 message.confirmoverwrite_0=%s already exists.
 message.confirmoverwrite_1=Are you sure you want to overwrite it?
@@ -91,7 +91,7 @@ calcframe.calculate=Calculate
 calcframe.lowerlimit=Lower limit
 calcframe.upperlimit=Upper limit
 calcframe.function=Function
-calcframe.functionnumber=Functie %d
+calcframe.functionnumber=Function %d
 calcframe.message.calczeroerror=Could not calculate zero
 calcframe.message.calcintersectsamefuncerror=Cannot intersect same function
 calcframe.message.calcdydxerror=Could not calculate dy/dx on X = %s
@@ -106,18 +106,17 @@ about.title=About %s
 about.description=
 about.credits=Credits
 about.license=License
+about.buildinfo=Build by %s on %s
 
 tooltip.changefunctioncolor=Click to change the color of function %c%d
 tooltip.changefunctioncolor.par=Click to change the color or Tmin/Tmax of function P%d
 tooltip.changefunctionvisibility=Make function %c%d visible
-tooltip.enterfunctionequotation=Enter here the equotation of function %c%d
+tooltip.enterfunctionequotation=Enter here the equation of function %c%d
 tooltip.functionparsedsuccessfully=Function %c%d was parsed successfully
 tooltip.functionparseerror=Function %c%d could not be parsed
 
 tooltip.changefunctioncolor.par=Click to change the color of function %c%d/%c%d
-tooltip.changefunctionvisibility.par=Make function %c%d/%c%d visible
 
 colorchooser.functioncolor.title=Color for function %c%d
-colorchooser.functioncolor.title.par=Color for function %c%d/%c%d
 
 tmintmax.title=Tmin/Tmax of function P%d

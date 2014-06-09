@@ -4,9 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.Image;
-import java.awt.Panel;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.imageio.ImageIO;
 import javax.swing.ButtonGroup;
@@ -36,7 +35,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JRadioButtonMenuItem;
-import javax.swing.JRootPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
@@ -45,14 +43,8 @@ import javax.swing.SpringLayout;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileFilter;
-import org.eclipse.swt.*;
-import org.eclipse.swt.awt.SWT_AWT;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Shell;
 
+import lorian.graph.fileio.ExtensionFileFilter;
 import lorian.graph.fileio.GraphFileReader;
 import lorian.graph.fileio.GraphFileWriter;
 import lorian.graph.fileio.JFileChooserWithConfirmation;
@@ -60,15 +52,21 @@ import lorian.graph.function.Function;
 import lorian.graph.function.Function2Var;
 import lorian.graph.function.MathChars;
 import lorian.graph.function.Util;
-import lorian.graph.fileio.ExtensionFileFilter;
 import lorian.graph.lang.Language;
 import lorian.graph.opengl.Graph3D;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Shell;
 
 public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyListener, MouseListener, WindowListener {
 	private static final long serialVersionUID = -1090268654275240501L;
 	public static final String appname = "Graph";
 	public static final String version = "1.8.2 Beta";
-
+	public static final int version_year = 2014;
+	
+	
 	public static String current_lang_name = "";
 	
 	// Only for GraphFileReader and GraphFileWriter
@@ -159,7 +157,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		detectOS();
 		initLanguages();
 		initVars(applet);
-		FileName = Translate("files.untitled");
+		FileName = localize("files.untitled");
 		
 		if (!use_swt) {
 
@@ -250,81 +248,81 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	}
 
 	private void translateFileChooser() {
-		UIManager.put("FileChooser.lookInLabelText", Translate("filechooser.lookin"));
-		UIManager.put("FileChooser.saveInLabelText", Translate("filechooser.savein"));
-		UIManager.put("FileChooser.saveDialogTitleText", Translate("filechooser.save"));
-		UIManager.put("FileChooser.openDialogTitleText", Translate("filechooser.open"));
-		UIManager.put("FileChooser.filesOfTypeLabelText", Translate("filechooser.filesoftype"));
-		UIManager.put("FileChooser.upFolderToolTipText", Translate("filechooser.upfolder"));
-		UIManager.put("FileChooser.fileNameLabelText", Translate("filechooser.filename"));
-		UIManager.put("FileChooser.newFolderToolTipText", Translate("filechooser.newfolder"));
-		UIManager.put("FileChooser.viewMenuLabelText", Translate("filechooser.view"));
-		UIManager.put("FileChooser.saveButtonText", Translate("filechooser.save"));
-		UIManager.put("FileChooser.openButtonText", Translate("filechooser.open"));
-		UIManager.put("FileChooser.cancelButtonText", Translate("filechooser.cancel"));
-		UIManager.put("FileChooser.updateButtonText", Translate("filechooser.update"));
-		UIManager.put("FileChooser.refreshActionLabelText", Translate("filechooser.refresh"));
-		UIManager.put("FileChooser.newFolderActionLabelText", Translate("filechooser.newfolder"));
-		UIManager.put("FileChooser.listViewActionLabelText", Translate("filechooser.list"));
-		UIManager.put("FileChooser.detailsViewActionLabelText", Translate("filechooser.details"));
-		UIManager.put("FileChooser.helpButtonText", Translate("filechooser.help"));
-		UIManager.put("FileChooser.saveButtonToolTipText", Translate("filechooser.save"));
-		UIManager.put("FileChooser.openButtonToolTipText", Translate("filechooser.open"));
-		UIManager.put("FileChooser.cancelButtonToolTipText", Translate("filechooser.cancel"));
-		UIManager.put("FileChooser.updateButtonToolTipText", Translate("filechooser.update"));
-		UIManager.put("FileChooser.helpButtonToolTipText", Translate("filechooser.help"));
-		UIManager.put("FileChooser.win32.newFolder", Translate("filechooser.newfolder"));
-		UIManager.put("FileChooser.win32.newFolder.subsequent", Translate("filechooser.newfolder") + " ({0})");
-		UIManager.put("FileChooser.other.newFolder", Translate("filechooser.newfolder"));
-		UIManager.put("FileChooser.other.newFolder.subsequent", Translate("filechooser.newfolder") + " ({0})");
-		UIManager.put("FileChooser.listViewButtonToolTipText", Translate("filechooser.list"));
-		UIManager.put("FileChooser.detailsViewButtonToolTipText", Translate("filechooser.details"));
-		UIManager.put("FileChooser.viewMenuButtonToolTipText", Translate("filechooser.viewmenu"));
-		UIManager.put("FileChooser.acceptAllFileFilterText", Translate("files.allfiles"));
+		UIManager.put("FileChooser.lookInLabelText", localize("filechooser.lookin"));
+		UIManager.put("FileChooser.saveInLabelText", localize("filechooser.savein"));
+		UIManager.put("FileChooser.saveDialogTitleText", localize("filechooser.save"));
+		UIManager.put("FileChooser.openDialogTitleText", localize("filechooser.open"));
+		UIManager.put("FileChooser.filesOfTypeLabelText", localize("filechooser.filesoftype"));
+		UIManager.put("FileChooser.upFolderToolTipText", localize("filechooser.upfolder"));
+		UIManager.put("FileChooser.fileNameLabelText", localize("filechooser.filename"));
+		UIManager.put("FileChooser.newFolderToolTipText", localize("filechooser.newfolder"));
+		UIManager.put("FileChooser.viewMenuLabelText", localize("filechooser.view"));
+		UIManager.put("FileChooser.saveButtonText", localize("filechooser.save"));
+		UIManager.put("FileChooser.openButtonText", localize("filechooser.open"));
+		UIManager.put("FileChooser.cancelButtonText", localize("filechooser.cancel"));
+		UIManager.put("FileChooser.updateButtonText", localize("filechooser.update"));
+		UIManager.put("FileChooser.refreshActionLabelText", localize("filechooser.refresh"));
+		UIManager.put("FileChooser.newFolderActionLabelText", localize("filechooser.newfolder"));
+		UIManager.put("FileChooser.listViewActionLabelText", localize("filechooser.list"));
+		UIManager.put("FileChooser.detailsViewActionLabelText", localize("filechooser.details"));
+		UIManager.put("FileChooser.helpButtonText", localize("filechooser.help"));
+		UIManager.put("FileChooser.saveButtonToolTipText", localize("filechooser.save"));
+		UIManager.put("FileChooser.openButtonToolTipText", localize("filechooser.open"));
+		UIManager.put("FileChooser.cancelButtonToolTipText", localize("filechooser.cancel"));
+		UIManager.put("FileChooser.updateButtonToolTipText", localize("filechooser.update"));
+		UIManager.put("FileChooser.helpButtonToolTipText", localize("filechooser.help"));
+		UIManager.put("FileChooser.win32.newFolder", localize("filechooser.newfolder"));
+		UIManager.put("FileChooser.win32.newFolder.subsequent", localize("filechooser.newfolder") + " ({0})");
+		UIManager.put("FileChooser.other.newFolder", localize("filechooser.newfolder"));
+		UIManager.put("FileChooser.other.newFolder.subsequent", localize("filechooser.newfolder") + " ({0})");
+		UIManager.put("FileChooser.listViewButtonToolTipText", localize("filechooser.list"));
+		UIManager.put("FileChooser.detailsViewButtonToolTipText", localize("filechooser.details"));
+		UIManager.put("FileChooser.viewMenuButtonToolTipText", localize("filechooser.viewmenu"));
+		UIManager.put("FileChooser.acceptAllFileFilterText", localize("files.allfiles"));
 	}
 
 	private void translateOptionPane() {
-		UIManager.put("OptionPane.cancelButtonText", Translate("optionpane.cancel"));
-		UIManager.put("OptionPane.noButtonText", Translate("optionpane.no"));
-		UIManager.put("OptionPane.okButtonText", Translate("optionpane.ok"));
-		UIManager.put("OptionPane.yesButtonText", Translate("optionpane.yes"));
+		UIManager.put("OptionPane.cancelButtonText", localize("optionpane.cancel"));
+		UIManager.put("OptionPane.noButtonText", localize("optionpane.no"));
+		UIManager.put("OptionPane.okButtonText", localize("optionpane.ok"));
+		UIManager.put("OptionPane.yesButtonText", localize("optionpane.yes"));
 	}
 
 	private void translateOtherStrings() {
 
 		for (int i = 0; i < MenuStrings.length; i++) {
-			MenuStrings[i] = Translate(MenuStrings[i]);
+			MenuStrings[i] = localize(MenuStrings[i]);
 		}
 
 		for (int i = 0; i < FileMenuStrings.length; i++) {
-			FileMenuStrings[i] = Translate(FileMenuStrings[i]);
+			FileMenuStrings[i] = localize(FileMenuStrings[i]);
 		}
 
 		// Translate all except integral
 		for (int i = 0; i < calcMenuStrings_func.length - 1; i++) {
-			calcMenuStrings_func[i] = Translate(calcMenuStrings_func[i]);
+			calcMenuStrings_func[i] = localize(calcMenuStrings_func[i]);
 		}
 
 		for(int i = 0; i < calcMenuStrings_3dfunc.length; i++)
 		{
-			calcMenuStrings_3dfunc[i] = Translate(calcMenuStrings_3dfunc[i]);
+			calcMenuStrings_3dfunc[i] = localize(calcMenuStrings_3dfunc[i]);
 		}
 		
 		for(int i = 0; i < calcMenuStrings_par.length; i++)
 		{
-			calcMenuStrings_par[i] = Translate(calcMenuStrings_par[i]);
+			calcMenuStrings_par[i] = localize(calcMenuStrings_par[i]);
 		}
 		
 		for(int i=0; i < viewMenuStrings.length; i++) {
-			viewMenuStrings[i] = Translate(viewMenuStrings[i]);
+			viewMenuStrings[i] = localize(viewMenuStrings[i]);
 		}
 		
 		for (int i = 0; i < HelpMenuStrings.length; i++) {
-			HelpMenuStrings[i] = Translate(HelpMenuStrings[i]);
+			HelpMenuStrings[i] = localize(HelpMenuStrings[i]);
 		}
 
 		for (int i = 0; i < buttons.length; i++) {
-			buttons[i] = Translate(buttons[i]);
+			buttons[i] = localize(buttons[i]);
 		}
 
 		
@@ -335,7 +333,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		return JColorChooser.showDialog(component, title, initialColor);
 	}
 
-	public static String Translate(String key) {
+	public static String localize(String key) {
 		if (language.isAvailable(key)) {
 			return language.getValue(key);
 		} else if (lang_en.isAvailable(key)) {
@@ -345,6 +343,10 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 			System.out.println("Warning: Unable to find a translation for key '" + key + "'");
 			return key;
 		}
+	}
+	public static Locale getCurrentLocale()
+	{
+		return new Locale(language.getLangName());
 	}
 
 	private static void UpdateGUIStyle() {
@@ -437,7 +439,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	public static void UpdateWindowSettings() {
 		gframe.UpdateWindowSettings(settings);
 		if (gframe.windowerror) {
-			JOptionPane.showMessageDialog(null, Translate("message.windowsettingserror"), Translate("message.error"), JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, localize("message.windowsettingserror"), localize("message.error"), JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -500,7 +502,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		SaveFileAsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK));
 		SaveFileAsItem.addActionListener(this);
 
-		settingsItem = new JMenuItem(Translate("file.settings"));
+		settingsItem = new JMenuItem(localize("file.settings"));
 		settingsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.ALT_MASK));
 		settingsItem.addActionListener(this);
 
@@ -801,20 +803,20 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		System.out.println("Loading " + filePath);
 		
 		progressbar.setValue(0);
-		progressbar.setString(String.format(Translate("message.progressbar.opening"), (new File(filePath)).getName(), progressbar.getValue()));
+		progressbar.setString(String.format(localize("message.progressbar.opening"), (new File(filePath)).getName(), progressbar.getValue()));
 		progressPanel.setVisible(true);
 		progressPanel.paintAll(progressPanel.getGraphics());
 		GraphFileReader fr = new GraphFileReader(filePath);
 		try {
 			if (!fr.read()) {
-				JOptionPane.showMessageDialog(this, String.format(Translate("message.fileopenerror"), (new File(filePath)).getName()), Translate("message.error"), JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(this, String.format(localize("message.fileopenerror"), (new File(filePath)).getName()), localize("message.error"), JOptionPane.ERROR_MESSAGE);
 				progressPanel.setVisible(false);
 				return false;
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(this, String.format(Translate("message.fileopenerror"), (new File(filePath)).getName()), Translate("message.error"), JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, String.format(localize("message.fileopenerror"), (new File(filePath)).getName()), localize("message.error"), JOptionPane.ERROR_MESSAGE);
 			progressPanel.setVisible(false);
 
 			return false;
@@ -823,7 +825,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		ClearAll();
 		doProgressBar = true;
 		progressbar.setValue(20);
-		progressbar.setString(String.format(Translate("message.progressbar.opening"), (new File(filePath)).getName(), progressbar.getValue()));
+		progressbar.setString(String.format(localize("message.progressbar.opening"), (new File(filePath)).getName(), progressbar.getValue()));
 		progressPanel.paintAll(progressPanel.getGraphics());
 		
 		/*
@@ -851,7 +853,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		System.err.println("GraphFunctionsFrame.OpenFile: Unimplementend!");
 		
 		progressbar.setValue(50);
-		progressbar.setString(String.format(Translate("message.progressbar.drawingfunctions"), progressbar.getValue()));
+		progressbar.setString(String.format(localize("message.progressbar.drawingfunctions"), progressbar.getValue()));
 		progressPanel.paintAll(progressPanel.getGraphics());
 		UpdateWindowSettings();
 		Render();
@@ -868,7 +870,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		Display display = Display.getDefault();
 		Shell shell = new Shell(display);
 		FileDialog opendialog = new FileDialog(shell, SWT.OPEN);
-		opendialog.setFilterNames(new String[] { Translate("files.graphfiles") });
+		opendialog.setFilterNames(new String[] { localize("files.graphfiles") });
 		opendialog.setFilterExtensions(new String[] { String.format("*.%s", FileExt) });
 		shell.forceActive();
 		String filepath = opendialog.open();
@@ -891,7 +893,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		else
 			openFile = new JFileChooserWithConfirmation(new File(FilePath));
 
-		FileFilter openFilter = new ExtensionFileFilter(Translate("files.graphfiles"), new String[] { FileExt });
+		FileFilter openFilter = new ExtensionFileFilter(localize("files.graphfiles"), new String[] { FileExt });
 		openFile.setFileFilter(openFilter);
 
 		int openOption = openFile.showOpenDialog(this);
@@ -910,7 +912,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		Shell shell = new Shell(display);
 
 		FileDialog savedialog = new FileDialog(shell, SWT.SAVE);
-		savedialog.setFilterNames(new String[] { Translate("files.graphfiles") });
+		savedialog.setFilterNames(new String[] { localize("files.graphfiles") });
 		savedialog.setFilterExtensions(new String[] { String.format("*.%s", FileExt) });
 		shell.forceActive();
 		FilePath = savedialog.open();
@@ -939,7 +941,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		else
 			saveFile = new JFileChooserWithConfirmation(new File(FilePath));
 
-		FileFilter saveFilter = new ExtensionFileFilter(Translate("files.graphfiles"), new String[] { FileExt });
+		FileFilter saveFilter = new ExtensionFileFilter(localize("files.graphfiles"), new String[] { FileExt });
 		saveFile.setFileFilter(saveFilter);
 
 		int saveOption = saveFile.showSaveDialog(this);
@@ -959,9 +961,9 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 	private boolean ConfirmFileChanges() {
 		int n;
 		if (this.isFocused())
-			n = JOptionPane.showConfirmDialog(this, String.format(Translate("message.confirmchanges"), FileName), "Graph", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+			n = JOptionPane.showConfirmDialog(this, String.format(localize("message.confirmchanges"), FileName), "Graph", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 		else
-			n = JOptionPane.showConfirmDialog(null, String.format(Translate("message.confirmchanges"), FileName), "Graph", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+			n = JOptionPane.showConfirmDialog(null, String.format(localize("message.confirmchanges"), FileName), "Graph", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 
 		if (n == JOptionPane.YES_OPTION) {
 			if (FilePathPresent)
@@ -990,7 +992,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 
 		settings = new WindowSettings(false);
 		FilePath = "";
-		FileName = Translate("files.untitled");
+		FileName = localize("files.untitled");
 		FileSaved = false;
 		FilePathPresent = false;
 		NoChangesMade = true;
@@ -1026,7 +1028,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 				parseresults.set(i, parseresult);
 				if (doProgressBar) {
 					progressbar.setValue(progstart + (int) (((double) (i + 1) / (double) MaxFunctions) * (100 - progstart)));
-					progressbar.setString(String.format(Translate("message.progressbar.drawingfunctions"), progressbar.getValue()));
+					progressbar.setString(String.format(localize("message.progressbar.drawingfunctions"), progressbar.getValue()));
 					progressPanel.paintAll(progressPanel.getGraphics());
 				}
 				continue;
@@ -1039,7 +1041,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 				parseresults.set(i, parseresult);
 				if (doProgressBar) {
 					progressbar.setValue(progstart + (int) (((double) (i + 1) / (double) MaxFunctions) * (100 - progstart)));
-					progressbar.setString(String.format(Translate("message.progressbar.drawingfunctions"), progressbar.getValue()));
+					progressbar.setString(String.format(localize("message.progressbar.drawingfunctions"), progressbar.getValue()));
 					progressPanel.paintAll(progressPanel.getGraphics());
 				}
 				continue;
@@ -1054,7 +1056,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 				parseresults.set(i, parseresult);
 				if (doProgressBar) {
 					progressbar.setValue(progstart + (int) (((double) (i + 1) / (double) MaxFunctions) * (100 - progstart)));
-					progressbar.setString(String.format(Translate("message.progressbar.drawingfunctions"), progressbar.getValue()));
+					progressbar.setString(String.format(localize("message.progressbar.drawingfunctions"), progressbar.getValue()));
 					progressPanel.paintAll(progressPanel.getGraphics());
 				}
 				continue;
@@ -1069,7 +1071,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 			System.out.println("Added function Z" + (i + 1) + " with color " + c.getRed() + "," + c.getGreen() + "," + c.getBlue());
 			if (doProgressBar) {
 				progressbar.setValue(progstart + (int) (((double) (i + 1) / (double) MaxFunctions) * (100 - progstart)));
-				progressbar.setString(String.format(Translate("message.progressbar.drawingfunctions"), progressbar.getValue()));
+				progressbar.setString(String.format(localize("message.progressbar.drawingfunctions"), progressbar.getValue()));
 				progressPanel.paintAll(progressPanel.getGraphics());
 			}
 		}
@@ -1080,7 +1082,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 
 		
 		progressbar.setValue(100);
-		progressbar.setString(String.format(Translate("message.progressbar.done"), progressbar.getValue()));
+		progressbar.setString(String.format(localize("message.progressbar.done"), progressbar.getValue()));
 		progressPanel.paintAll(progressPanel.getGraphics());
 
 	
@@ -1108,7 +1110,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 				parseresults.set(i, parseresult);
 				if (doProgressBar) {
 					progressbar.setValue(progstart + (int) (((double) (i + 1) / (double) MaxFunctions) * (100 - progstart)));
-					progressbar.setString(String.format(Translate("message.progressbar.drawingfunctions"), progressbar.getValue()));
+					progressbar.setString(String.format(localize("message.progressbar.drawingfunctions"), progressbar.getValue()));
 					progressPanel.paintAll(progressPanel.getGraphics());
 				}
 				continue;
@@ -1121,7 +1123,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 				parseresults.set(i, parseresult);
 				if (doProgressBar) {
 					progressbar.setValue(progstart + (int) (((double) (i + 1) / (double) MaxFunctions) * (100 - progstart)));
-					progressbar.setString(String.format(Translate("message.progressbar.drawingfunctions"), progressbar.getValue()));
+					progressbar.setString(String.format(localize("message.progressbar.drawingfunctions"), progressbar.getValue()));
 					progressPanel.paintAll(progressPanel.getGraphics());
 				}
 				continue;
@@ -1136,7 +1138,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 				parseresults.set(i, parseresult);
 				if (doProgressBar) {
 					progressbar.setValue(progstart + (int) (((double) (i + 1) / (double) MaxFunctions) * (100 - progstart)));
-					progressbar.setString(String.format(Translate("message.progressbar.drawingfunctions"), progressbar.getValue()));
+					progressbar.setString(String.format(localize("message.progressbar.drawingfunctions"), progressbar.getValue()));
 					progressPanel.paintAll(progressPanel.getGraphics());
 				}
 				continue;
@@ -1151,7 +1153,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 			System.out.println("Added function Y" + (i + 1) + " with color " + c.getRed() + "," + c.getGreen() + "," + c.getBlue());
 			if (doProgressBar) {
 				progressbar.setValue(progstart + (int) (((double) (i + 1) / (double) MaxFunctions) * (100 - progstart)));
-				progressbar.setString(String.format(Translate("message.progressbar.drawingfunctions"), progressbar.getValue()));
+				progressbar.setString(String.format(localize("message.progressbar.drawingfunctions"), progressbar.getValue()));
 				progressPanel.paintAll(progressPanel.getGraphics());
 			}
 		}
@@ -1223,7 +1225,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 				UpdateTitle();
 			}
 
-			else if (buttonname.equalsIgnoreCase(Translate("file.settings"))) {
+			else if (buttonname.equalsIgnoreCase(localize("file.settings"))) {
 				if (settingsframe == null) { 
 					settingsframe = new SettingsFrame(this.getLocation());
 				} else 
@@ -1324,7 +1326,7 @@ public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyLi
 		JLabel label = ((JLabel) e.getSource());
 		// label.setBackground(JColorChooser.showDialog(null,
 		// "Choose function color", label.getBackground()));
-		label.setBackground(ChooseColor(null, Translate("color.choosecolor"), label.getBackground()));
+		label.setBackground(ChooseColor(null, localize("color.choosecolor"), label.getBackground()));
 		int funcindex;
 		String functext = label.getText().substring(1, label.getText().length() - 3);
 		funcindex = Integer.parseInt(functext.trim()) - 1;

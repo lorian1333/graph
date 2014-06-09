@@ -3,7 +3,6 @@ package lorian.graph.lang;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Locale;
@@ -21,7 +20,7 @@ public class Language  {
 			read(locale.getLanguage());
 			System.out.println("Using locale " + locale.getLanguage());
 		}
-		catch (FileNotFoundException e) // There are probebly a few starting with xx
+		catch (FileNotFoundException e) // There are probably a few starting with xx
 		{
 			try
 			{

@@ -1,8 +1,10 @@
 package lorian.graph.fileio;
 
 import java.io.File;
+
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+
 import lorian.graph.GraphFunctionsFrame;
 
 public class JFileChooserWithConfirmation extends JFileChooser {
@@ -23,7 +25,7 @@ public class JFileChooserWithConfirmation extends JFileChooser {
 		File f = getSelectedFile();
         if(f.exists() && getDialogType() == SAVE_DIALOG)
         {
-			int n = JOptionPane.showConfirmDialog (this, String.format(GraphFunctionsFrame.Translate("message.confirmoverwrite_0") + '\n' + GraphFunctionsFrame.Translate("message.confirmoverwrite_1"), f.getName()), "Graph", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+			int n = JOptionPane.showConfirmDialog (this, String.format(GraphFunctionsFrame.localize("message.confirmoverwrite_0") + '\n' + GraphFunctionsFrame.localize("message.confirmoverwrite_1"), f.getName()), "Graph", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 			if(n == JOptionPane.YES_OPTION)
 			{
 				super.approveSelection();

@@ -13,11 +13,17 @@
 			<classpath refid="graph.classpath" />
 		</javac>
 	</target>
-
+	
+	<tstamp>
+		<format property="TODAY" pattern="dd-MM-yyyy HH:mm:ss" />
+    </tstamp>
+  
 	<target name="jar" depends="compile" >
 		<jar destfile="build/graph.jar" basedir="build/classes" >
 			<manifest>
 				<attribute name="Main-Class" value="lorian.graph.GraphMain" />
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
 			</manifest>
 			<zipfileset excludes="META-INF/*.MF,version.txt" src="lib/jar-in-jar-loader.jar" />
 			<fileset dir="./src" includes="res/**" />

@@ -1,7 +1,6 @@
 package lorian.graph.lang;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,10 +23,15 @@ public class LangFileReader {
 		this.items = new ArrayList<Item>();
 	}
 	
-	private void parseItem(String line) throws IOException
+	private void parseItem(String line, int linenum) throws IOException
 	{
 		line = line.trim();
-		if(line.startsWith("#") || !line.contains("=")) return;
+		if(line.startsWith("#") || !line.contains("=")) 
+		{
+			if(!line.equals("") && !line.startsWith("#"))
+				System.out.println(String.format("%s: Skipping line %d:'%s'.", filename.substring(filename.lastIndexOf('/')+1), linenum, line));
+			return;
+		}
 		
 		String name, value;
 		int i=0;
@@ -73,9 +77,11 @@ public class LangFileReader {
 			br = new BufferedReader(new InputStreamReader(is));
 		}
 	*/
+		
+		int i=1;
 		while((line = br.readLine()) != null)
 		{
-			parseItem(line);
+			parseItem(line, i++);
 		}
 		
 		br.close();

@@ -1,9 +1,5 @@
 package lorian.graph;
 
-import lorian.graph.fileio.ExtensionFileFilter;
-import lorian.graph.fileio.JFileChooserWithConfirmation;
-import lorian.graph.function.*;
-
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -35,6 +31,13 @@ import javax.swing.Spring;
 import javax.swing.SpringLayout;
 import javax.swing.filechooser.FileFilter;
 
+import lorian.graph.fileio.ExtensionFileFilter;
+import lorian.graph.fileio.JFileChooserWithConfirmation;
+import lorian.graph.function.ParameterFunction;
+import lorian.graph.function.PointXY;
+import lorian.graph.function.Util;
+import lorian.graph.function.VisualPoint;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
@@ -47,7 +50,7 @@ public class GraphParameter extends JPanel implements ActionListener, MouseListe
 
 	private List<VisualPoint> vpoints;
 	private List<Point> vmovablepoints;
-	private boolean vpointsVisible = false, movablevpointsfrozen = false;
+	private boolean vpointsVisible = false;
 	private Image pointimg, movablepointimg;
 	private int MovingVPointIndex = -1;
 	private int MovingPointIndex = -1;
@@ -63,7 +66,6 @@ public class GraphParameter extends JPanel implements ActionListener, MouseListe
 	private boolean clearOnlyCorner = false;
 
 	private int FillFunctionIndex = -1;
-	private double FillLowX = 0, FillUpX = 0;
 	public GraphParameter(List<ParameterFunction> functions, WindowSettingsParameter settings, Dimension size) {
 		super();
 		this.size = size;
@@ -157,7 +159,7 @@ public class GraphParameter extends JPanel implements ActionListener, MouseListe
 
 	private void InitPopupMenu() {
 		final JPopupMenu menu = new JPopupMenu();
-		JMenuItem screenShotItem = new JMenuItem(GraphFunctionsFrame.Translate("menu.savescreenshot"));
+		JMenuItem screenShotItem = new JMenuItem(GraphFunctionsFrame.localize("menu.savescreenshot"));
 		screenShotItem.setName("screenshot");
 		menu.add(screenShotItem);
 		screenShotItem.addActionListener(this);
@@ -204,7 +206,7 @@ public class GraphParameter extends JPanel implements ActionListener, MouseListe
 	public void UpdateWindowSettings(WindowSettingsParameter settings) {
 		this.settings = settings;
 		if (settings.getXmax() <= settings.getXmin() || settings.getYmax() <= settings.getYmin()) {
-			System.out.println(GraphFunctionsFrame.Translate("message.windowsettingserror"));
+			System.out.println(GraphFunctionsFrame.localize("message.windowsettingserror"));
 			windowerror = true;
 		} else
 			windowerror = false;
@@ -465,13 +467,7 @@ public class GraphParameter extends JPanel implements ActionListener, MouseListe
 
 		int xpix, ypix;
 		PointXY xy;
-		boolean inNaN = false;
-		double step = ((double) (settings.getXmax() - settings.getXmin())) / size.getWidth();
 		Point previous = null;//new Point();
-		boolean WaitForRealNumber = false;
-		
-
-		
 		for (double t = f.getTmin(); t < f.getTmax(); t += settings.getTstep()) {
 			xy = f.Calc(t);
 			
@@ -587,11 +583,9 @@ public class GraphParameter extends JPanel implements ActionListener, MouseListe
 	}
 
 	public void SetFillLowerLimit(double lowx) {
-		this.FillLowX = lowx;
 	}
 
 	public void SetFillUpperLimit(double upx) {
-		this.FillUpX = upx;
 	}
 
 	public void SetFillFunction(boolean on) {
@@ -646,7 +640,6 @@ public class GraphParameter extends JPanel implements ActionListener, MouseListe
 	public void ClearVisualPoints() {
 		vpoints.clear();
 		vmovablepoints.clear();
-		movablevpointsfrozen = false;
 		this.repaint();
 	}
 
@@ -708,11 +701,9 @@ public class GraphParameter extends JPanel implements ActionListener, MouseListe
 	}
 
 	public void FreezeMovablePoints() {
-		movablevpointsfrozen = true;
 	}
 
 	public void UnfreezeMovablePoints() {
-		movablevpointsfrozen = false;
 	}
 
 	private int GetMovableVisualPointIndex(int PointIndex) {
@@ -752,7 +743,7 @@ public class GraphParameter extends JPanel implements ActionListener, MouseListe
 			Shell shell = new Shell(display);
 
 			FileDialog savedialog = new FileDialog(shell, SWT.SAVE);
-			savedialog.setFilterNames(new String[] { GraphFunctionsFrame.Translate("files.pngimage") });
+			savedialog.setFilterNames(new String[] { GraphFunctionsFrame.localize("files.pngimage") });
 			savedialog.setFilterExtensions(new String[] { "*.png" });
 			String FilePath = savedialog.open();
 			if (FilePath == null) {
@@ -773,7 +764,7 @@ public class GraphParameter extends JPanel implements ActionListener, MouseListe
 			ImageIO.write(bImg, "png", output);
 
 			System.out.println("Done");
-			JOptionPane.showMessageDialog(this, GraphFunctionsFrame.Translate("message.screenshotsaved"), "Graph", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(this, GraphFunctionsFrame.localize("message.screenshotsaved"), "Graph", JOptionPane.INFORMATION_MESSAGE);
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -805,7 +796,7 @@ public class GraphParameter extends JPanel implements ActionListener, MouseListe
 			else
 				saveFile = new JFileChooserWithConfirmation(new File(GraphFunctionsFrame.FilePath));
 
-			FileFilter saveFilter = new ExtensionFileFilter(GraphFunctionsFrame.Translate("files.pngimage"), new String[] { "PNG" });
+			FileFilter saveFilter = new ExtensionFileFilter(GraphFunctionsFrame.localize("files.pngimage"), new String[] { "PNG" });
 			saveFile.setFileFilter(saveFilter);
 
 			int saveOption = saveFile.showSaveDialog(this);
@@ -822,7 +813,7 @@ public class GraphParameter extends JPanel implements ActionListener, MouseListe
 
 			ImageIO.write(bImg, "png", output);
 			System.out.println("Done");
-			JOptionPane.showMessageDialog(this, GraphFunctionsFrame.Translate("message.screenshotsaved"), "Graph", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(this, GraphFunctionsFrame.localize("message.screenshotsaved"), "Graph", JOptionPane.INFORMATION_MESSAGE);
 
 		} catch (IOException e) {
 			e.printStackTrace();

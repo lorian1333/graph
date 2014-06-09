@@ -3,23 +3,15 @@ package lorian.graph;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
-import lorian.graph.fileio.GraphFileWriter;
-import lorian.graph.function.Function;
-import lorian.graph.function.Function2Var;
-import lorian.graph.function.ParameterFunction;
-
-import org.eclipse.jdt.internal.jarinjarloader.*;
+import org.eclipse.jdt.internal.jarinjarloader.RsrcURLStreamHandlerFactory;
 import org.eclipse.swt.widgets.Display;
 
 public class GraphMain {
 	private static String sSwtVersion = "4.3";
-
 	public static void main(String[] args) throws Throwable {
 		System.out.println("Graph v" + GraphFunctionsFrame.version);
 		

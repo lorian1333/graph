@@ -89,7 +89,7 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 	private void AddCalculateButton()
 	{
 
-		JButton calcButton = new JButton(GraphFunctionsFrame.Translate("calcframe.calculate"));
+		JButton calcButton = new JButton(GraphFunctionsFrame.localize("calcframe.calculate"));
 		calcButton.addActionListener(this);
 		calcButton.setName("calculate");
 		this.add(calcButton);
@@ -128,8 +128,8 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 		
 		Function f = GraphFunctionsFrame.functions.get(funcindex);
 		
-		lowx = new VisualPoint(new PointXY(lowxval, f.Calc(lowxval)), funcindex, true, false, GraphFunctionsFrame.Translate("calcframe.lowerlimit"));
-		upx = new VisualPoint(new PointXY(upxval, f.Calc(upxval)), funcindex, true, false, GraphFunctionsFrame.Translate("calcframe.upperlimit"));
+		lowx = new VisualPoint(new PointXY(lowxval, f.Calc(lowxval)), funcindex, true, false, GraphFunctionsFrame.localize("calcframe.lowerlimit"));
+		upx = new VisualPoint(new PointXY(upxval, f.Calc(upxval)), funcindex, true, false, GraphFunctionsFrame.localize("calcframe.upperlimit"));
 		lowx.addLocationChangedListener(this);
 		upx.addLocationChangedListener(this);
 		GraphFunctionsFrame.gframe.ClearVisualPoints();
@@ -167,7 +167,7 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 	}
 	private void initLowUpX(int x)
 	{
-		JLabel xLowLabel = new JLabel(GraphFunctionsFrame.Translate("calcframe.lowerlimit")+":");
+		JLabel xLowLabel = new JLabel(GraphFunctionsFrame.localize("calcframe.lowerlimit")+":");
 		xLowLabel.setFont(xLowLabel.getFont().deriveFont(13.0f));
 		SpinnerNumberModel sModel = new SpinnerNumberModel(-2.0,  Long.MIN_VALUE, Long.MAX_VALUE, 1.0); 
 		x1 = new JSpinner(sModel);
@@ -192,7 +192,7 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 		
 		
 		
-		JLabel xUpLabel = new JLabel(GraphFunctionsFrame.Translate("calcframe.upperlimit")+":");
+		JLabel xUpLabel = new JLabel(GraphFunctionsFrame.localize("calcframe.upperlimit")+":");
 		xUpLabel.setFont(xUpLabel.getFont().deriveFont(13.0f));
 		sModel = new SpinnerNumberModel(2.0,  Long.MIN_VALUE, Long.MAX_VALUE, 1.0); 
 		x2 = new JSpinner(sModel);
@@ -222,7 +222,7 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 	private void initValueOrDyDxUI()
 	{
 		initGeneralUI();
-		funcComboBox = initFunctionCombobox("function1", GraphFunctionsFrame.Translate("calcframe.function") + ": ", -1); 
+		funcComboBox = initFunctionCombobox("function1", GraphFunctionsFrame.localize("calcframe.function") + ": ", -1); 
 		// X
 		JLabel xLabel = new JLabel("X:");
 		xLabel.setFont(xLabel.getFont().deriveFont(13.0f));
@@ -250,7 +250,7 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 	private void initLowUpXUI()
 	{
 		initGeneralUI();
-		funcComboBox = initFunctionCombobox("function1", GraphFunctionsFrame.Translate("calcframe.function") + ": ", 135); 
+		funcComboBox = initFunctionCombobox("function1", GraphFunctionsFrame.localize("calcframe.function") + ": ", 135); 
 		initLowUpX(135);
 		AddCalculateButton();
 		initMovablePoints(-2, 2);
@@ -266,8 +266,8 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 	private void initIntersectUI()
 	{
 		initGeneralUI();
-		funcComboBox = initFunctionCombobox("function1", GraphFunctionsFrame.Translate("calcframe.function") + " 1: ", -1);
-		funcComboBox2 = initFunctionCombobox("function2", GraphFunctionsFrame.Translate("calcframe.function") + " 2: ", -1);
+		funcComboBox = initFunctionCombobox("function1", GraphFunctionsFrame.localize("calcframe.function") + " 1: ", -1);
+		funcComboBox2 = initFunctionCombobox("function2", GraphFunctionsFrame.localize("calcframe.function") + " 2: ", -1);
 		if(funcComboBox2.getItemCount() > 1) funcComboBox2.setSelectedIndex(1);
 		initLowUpX(-1);
 		AddCalculateButton();
@@ -310,34 +310,34 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 	public CalculateFrame(Calculation calc)
 	{
 		this.calc = calc;
-		title = GraphFunctionsFrame.Translate("calcframe.calculate") + ": ";
+		title = GraphFunctionsFrame.localize("calcframe.calculate") + ": ";
 		if(this.calc != Calculation.INTEGRAL)
 			GraphFunctionsFrame.gframe.SetFillFunction(false);
 		
 		switch(this.calc)
 		{
 		case VALUE:
-			title += GraphFunctionsFrame.Translate("calc.value");
+			title += GraphFunctionsFrame.localize("calc.value");
 			initValueOrDyDxUI();
 			break;
 		case ZERO:
-			title += GraphFunctionsFrame.Translate("calc.zero");
+			title += GraphFunctionsFrame.localize("calc.zero");
 			initZeroUI();
 			break;
 		case MINIMUM:
-			title += GraphFunctionsFrame.Translate("calc.min");
+			title += GraphFunctionsFrame.localize("calc.min");
 			initMinOrMaxUI();
 			break;
 		case MAXIMUM:
-			title += GraphFunctionsFrame.Translate("calc.max");
+			title += GraphFunctionsFrame.localize("calc.max");
 			initMinOrMaxUI();
 			break;
 		case INTERSECT:
-			title += GraphFunctionsFrame.Translate("calc.intersect");
+			title += GraphFunctionsFrame.localize("calc.intersect");
 			initIntersectUI();
 			break;
 		case DYDX:
-			title += GraphFunctionsFrame.Translate("calc.deriv");
+			title += GraphFunctionsFrame.localize("calc.deriv");
 			initValueOrDyDxUI();
 			break;
 		case INTEGRAL:
@@ -380,9 +380,9 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 		case ZERO:
 			PointXY zeropoint = lorian.graph.function.Calculate.Zero(GraphFunctionsFrame.functions.get(func1index), x1val, x2val);
 			if(Double.isNaN(zeropoint.getX()))
-				resultstr = GraphFunctionsFrame.Translate("calcframe.message.calczeroerror");
+				resultstr = GraphFunctionsFrame.localize("calcframe.message.calczeroerror");
 			else
-				resultstr = String.format(GraphFunctionsFrame.Translate("calc.zero") + ": X = %s, Y = %s", Util.GetString(zeropoint.getX()), Util.GetString(zeropoint.getY()));
+				resultstr = String.format(GraphFunctionsFrame.localize("calc.zero") + ": X = %s, Y = %s", Util.GetString(zeropoint.getX()), Util.GetString(zeropoint.getY()));
 			resultLabel.setText(resultstr);
 			GraphFunctionsFrame.gframe.ClearVisualPoints();
 			if(!Double.isInfinite(zeropoint.getY()) && !Double.isNaN(zeropoint.getY()))
@@ -394,7 +394,7 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 			break;
 		case MINIMUM:
 			PointXY min = lorian.graph.function.Calculate.Minimum(GraphFunctionsFrame.functions.get(func1index), x1val, x2val);
-			resultstr = String.format(GraphFunctionsFrame.Translate("calc.min") + ": X = %s, Y = %s", Util.GetString(min.getX()), Util.GetString(min.getY()));
+			resultstr = String.format(GraphFunctionsFrame.localize("calc.min") + ": X = %s, Y = %s", Util.GetString(min.getX()), Util.GetString(min.getY()));
 			resultLabel.setText(resultstr);
 			GraphFunctionsFrame.gframe.ClearVisualPoints();
 			if(!Double.isInfinite(min.getY()) && !Double.isNaN(min.getY()))
@@ -406,7 +406,7 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 			break;
 		case MAXIMUM:
 			PointXY max = lorian.graph.function.Calculate.Maximum(GraphFunctionsFrame.functions.get(func1index), x1val, x2val);
-			resultstr = String.format(GraphFunctionsFrame.Translate("calc.max") + ": X = %s, Y = %s", Util.GetString(max .getX()), Util.GetString(max .getY()));
+			resultstr = String.format(GraphFunctionsFrame.localize("calc.max") + ": X = %s, Y = %s", Util.GetString(max .getX()), Util.GetString(max .getY()));
 			resultLabel.setText(resultstr);
 			GraphFunctionsFrame.gframe.ClearVisualPoints();
 			if(!Double.isInfinite(max .getY()) && !Double.isNaN(max .getY()))
@@ -419,15 +419,15 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 		case INTERSECT:
 			if(func1index == func2index)
 			{
-				resultLabel.setText(GraphFunctionsFrame.Translate("calcframe.message.calcintersectsamefuncerror"));
+				resultLabel.setText(GraphFunctionsFrame.localize("calcframe.message.calcintersectsamefuncerror"));
 				resultLabel.setVisible(true);
 				return;
 			}
 			PointXY intersectpoint = lorian.graph.function.Calculate.Intersect(GraphFunctionsFrame.functions.get(func1index), GraphFunctionsFrame.functions.get(func2index), x1val, x2val);
 			if(Double.isNaN(intersectpoint.getX()))
-				resultstr = GraphFunctionsFrame.Translate("calcframe.message.calcintersecterror");
+				resultstr = GraphFunctionsFrame.localize("calcframe.message.calcintersecterror");
 			else
-				resultstr = String.format(GraphFunctionsFrame.Translate("calc.intersect") + ": X = %s, Y = %s", Util.GetString(intersectpoint .getX()), Util.GetString(intersectpoint .getY()));
+				resultstr = String.format(GraphFunctionsFrame.localize("calc.intersect") + ": X = %s, Y = %s", Util.GetString(intersectpoint .getX()), Util.GetString(intersectpoint .getY()));
 			resultLabel.setText(resultstr);
 			GraphFunctionsFrame.gframe.ClearVisualPoints();
 			if(!Double.isInfinite(intersectpoint .getY()) && !Double.isNaN(intersectpoint .getY()))
@@ -439,7 +439,7 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 			break;
 		case DYDX:
 			double dydx = lorian.graph.function.Calculate.DyDx(GraphFunctionsFrame.functions.get(func1index), x1val);
-			resultstr = String.format(GraphFunctionsFrame.Translate("calc.deriv") + ": %s", Util.GetString(dydx));
+			resultstr = String.format(GraphFunctionsFrame.localize("calc.deriv") + ": %s", Util.GetString(dydx));
 			resultLabel.setText(resultstr);
 			GraphFunctionsFrame.gframe.ClearVisualPoints();
 			if(!Double.isInfinite(dydx) && !Double.isNaN(dydx))
@@ -531,7 +531,7 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 	
 	@Override
 	public void OnLocationChange(VisualPoint p) {
-		if(p.getLabel().equalsIgnoreCase(GraphFunctionsFrame.Translate("calcframe.lowerlimit")))
+		if(p.getLabel().equalsIgnoreCase(GraphFunctionsFrame.localize("calcframe.lowerlimit")))
 		{
 			if(p.getPoint().getX() >= upx.getPoint().getX())
 			{
@@ -543,7 +543,7 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 			}
 			GraphFunctionsFrame.gframe.SetFillLowerLimit(p.getPoint().getX());
 		}
-		else if(p.getLabel().equalsIgnoreCase(GraphFunctionsFrame.Translate("calcframe.upperlimit")))
+		else if(p.getLabel().equalsIgnoreCase(GraphFunctionsFrame.localize("calcframe.upperlimit")))
 		{
 			if(p.getPoint().getX() <= lowx.getPoint().getX())
 			{
@@ -630,7 +630,7 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 				source.setValue(x2.getValue());
 			}
 			else
-				GraphFunctionsFrame.gframe.SetMovableVisualPointLocationByLabel(GraphFunctionsFrame.Translate("calcframe.lowerlimit"), new PointXY((Double) source.getValue(), f.Calc((Double) source.getValue())));
+				GraphFunctionsFrame.gframe.SetMovableVisualPointLocationByLabel(GraphFunctionsFrame.localize("calcframe.lowerlimit"), new PointXY((Double) source.getValue(), f.Calc((Double) source.getValue())));
 		}
 		else if(source.getName().equalsIgnoreCase("upX"))
 		{
@@ -639,7 +639,7 @@ public class CalculateFrame extends JPanel implements ActionListener, ChangeList
 				source.setValue(x1.getValue());
 			}
 			else
-				GraphFunctionsFrame.gframe.SetMovableVisualPointLocationByLabel(GraphFunctionsFrame.Translate("calcframe.upperlimit"), new PointXY((Double) source.getValue(), f.Calc((Double) source.getValue())));
+				GraphFunctionsFrame.gframe.SetMovableVisualPointLocationByLabel(GraphFunctionsFrame.localize("calcframe.upperlimit"), new PointXY((Double) source.getValue(), f.Calc((Double) source.getValue())));
 			
 		}
 		

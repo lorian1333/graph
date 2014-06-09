@@ -2,8 +2,6 @@ package lorian.graph.function;
 
 import java.awt.Color;
 import java.awt.FontMetrics;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -118,7 +116,7 @@ public class Util {
 	public static String GetString(double d)
 	{
 		if(Double.isInfinite(d)) return "" + MathChars.Infinity.getCode();
-		else if(Double.isNaN(d)) return String.format("(%s)", GraphFunctionsFrame.Translate("message.complexnumber")); 
+		else if(Double.isNaN(d)) return String.format("(%s)", GraphFunctionsFrame.localize("message.complexnumber")); 
 		else if(d == Math.rint(d)) return "" + (int) d;
 		else return "" + round(d, 6);
 	}
@@ -146,8 +144,6 @@ public class Util {
 		return f.format(d);
 	}
 	
-	private static final int BYTES_PER_FLOAT = Float.SIZE / 8;
-	private static final int BYTES_PER_DOUBLE = Double.SIZE / 8;
 	public static IntBuffer toIntBuffer(int[] src)
 	{
 		IntBuffer buf = Buffers.newDirectIntBuffer(src);
@@ -162,14 +158,6 @@ public class Util {
 	}
 	public static FloatBuffer toFloatBuffer(float[] src)
 	{
-		/*
-		ByteBuffer byteBuffer = ByteBuffer.allocateDirect(src.length * BYTES_PER_FLOAT).order(ByteOrder.nativeOrder());
-		
-		FloatBuffer Buf = byteBuffer.asFloatBuffer();
-		Buf.put(src);
-		Buf.flip();
-		return Buf;
-		*/
 		FloatBuffer buf = Buffers.newDirectFloatBuffer(src);
 		buf.rewind();
 		return buf;

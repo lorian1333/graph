@@ -1,21 +1,18 @@
 package lorian.graph.opengl;
 
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
-import java.lang.reflect.Method;
 import java.util.List;
 
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLCanvas;
 import javax.swing.SwingUtilities;
-import javax.xml.soap.Text;
 
 import lorian.graph.GraphFunctionsFrame;
 import lorian.graph.WindowSettings3D;

@@ -103,6 +103,8 @@ about.title=Over %s
 about.description=Een wiskundig programma om functiegrafieken\n te plotten en berekeningen uit te voeren.
 about.credits=Met dank aan
 about.license=Licentie
+#about.buildinfo=Gebouwd door %s op %d %s %d %d:%d:%d
+about.buildinfo=Gebouwd door %s op %s
 
 tooltip.changefunctioncolor=Klik om de kleur van functie %c%d te veranderen
 tooltip.changefunctioncolor.par=Klik om de kleur of Tmin/Tmax van functie P%d te veranderen
@@ -112,9 +114,7 @@ tooltip.functionparsedsuccessfully=Functie %c%d is succesvol gelezen
 tooltip.functionparseerror=Functie %c%d kon niet goed worden gelezen
 
 tooltip.changefunctioncolor.par=Klik om de kleur van functie %c%d/%c%d te veranderen
-tooltip.changefunctionvisibility.par=Maak functie %c%d/%c%d zichtbaar
 
 colorchooser.functioncolor.title=Kleur voor functie %c%d
-colorchooser.functioncolor.title.par=Kleur voor functie %c%d/%c%d
 
 tmintmax.title=Tmin/Tmax van functie P%d

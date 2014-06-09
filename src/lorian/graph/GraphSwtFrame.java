@@ -13,6 +13,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.JRootPane;
+
 import lorian.graph.CalcPanelSwt.Calculations;
 import lorian.graph.GraphFunctionsFrame.Mode;
 import lorian.graph.fileio.GraphFileReader;
@@ -26,12 +27,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.awt.SWT_AWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
@@ -59,8 +60,6 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Widget;
-import org.eclipse.swt.graphics.Color;
 
 public class GraphSwtFrame implements SelectionListener {
 
@@ -243,7 +242,7 @@ public class GraphSwtFrame implements SelectionListener {
 				try {
 					FileDialog savedialog = new FileDialog(shell, SWT.SAVE);
 					savedialog.setOverwrite(true);
-					savedialog.setFilterNames(new String[] { GraphFunctionsFrame.Translate("files.pngimage") });
+					savedialog.setFilterNames(new String[] { GraphFunctionsFrame.localize("files.pngimage") });
 					savedialog.setFilterExtensions(new String[] { "*.png" });
 					String FilePath = savedialog.open();
 					if (FilePath == null) {
@@ -260,7 +259,7 @@ public class GraphSwtFrame implements SelectionListener {
 					System.out.println("Done");
 	
 					MessageBox message = new MessageBox(shell);
-					message.setMessage(GraphFunctionsFrame.Translate("message.screenshotsaved"));
+					message.setMessage(GraphFunctionsFrame.localize("message.screenshotsaved"));
 					message.setText("Graph");
 					message.open();
 				} catch (IOException e) {
@@ -281,7 +280,7 @@ public class GraphSwtFrame implements SelectionListener {
 				try {
 					FileDialog savedialog = new FileDialog(shell, SWT.SAVE);
 					savedialog.setOverwrite(true);
-					savedialog.setFilterNames(new String[] { GraphFunctionsFrame.Translate("files.pngimage") });
+					savedialog.setFilterNames(new String[] { GraphFunctionsFrame.localize("files.pngimage") });
 					savedialog.setFilterExtensions(new String[] { "*.png" });
 					String FilePath = savedialog.open();
 					if (FilePath == null) {
@@ -298,7 +297,7 @@ public class GraphSwtFrame implements SelectionListener {
 					System.out.println("Done");
 	
 					MessageBox message = new MessageBox(shell);
-					message.setMessage(GraphFunctionsFrame.Translate("message.screenshotsaved"));
+					message.setMessage(GraphFunctionsFrame.localize("message.screenshotsaved"));
 					message.setText("Graph");
 					message.open();
 				} catch (IOException e) {
@@ -316,7 +315,7 @@ public class GraphSwtFrame implements SelectionListener {
 				try {
 					FileDialog savedialog = new FileDialog(shell, SWT.SAVE);
 					savedialog.setOverwrite(true);
-					savedialog.setFilterNames(new String[] { GraphFunctionsFrame.Translate("files.pngimage") });
+					savedialog.setFilterNames(new String[] { GraphFunctionsFrame.localize("files.pngimage") });
 					savedialog.setFilterExtensions(new String[] { "*.png" });
 					String FilePath = savedialog.open();
 					if (FilePath == null) {
@@ -333,7 +332,7 @@ public class GraphSwtFrame implements SelectionListener {
 					System.out.println("Done");
 	
 					MessageBox message = new MessageBox(shell);
-					message.setMessage(GraphFunctionsFrame.Translate("message.screenshotsaved"));
+					message.setMessage(GraphFunctionsFrame.localize("message.screenshotsaved"));
 					message.setText("Graph");
 					message.open();
 				} catch (IOException e) {
@@ -408,7 +407,7 @@ public class GraphSwtFrame implements SelectionListener {
 		for (int i = 0; i < GraphFunctionsFrame.MaxFunctions; i++) {
 			final int numFunction = i + 1;
 			Button functionVisible = new Button(comp, SWT.CHECK);
-			functionVisible.setToolTipText(String.format(GraphFunctionsFrame.Translate("tooltip.changefunctionvisibility"), 'Y', numFunction));
+			functionVisible.setToolTipText(String.format(GraphFunctionsFrame.localize("tooltip.changefunctionvisibility"), 'Y', numFunction));
 			if (!UIinitted_func)
 				functionVisible.setSelection(true);
 			else
@@ -432,7 +431,7 @@ public class GraphSwtFrame implements SelectionListener {
 			else
 				functionName.setBackground(backups_func[i].color);
 
-			functionName.setToolTipText(String.format(GraphFunctionsFrame.Translate("tooltip.changefunctioncolor"), 'Y', numFunction));
+			functionName.setToolTipText(String.format(GraphFunctionsFrame.localize("tooltip.changefunctioncolor"), 'Y', numFunction));
 
 			functionName.addMouseListener(new MouseAdapter() {
 				@Override
@@ -440,7 +439,7 @@ public class GraphSwtFrame implements SelectionListener {
 					ColorDialog dlg = new ColorDialog(shell);
 					Color currentColor = functionName.getBackground();
 					dlg.setRGB(currentColor.getRGB());
-					dlg.setText(String.format(GraphFunctionsFrame.Translate("colorchooser.functioncolor.title"), 'Y', numFunction));
+					dlg.setText(String.format(GraphFunctionsFrame.localize("colorchooser.functioncolor.title"), 'Y', numFunction));
 					RGB rgb = dlg.open();
 					if (rgb != null) {
 						functionName.setBackground(new Color(currentColor.getDevice(), rgb));
@@ -455,7 +454,7 @@ public class GraphSwtFrame implements SelectionListener {
 			int bigfont_size = textFont.getFontData()[0].getHeight() + 2;
 			Font big = new Font(null, new FontData(textFont.getFontData()[0].getName(), bigfont_size, SWT.NONE));
 			inputText.setFont(big);
-			inputText.setToolTipText(String.format(GraphFunctionsFrame.Translate("tooltip.enterfunctionequotation"), 'Y', numFunction));
+			inputText.setToolTipText(String.format(GraphFunctionsFrame.localize("tooltip.enterfunctionequotation"), 'Y', numFunction));
 			inputText.addListener(SWT.Traverse, new Listener() {
 				@Override
 				public void handleEvent(Event e) {
@@ -505,7 +504,7 @@ public class GraphSwtFrame implements SelectionListener {
 		plotButtonHolder.setLayout(plotButtonHolderLayout);
 
 		Button plotButton = new Button(plotButtonHolder, SWT.PUSH);
-		plotButton.setText("  " + GraphFunctionsFrame.Translate("buttons.draw") + "  ");
+		plotButton.setText("  " + GraphFunctionsFrame.localize("buttons.draw") + "  ");
 		plotButton.addSelectionListener(this);
 
 		try {
@@ -519,7 +518,7 @@ public class GraphSwtFrame implements SelectionListener {
 
 		final Menu menu = new Menu(shell, SWT.POP_UP);
 		MenuItem item = new MenuItem(menu, SWT.PUSH);
-		item.setText(GraphFunctionsFrame.Translate("menu.savescreenshot"));
+		item.setText(GraphFunctionsFrame.localize("menu.savescreenshot"));
 		item.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -624,7 +623,7 @@ public class GraphSwtFrame implements SelectionListener {
 		for (int i = 0; i < GraphFunctionsFrame.MaxFunctions; i++) {
 			final int numFunction = i + 1;
 			Button functionVisible = new Button(comp, SWT.CHECK);
-			functionVisible.setToolTipText(String.format(GraphFunctionsFrame.Translate("tooltip.changefunctionvisibility"), 'Z', numFunction));
+			functionVisible.setToolTipText(String.format(GraphFunctionsFrame.localize("tooltip.changefunctionvisibility"), 'Z', numFunction));
 			if (!UIinitted_3dfunc)
 				functionVisible.setSelection(true);
 			else
@@ -647,7 +646,7 @@ public class GraphSwtFrame implements SelectionListener {
 			else
 				functionName.setBackground(backups_3dfunc[i].color);
 
-			functionName.setToolTipText(String.format(GraphFunctionsFrame.Translate("tooltip.changefunctioncolor"), 'Z', numFunction));
+			functionName.setToolTipText(String.format(GraphFunctionsFrame.localize("tooltip.changefunctioncolor"), 'Z', numFunction));
 
 			functionName.addMouseListener(new MouseAdapter() {
 				@Override
@@ -655,7 +654,7 @@ public class GraphSwtFrame implements SelectionListener {
 					ColorDialog dlg = new ColorDialog(shell);
 					Color currentColor = functionName.getBackground();
 					dlg.setRGB(currentColor.getRGB());
-					dlg.setText(String.format(GraphFunctionsFrame.Translate("colorchooser.functioncolor.title"), 'Z', numFunction));
+					dlg.setText(String.format(GraphFunctionsFrame.localize("colorchooser.functioncolor.title"), 'Z', numFunction));
 					RGB rgb = dlg.open();
 					if (rgb != null) {
 						functionName.setBackground(new Color(currentColor.getDevice(), rgb));
@@ -670,7 +669,7 @@ public class GraphSwtFrame implements SelectionListener {
 			int bigfont_size = textFont.getFontData()[0].getHeight() + 2;
 			Font big = new Font(null, new FontData(textFont.getFontData()[0].getName(), bigfont_size, SWT.NONE));
 			inputText.setFont(big);
-			inputText.setToolTipText(String.format(GraphFunctionsFrame.Translate("tooltip.enterfunctionequotation"), 'Z', numFunction));
+			inputText.setToolTipText(String.format(GraphFunctionsFrame.localize("tooltip.enterfunctionequotation"), 'Z', numFunction));
 			inputText.addListener(SWT.Traverse, new Listener() {
 				@Override
 				public void handleEvent(Event e) {
@@ -721,14 +720,14 @@ public class GraphSwtFrame implements SelectionListener {
 		plotButtonHolder.setLayout(plotButtonHolderLayout);
 
 		Button plotButton = new Button(plotButtonHolder, SWT.PUSH);
-		plotButton.setText("  " + GraphFunctionsFrame.Translate("buttons.draw") + "  ");
+		plotButton.setText("  " + GraphFunctionsFrame.localize("buttons.draw") + "  ");
 		plotButton.addSelectionListener(this);
 
 		final Composite gframe_holder = new Composite(outer, SWT.EMBEDDED);
 
 		final Menu menu = new Menu(shell, SWT.POP_UP);
 		MenuItem item = new MenuItem(menu, SWT.PUSH);
-		item.setText(GraphFunctionsFrame.Translate("menu.savescreenshot"));
+		item.setText(GraphFunctionsFrame.localize("menu.savescreenshot"));
 		item.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -837,7 +836,7 @@ public class GraphSwtFrame implements SelectionListener {
 		for (int i = 0; i < (int) (GraphFunctionsFrame.MaxFunctions * 0.5); i++) {
 			final int numFunction = i + 1;
 			Button functionVisible = new Button(comp, SWT.CHECK);
-			functionVisible.setToolTipText(String.format(GraphFunctionsFrame.Translate("tooltip.changefunctionvisibility"), 'P', numFunction));
+			functionVisible.setToolTipText(String.format(GraphFunctionsFrame.localize("tooltip.changefunctionvisibility"), 'P', numFunction));
 			if (!UIinitted_par)
 				functionVisible.setSelection(true);
 			else
@@ -873,7 +872,7 @@ public class GraphSwtFrame implements SelectionListener {
 			});
 			accoladeCanvas.update();
 
-			functionName.setToolTipText(String.format(GraphFunctionsFrame.Translate("tooltip.changefunctioncolor.par"), numFunction));
+			functionName.setToolTipText(String.format(GraphFunctionsFrame.localize("tooltip.changefunctioncolor.par"), numFunction));
 
 			Composite betweenAccolades = new Canvas(comp, SWT.NONE);
 			GridLayout betweenAccoladesLayout = new GridLayout(3, false);
@@ -896,7 +895,7 @@ public class GraphSwtFrame implements SelectionListener {
 			int bigfont_size = textFont.getFontData()[0].getHeight() + 2;
 			Font big = new Font(null, new FontData(textFont.getFontData()[0].getName(), bigfont_size, SWT.NONE));
 			inputTextX.setFont(big);
-			inputTextX.setToolTipText(String.format(GraphFunctionsFrame.Translate("tooltip.enterfunctionequotation"), 'X', numFunction));
+			inputTextX.setToolTipText(String.format(GraphFunctionsFrame.localize("tooltip.enterfunctionequotation"), 'X', numFunction));
 			inputTextX.addListener(SWT.Traverse, new Listener() {
 				@Override
 				public void handleEvent(Event e) {
@@ -942,7 +941,7 @@ public class GraphSwtFrame implements SelectionListener {
 			//functionName.setMenu();
 			final Menu menu = new Menu(functionName);
 			MenuItem item = new MenuItem(menu, SWT.PUSH);
-			item.setText(GraphFunctionsFrame.Translate("color.color")); 
+			item.setText(GraphFunctionsFrame.localize("color.color")); 
 			item.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e)
@@ -951,7 +950,7 @@ public class GraphSwtFrame implements SelectionListener {
 					ColorDialog dlg = new ColorDialog(shell);
 			 		Color currentColor = functionName.getBackground();
 					dlg.setRGB(currentColor.getRGB());
-					dlg.setText(String.format(GraphFunctionsFrame.Translate("colorchooser.functioncolor.title"), 'P', numFunction));
+					dlg.setText(String.format(GraphFunctionsFrame.localize("colorchooser.functioncolor.title"), 'P', numFunction));
 					RGB rgb = dlg.open();
 					if (rgb != null) {
 						functionName.setBackground(new Color(currentColor.getDevice(), rgb));
@@ -983,7 +982,7 @@ public class GraphSwtFrame implements SelectionListener {
 
 			final Text inputTextY = new Text(betweenAccolades, SWT.SINGLE | SWT.BORDER);
 			inputTextY.setFont(big);
-			inputTextY.setToolTipText(String.format(GraphFunctionsFrame.Translate("tooltip.enterfunctionequotation"), 'Y', numFunction));
+			inputTextY.setToolTipText(String.format(GraphFunctionsFrame.localize("tooltip.enterfunctionequotation"), 'Y', numFunction));
 			inputTextY.addListener(SWT.Traverse, new Listener() {
 				@Override
 				public void handleEvent(Event e) {
@@ -1039,14 +1038,14 @@ public class GraphSwtFrame implements SelectionListener {
 		plotButtonHolder.setLayout(plotButtonHolderLayout);
 
 		Button plotButton = new Button(plotButtonHolder, SWT.PUSH);
-		plotButton.setText("  " + GraphFunctionsFrame.Translate("buttons.draw") + "  ");
+		plotButton.setText("  " + GraphFunctionsFrame.localize("buttons.draw") + "  ");
 		plotButton.addSelectionListener(this);
 
 		final Composite gframe_holder = new Composite(outer, SWT.EMBEDDED);
 
 		final Menu menu = new Menu(shell, SWT.POP_UP);
 		MenuItem item = new MenuItem(menu, SWT.PUSH);
-		item.setText(GraphFunctionsFrame.Translate("menu.savescreenshot"));
+		item.setText(GraphFunctionsFrame.localize("menu.savescreenshot"));
 		item.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -1071,7 +1070,7 @@ public class GraphSwtFrame implements SelectionListener {
 		});
 		Menu screenShotMenu = new Menu(gframe_holder);
 		MenuItem takeScreenshot = new MenuItem(screenShotMenu, SWT.PUSH);
-		takeScreenshot.setText(GraphFunctionsFrame.Translate("menu.savescreenshot"));
+		takeScreenshot.setText(GraphFunctionsFrame.localize("menu.savescreenshot"));
 		gframe_holder.setMenu(screenShotMenu);
 
 		gframe_holder.setLayout(fillLayout);
@@ -1307,14 +1306,14 @@ public class GraphSwtFrame implements SelectionListener {
 
 			if (!f.Parse(input)) {
 				functionParseResults_func[i].setData((Object) errorIcon);
-				functionParseResults_func[i].setToolTipText(String.format(GraphFunctionsFrame.Translate("tooltip.functionparseerror"), 'Y', i + 1));
+				functionParseResults_func[i].setToolTipText(String.format(GraphFunctionsFrame.localize("tooltip.functionparseerror"), 'Y', i + 1));
 				functionParseResults_func[i].redraw();
 				f.setDraw(false);
 				functions_func.set(i, f);
 				continue;
 			}
 			functionParseResults_func[i].setData((Object) okIcon);
-			functionParseResults_func[i].setToolTipText(String.format(GraphFunctionsFrame.Translate("tooltip.functionparsedsuccessfully"), 'Y', i + 1));
+			functionParseResults_func[i].setToolTipText(String.format(GraphFunctionsFrame.localize("tooltip.functionparsedsuccessfully"), 'Y', i + 1));
 			functionParseResults_func[i].redraw();
 
 			RGB rgb = functionColors_func[i].getBackground().getRGB();
@@ -1344,14 +1343,14 @@ public class GraphSwtFrame implements SelectionListener {
 
 			if (!f.Parse(input)) {
 				functionParseResults_3dfunc[i].setData((Object) errorIcon);
-				functionParseResults_3dfunc[i].setToolTipText(String.format(GraphFunctionsFrame.Translate("tooltip.functionparseerror"), 'Z', i + 1));
+				functionParseResults_3dfunc[i].setToolTipText(String.format(GraphFunctionsFrame.localize("tooltip.functionparseerror"), 'Z', i + 1));
 				functionParseResults_3dfunc[i].redraw();
 				f.setDraw(false);
 				functions_3dfunc.set(i, f);
 				continue;
 			}
 			functionParseResults_3dfunc[i].setData((Object) okIcon);
-			functionParseResults_3dfunc[i].setToolTipText(String.format(GraphFunctionsFrame.Translate("tooltip.functionparsedsuccessfully"), 'Z', i + 1));
+			functionParseResults_3dfunc[i].setToolTipText(String.format(GraphFunctionsFrame.localize("tooltip.functionparsedsuccessfully"), 'Z', i + 1));
 			functionParseResults_3dfunc[i].redraw();
 
 			RGB rgb = functionColors_3dfunc[i].getBackground().getRGB();
@@ -1383,11 +1382,11 @@ public class GraphSwtFrame implements SelectionListener {
 				functionParseResults_par_x[i].redraw();
 			} else if (!f.ParseX(inputX)) {
 				functionParseResults_par_x[i].setData((Object) errorIcon);
-				functionParseResults_par_x[i].setToolTipText(String.format(GraphFunctionsFrame.Translate("tooltip.functionparseerror"), 'X', i + 1));
+				functionParseResults_par_x[i].setToolTipText(String.format(GraphFunctionsFrame.localize("tooltip.functionparseerror"), 'X', i + 1));
 				functionParseResults_par_x[i].redraw();
 			} else {
 				functionParseResults_par_x[i].setData((Object) okIcon);
-				functionParseResults_par_x[i].setToolTipText(String.format(GraphFunctionsFrame.Translate("tooltip.functionparsedsuccessfully"), 'X', i + 1));
+				functionParseResults_par_x[i].setToolTipText(String.format(GraphFunctionsFrame.localize("tooltip.functionparsedsuccessfully"), 'X', i + 1));
 				functionParseResults_par_x[i].redraw();
 			}
 
@@ -1397,11 +1396,11 @@ public class GraphSwtFrame implements SelectionListener {
 				functionParseResults_par_y[i].redraw();
 			} else if (!f.ParseY(inputY)) {
 				functionParseResults_par_y[i].setData((Object) errorIcon);
-				functionParseResults_par_y[i].setToolTipText(String.format(GraphFunctionsFrame.Translate("tooltip.functionparseerror"), 'Y', i + 1));
+				functionParseResults_par_y[i].setToolTipText(String.format(GraphFunctionsFrame.localize("tooltip.functionparseerror"), 'Y', i + 1));
 				functionParseResults_par_y[i].redraw();
 			} else {
 				functionParseResults_par_y[i].setData((Object) okIcon);
-				functionParseResults_par_y[i].setToolTipText(String.format(GraphFunctionsFrame.Translate("tooltip.functionparsedsuccessfully"), 'Y', i + 1));
+				functionParseResults_par_y[i].setToolTipText(String.format(GraphFunctionsFrame.localize("tooltip.functionparsedsuccessfully"), 'Y', i + 1));
 				functionParseResults_par_y[i].redraw();
 			}
 
@@ -1683,7 +1682,7 @@ public class GraphSwtFrame implements SelectionListener {
 		
 		Render();
 		
-		GraphFunctionsFrame.FileName = GraphFunctionsFrame.Translate("files.untitled");
+		GraphFunctionsFrame.FileName = GraphFunctionsFrame.localize("files.untitled");
 		GraphFunctionsFrame.FileSaved = false;
 		GraphFunctionsFrame.NoChangesMade = true;
 		GraphFunctionsFrame.FilePathPresent = false; 
@@ -1718,7 +1717,7 @@ public class GraphSwtFrame implements SelectionListener {
 	private boolean SaveFileAs()
 	{
 		FileDialog savedialog = new FileDialog(shell, SWT.SAVE);
-		savedialog.setFilterNames(new String[] { GraphFunctionsFrame.Translate("files.graphfiles") });
+		savedialog.setFilterNames(new String[] { GraphFunctionsFrame.localize("files.graphfiles") });
 		savedialog.setFilterExtensions(new String[] { String.format("*.%s", GraphFunctionsFrame.FileExt) });
 		GraphFunctionsFrame.FilePath = savedialog.open();
 		if (GraphFunctionsFrame.FilePath == null) {
@@ -1885,7 +1884,7 @@ public class GraphSwtFrame implements SelectionListener {
 	}
 	private boolean ShowOpenFileDialog() {
 		FileDialog opendialog = new FileDialog(shell, SWT.OPEN);
-		opendialog.setFilterNames(new String[] { GraphFunctionsFrame.Translate("files.graphfiles") });
+		opendialog.setFilterNames(new String[] { GraphFunctionsFrame.localize("files.graphfiles") });
 		opendialog.setFilterExtensions(new String[] { String.format("*.%s", GraphFunctionsFrame.FileExt) });
 		String filepath = opendialog.open();
 		if (filepath == null) {
@@ -1900,7 +1899,7 @@ public class GraphSwtFrame implements SelectionListener {
 	{
 		MessageBox confirmNoSave = new MessageBox(shell, SWT.ICON_QUESTION| SWT.YES | SWT.NO | SWT.CANCEL);
 		confirmNoSave.setText("Graph");
-		confirmNoSave.setMessage(String.format(GraphFunctionsFrame.Translate("message.confirmchanges"), GraphFunctionsFrame.FileName));
+		confirmNoSave.setMessage(String.format(GraphFunctionsFrame.localize("message.confirmchanges"), GraphFunctionsFrame.FileName));
 		int n = confirmNoSave.open();
 		switch(n)
 		{
@@ -1951,7 +1950,7 @@ public class GraphSwtFrame implements SelectionListener {
 			} else if (text.equalsIgnoreCase(GraphFunctionsFrame.funcframe.FileMenuStrings[3])) // Save																					// as
 			{
 				System.out.println("Saving file as...");
-				if (!GraphFunctionsFrame.FileName.equals(GraphFunctionsFrame.Translate("files.untitled")) && !GraphFunctionsFrame.FileSaved && !GraphFunctionsFrame.NoChangesMade) {
+				if (!GraphFunctionsFrame.FileName.equals(GraphFunctionsFrame.localize("files.untitled")) && !GraphFunctionsFrame.FileSaved && !GraphFunctionsFrame.NoChangesMade) {
 					if (!ConfirmFileChanges()) {
 						System.out.println("Canceled by user");
 						return;
@@ -2014,7 +2013,7 @@ public class GraphSwtFrame implements SelectionListener {
 		} else if (e.getSource() instanceof Button) {
 			Button buttonSrc = (Button) e.getSource();
 			String text = buttonSrc.getText();
-			if (text.trim().equalsIgnoreCase(GraphFunctionsFrame.Translate("buttons.draw"))) {
+			if (text.trim().equalsIgnoreCase(GraphFunctionsFrame.localize("buttons.draw"))) {
 				Plot();
 			}
 		}

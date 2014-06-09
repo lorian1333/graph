@@ -3,6 +3,7 @@ package lorian.graph;
 import java.awt.GraphicsEnvironment;
 
 import lorian.graph.GraphFunctionsFrame.OperatingSystem;
+import lorian.graph.function.Calculate;
 import lorian.graph.function.Function;
 import lorian.graph.function.MathChars;
 import lorian.graph.function.ParameterFunction;
@@ -10,12 +11,10 @@ import lorian.graph.function.PointXY;
 import lorian.graph.function.Util;
 import lorian.graph.function.VisualPoint;
 import lorian.graph.function.VisualPointLocationChangeListener;
-import lorian.graph.function.Calculate;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
@@ -115,12 +114,12 @@ public class CalcPanelSwt extends Dialog {
 			GraphFunctionsFrame.gframe.SetVisualPointsVisible(true);
 			GraphFunctionsFrame.gframe.ClearVisualPoints();
 			if (Double.isNaN(y)) {
-				updateResultLabel(String.format(GraphFunctionsFrame.Translate("calcframe.message.nosolutions"), Util.GetString(x)));
+				updateResultLabel(String.format(GraphFunctionsFrame.localize("calcframe.message.nosolutions"), Util.GetString(x)));
 			} else {
 				resultPoint = new VisualPoint(new PointXY(x, y), index, false, true);
 				GraphFunctionsFrame.gframe.AddVisualPoint(resultPoint);
 				GraphFunctionsFrame.gframe.repaint();
-				updateResultLabel(String.format("%s: X = %s, Y = %s", GraphFunctionsFrame.Translate("calc.value"), Util.GetString(x), Util.GetString(y)));
+				updateResultLabel(String.format("%s: X = %s, Y = %s", GraphFunctionsFrame.localize("calc.value"), Util.GetString(x), Util.GetString(y)));
 			}
 
 			break;
@@ -136,14 +135,14 @@ public class CalcPanelSwt extends Dialog {
 				public void run() {
 					final PointXY zeroPoint = Calculate.Zero(((Function[]) functions)[index], x1val, x2val);
 					if (Double.isNaN(zeroPoint.getX())) {
-						updateResultLabel(GraphFunctionsFrame.Translate("calcframe.message.calczeroerror"));
+						updateResultLabel(GraphFunctionsFrame.localize("calcframe.message.calczeroerror"));
 					} else {
 						resultPoint = new VisualPoint(zeroPoint, index, false, true);
 						GraphFunctionsFrame.gframe.ClearVisualPoints();
 						GraphFunctionsFrame.gframe.AddVisualPoint(resultPoint);
 						GraphFunctionsFrame.gframe.repaint();
-						updateResultLabel(String.format("%s: X = %s, Y = %s", GraphFunctionsFrame.Translate("calc.zero"), Util.GetString(zeroPoint.getX()), Util.GetString(zeroPoint.getY())));
-						updateCalcButtonText(GraphFunctionsFrame.Translate("calcframe.again"));
+						updateResultLabel(String.format("%s: X = %s, Y = %s", GraphFunctionsFrame.localize("calc.zero"), Util.GetString(zeroPoint.getX()), Util.GetString(zeroPoint.getY())));
+						updateCalcButtonText(GraphFunctionsFrame.localize("calcframe.again"));
 						calculated = true;
 					}
 					Display.getDefault().syncExec(new Runnable() {
@@ -162,7 +161,7 @@ public class CalcPanelSwt extends Dialog {
 			x1.setEnabled(false);
 			x2.setEnabled(false);
 			funcList.setEnabled(false);
-			updateResultLabel(GraphFunctionsFrame.Translate("calcframe.message.calculating"));
+			updateResultLabel(GraphFunctionsFrame.localize("calcframe.message.calculating"));
 			break;
 		case FUNC_MINIMUM:
 			x1val = (double) x1.getSelection() / Math.pow(10, 4);
@@ -179,8 +178,8 @@ public class CalcPanelSwt extends Dialog {
 					GraphFunctionsFrame.gframe.ClearVisualPoints();
 					GraphFunctionsFrame.gframe.AddVisualPoint(resultPoint);
 					GraphFunctionsFrame.gframe.repaint();
-					updateResultLabel(String.format("%s: X = %s, Y = %s", GraphFunctionsFrame.Translate("calc.min"), Util.GetString(minimumPoint.getX()), Util.GetString(minimumPoint.getY())));
-					updateCalcButtonText(GraphFunctionsFrame.Translate("calcframe.again"));
+					updateResultLabel(String.format("%s: X = %s, Y = %s", GraphFunctionsFrame.localize("calc.min"), Util.GetString(minimumPoint.getX()), Util.GetString(minimumPoint.getY())));
+					updateCalcButtonText(GraphFunctionsFrame.localize("calcframe.again"));
 					calculated = true;
 
 					Display.getDefault().syncExec(new Runnable() {
@@ -199,7 +198,7 @@ public class CalcPanelSwt extends Dialog {
 			x1.setEnabled(false);
 			x2.setEnabled(false);
 			funcList.setEnabled(false);
-			updateResultLabel(GraphFunctionsFrame.Translate("calcframe.message.calculating"));
+			updateResultLabel(GraphFunctionsFrame.localize("calcframe.message.calculating"));
 			break;
 		case FUNC_MAXIMUM:
 			x1val = (double) x1.getSelection() / Math.pow(10, 4);
@@ -216,8 +215,8 @@ public class CalcPanelSwt extends Dialog {
 					GraphFunctionsFrame.gframe.ClearVisualPoints();
 					GraphFunctionsFrame.gframe.AddVisualPoint(resultPoint);
 					GraphFunctionsFrame.gframe.repaint();
-					updateResultLabel(String.format("%s: X = %s, Y = %s", GraphFunctionsFrame.Translate("calc.max"), Util.GetString(maximumPoint.getX()), Util.GetString(maximumPoint.getY())));
-					updateCalcButtonText(GraphFunctionsFrame.Translate("calcframe.again"));
+					updateResultLabel(String.format("%s: X = %s, Y = %s", GraphFunctionsFrame.localize("calc.max"), Util.GetString(maximumPoint.getX()), Util.GetString(maximumPoint.getY())));
+					updateCalcButtonText(GraphFunctionsFrame.localize("calcframe.again"));
 					calculated = true;
 
 					Display.getDefault().syncExec(new Runnable() {
@@ -236,7 +235,7 @@ public class CalcPanelSwt extends Dialog {
 			x1.setEnabled(false);
 			x2.setEnabled(false);
 			funcList.setEnabled(false);
-			updateResultLabel(GraphFunctionsFrame.Translate("calcframe.message.calculating"));
+			updateResultLabel(GraphFunctionsFrame.localize("calcframe.message.calculating"));
 			break;
 		case FUNC_INTERSECT:
 			x1val = (double) x1.getSelection() / Math.pow(10, 4);
@@ -247,7 +246,7 @@ public class CalcPanelSwt extends Dialog {
 			index = Integer.parseInt(funcList.getText().substring(1)) - 1;
 			index2 = Integer.parseInt(funcList2.getText().substring(1)) - 1;
 			if (index == index2) {
-				updateResultLabel(GraphFunctionsFrame.Translate("calcframe.message.calcintersectsamefuncerror"));
+				updateResultLabel(GraphFunctionsFrame.localize("calcframe.message.calcintersectsamefuncerror"));
 				return;
 			}
 			GraphFunctionsFrame.gframe.FreezeMovablePoints();
@@ -256,15 +255,15 @@ public class CalcPanelSwt extends Dialog {
 				public void run() {
 					final PointXY intersectPoint = Calculate.Intersect(((Function[]) functions)[index], ((Function[]) functions)[index2], x1val, x2val);
 					if (Double.isNaN(intersectPoint.getX())) {
-						updateResultLabel(GraphFunctionsFrame.Translate("calcframe.message.calcintersecterror"));
+						updateResultLabel(GraphFunctionsFrame.localize("calcframe.message.calcintersecterror"));
 						GraphFunctionsFrame.gframe.UnfreezeMovablePoints();
 					} else {
 						resultPoint = new VisualPoint(intersectPoint, index, false, true);
 						GraphFunctionsFrame.gframe.ClearVisualPoints();
 						GraphFunctionsFrame.gframe.AddVisualPoint(resultPoint);
 						GraphFunctionsFrame.gframe.repaint();
-						updateResultLabel(String.format("%s: X = %s, Y = %s", GraphFunctionsFrame.Translate("calc.intersect"), Util.GetString(intersectPoint.getX()), Util.GetString(intersectPoint.getY())));
-						updateCalcButtonText(GraphFunctionsFrame.Translate("calcframe.again"));
+						updateResultLabel(String.format("%s: X = %s, Y = %s", GraphFunctionsFrame.localize("calc.intersect"), Util.GetString(intersectPoint.getX()), Util.GetString(intersectPoint.getY())));
+						updateCalcButtonText(GraphFunctionsFrame.localize("calcframe.again"));
 						calculated = true;
 					}
 					Display.getDefault().syncExec(new Runnable() {
@@ -285,7 +284,7 @@ public class CalcPanelSwt extends Dialog {
 			x2.setEnabled(false);
 			funcList.setEnabled(false);
 			funcList2.setEnabled(false);
-			updateResultLabel(GraphFunctionsFrame.Translate("calcframe.message.calculating"));
+			updateResultLabel(GraphFunctionsFrame.localize("calcframe.message.calculating"));
 			break;
 		case FUNC_DYDX:
 			x = (double) x1.getSelection() / Math.pow(10, 4);
@@ -298,7 +297,7 @@ public class CalcPanelSwt extends Dialog {
 				public void run() {
 					double dydx = Calculate.DyDx(((Function[]) functions)[index], x);
 					if (Double.isNaN(dydx)) {
-						updateResultLabel(String.format(GraphFunctionsFrame.Translate("calcframe.message.calcdydxerror"), Util.GetString(x)));
+						updateResultLabel(String.format(GraphFunctionsFrame.localize("calcframe.message.calcdydxerror"), Util.GetString(x)));
 						GraphFunctionsFrame.gframe.SetVisualPointsVisible(false);
 						GraphFunctionsFrame.gframe.repaint();
 						Display.getDefault().syncExec(new Runnable() {
@@ -311,7 +310,7 @@ public class CalcPanelSwt extends Dialog {
 						});
 					} else {
 						GraphFunctionsFrame.gframe.SetVisualPointsVisible(true);
-						String result = String.format("%s: %s", GraphFunctionsFrame.Translate("calc.deriv"), Util.GetString(dydx));
+						String result = String.format("%s: %s", GraphFunctionsFrame.localize("calc.deriv"), Util.GetString(dydx));
 						resultPoint = new VisualPoint(new PointXY(x, ((Function[]) functions)[index].Calc(x)), index, false, false, result);
 						GraphFunctionsFrame.gframe.ClearVisualPoints();
 						GraphFunctionsFrame.gframe.AddVisualPoint(resultPoint);
@@ -333,7 +332,7 @@ public class CalcPanelSwt extends Dialog {
 			calcButton.setEnabled(false);
 			x1.setEnabled(false);
 			funcList.setEnabled(false);
-			updateResultLabel(GraphFunctionsFrame.Translate("calcframe.message.calculating"));
+			updateResultLabel(GraphFunctionsFrame.localize("calcframe.message.calculating"));
 			break;
 		case FUNC_INTEGRAL:
 			x1val = (double) x1.getSelection() / Math.pow(10, 4);
@@ -349,7 +348,7 @@ public class CalcPanelSwt extends Dialog {
 					GraphFunctionsFrame.gframe.SetVisualPointsVisible(false);
 					GraphFunctionsFrame.gframe.repaint();
 					updateResultLabel(String.format("%cf(x)dx: %s", MathChars.Integral.getCode(), Util.GetString(integral)));
-					updateCalcButtonText(GraphFunctionsFrame.Translate("calcframe.again"));
+					updateCalcButtonText(GraphFunctionsFrame.localize("calcframe.again"));
 					calculated = true;
 
 					Display.getDefault().syncExec(new Runnable() {
@@ -368,7 +367,7 @@ public class CalcPanelSwt extends Dialog {
 			x1.setEnabled(false);
 			x2.setEnabled(false);
 			funcList.setEnabled(false);
-			updateResultLabel(GraphFunctionsFrame.Translate("calcframe.message.calculating"));
+			updateResultLabel(GraphFunctionsFrame.localize("calcframe.message.calculating"));
 			break;
 		case PAR_VALUE:
 			x = (double) x1.getSelection() / Math.pow(10, 4);
@@ -380,14 +379,14 @@ public class CalcPanelSwt extends Dialog {
 			GraphFunctionsFrame.gparam.SetVisualPointsVisible(true);
 			GraphFunctionsFrame.gparam.ClearVisualPoints();
 			if (Double.isNaN(xy.getX()) || Double.isNaN(xy.getY())) {
-				updateResultLabel(String.format(GraphFunctionsFrame.Translate("calcframe.message.nosolutions.par"), Util.GetString(x)));
+				updateResultLabel(String.format(GraphFunctionsFrame.localize("calcframe.message.nosolutions.par"), Util.GetString(x)));
 			} else {
 
 				resultPoint = new VisualPoint(xy, index, false, true);
 				GraphFunctionsFrame.gparam.AddVisualPoint(resultPoint);
 				GraphFunctionsFrame.gparam.repaint();
 
-				updateResultLabel(String.format("%s: T = %s, X = %s, Y = %s", GraphFunctionsFrame.Translate("calc.value"), Util.GetString(x), Util.GetString(xy.getX()), Util.GetString(xy.getY())));
+				updateResultLabel(String.format("%s: T = %s, X = %s, Y = %s", GraphFunctionsFrame.localize("calc.value"), Util.GetString(x), Util.GetString(xy.getX()), Util.GetString(xy.getY())));
 			}
 
 			break;
@@ -402,12 +401,12 @@ public class CalcPanelSwt extends Dialog {
 				public void run() {
 					double dydx = Calculate.DyDx(((ParameterFunction[]) functions)[index], x);
 					if (Double.isNaN(dydx)) {
-						updateResultLabel(String.format(GraphFunctionsFrame.Translate("calcframe.message.calcderiverror"), 'y', 'x', Util.GetString(x)));
+						updateResultLabel(String.format(GraphFunctionsFrame.localize("calcframe.message.calcderiverror"), 'y', 'x', Util.GetString(x)));
 						GraphFunctionsFrame.gparam.SetVisualPointsVisible(false);
 						GraphFunctionsFrame.gparam.repaint();
 					} else {
 						GraphFunctionsFrame.gparam.SetVisualPointsVisible(true);
-						String result = String.format("%s: %s", GraphFunctionsFrame.Translate("calc.deriv"), Util.GetString(dydx));
+						String result = String.format("%s: %s", GraphFunctionsFrame.localize("calc.deriv"), Util.GetString(dydx));
 						resultPoint = new VisualPoint(((ParameterFunction[]) functions)[index].Calc(x), index, false, false, result);
 						GraphFunctionsFrame.gparam.ClearVisualPoints();
 						GraphFunctionsFrame.gparam.AddVisualPoint(resultPoint);
@@ -428,7 +427,7 @@ public class CalcPanelSwt extends Dialog {
 			calcButton.setEnabled(false);
 			x1.setEnabled(false);
 			funcList.setEnabled(false);
-			updateResultLabel(GraphFunctionsFrame.Translate("calcframe.message.calculating"));
+			updateResultLabel(GraphFunctionsFrame.localize("calcframe.message.calculating"));
 			break;
 		case PAR_DYDT:
 			x = (double) x1.getSelection() / Math.pow(10, 4);
@@ -441,12 +440,12 @@ public class CalcPanelSwt extends Dialog {
 				public void run() {
 					double dydt = Calculate.DyDt(((ParameterFunction[]) functions)[index], x);
 					if (Double.isNaN(dydt)) {
-						updateResultLabel(String.format(GraphFunctionsFrame.Translate("calcframe.message.calcderiverror"), 'y', 't', Util.GetString(x)));
+						updateResultLabel(String.format(GraphFunctionsFrame.localize("calcframe.message.calcderiverror"), 'y', 't', Util.GetString(x)));
 						GraphFunctionsFrame.gparam.SetVisualPointsVisible(false);
 						GraphFunctionsFrame.gparam.repaint();
 					} else {
 						GraphFunctionsFrame.gparam.SetVisualPointsVisible(true);
-						String result = String.format("%s: %s", GraphFunctionsFrame.Translate("calc.dydt"), Util.GetString(dydt));
+						String result = String.format("%s: %s", GraphFunctionsFrame.localize("calc.dydt"), Util.GetString(dydt));
 						resultPoint = new VisualPoint(((ParameterFunction[]) functions)[index].Calc(x), index, false, false, result);
 						GraphFunctionsFrame.gparam.ClearVisualPoints();
 						GraphFunctionsFrame.gparam.AddVisualPoint(resultPoint);
@@ -467,7 +466,7 @@ public class CalcPanelSwt extends Dialog {
 			calcButton.setEnabled(false);
 			x1.setEnabled(false);
 			funcList.setEnabled(false);
-			updateResultLabel(GraphFunctionsFrame.Translate("calcframe.message.calculating"));
+			updateResultLabel(GraphFunctionsFrame.localize("calcframe.message.calculating"));
 			break;
 		case PAR_DXDT:
 			x = (double) x1.getSelection() / Math.pow(10, 4);
@@ -480,12 +479,12 @@ public class CalcPanelSwt extends Dialog {
 				public void run() {
 					double dxdt = Calculate.DxDt(((ParameterFunction[]) functions)[index], x);
 					if (Double.isNaN(dxdt)) {
-						updateResultLabel(String.format(GraphFunctionsFrame.Translate("calcframe.message.calcderiverror"), 'x', 't', Util.GetString(x)));
+						updateResultLabel(String.format(GraphFunctionsFrame.localize("calcframe.message.calcderiverror"), 'x', 't', Util.GetString(x)));
 						GraphFunctionsFrame.gparam.SetVisualPointsVisible(false);
 						GraphFunctionsFrame.gparam.repaint();
 					} else {
 						GraphFunctionsFrame.gparam.SetVisualPointsVisible(true);
-						String result = String.format("%s: %s", GraphFunctionsFrame.Translate("calc.dxdt"), Util.GetString(dxdt));
+						String result = String.format("%s: %s", GraphFunctionsFrame.localize("calc.dxdt"), Util.GetString(dxdt));
 						resultPoint = new VisualPoint(((ParameterFunction[]) functions)[index].Calc(x), index, false, false, result);
 						GraphFunctionsFrame.gparam.ClearVisualPoints();
 						GraphFunctionsFrame.gparam.AddVisualPoint(resultPoint);
@@ -506,7 +505,7 @@ public class CalcPanelSwt extends Dialog {
 			calcButton.setEnabled(false);
 			x1.setEnabled(false);
 			funcList.setEnabled(false);
-			updateResultLabel(GraphFunctionsFrame.Translate("calcframe.message.calculating"));
+			updateResultLabel(GraphFunctionsFrame.localize("calcframe.message.calculating"));
 			break;
 		default:
 			break;
@@ -594,7 +593,7 @@ public class CalcPanelSwt extends Dialog {
 
 	private void addFuncList(Composite calcPanel, boolean addOne) {
 		Label label = new Label(calcPanel, SWT.NONE);
-		label.setText(addOne ? String.format(GraphFunctionsFrame.Translate("calcframe.functionnumber") + ":", 1) : GraphFunctionsFrame.Translate("calcframe.function") + ":");
+		label.setText(addOne ? String.format(GraphFunctionsFrame.localize("calcframe.functionnumber") + ":", 1) : GraphFunctionsFrame.localize("calcframe.function") + ":");
 		GridData data = new GridData(SWT.RIGHT, SWT.TOP, true, false);
 		label.setLayoutData(data);
 
@@ -615,14 +614,14 @@ public class CalcPanelSwt extends Dialog {
 				resetMovablePoints();
 				calculated = false;
 				updateResultLabel("");
-				updateCalcButtonText(GraphFunctionsFrame.Translate("calcframe.calculate"));
+				updateCalcButtonText(GraphFunctionsFrame.localize("calcframe.calculate"));
 			}
 		});
 	}
 
 	private void addFuncList2(Composite calcPanel) {
 		Label label = new Label(calcPanel, SWT.NONE);
-		label.setText(String.format(GraphFunctionsFrame.Translate("calcframe.functionnumber") + ":", 2));
+		label.setText(String.format(GraphFunctionsFrame.localize("calcframe.functionnumber") + ":", 2));
 		GridData data = new GridData(SWT.RIGHT, SWT.TOP, true, false);
 		label.setLayoutData(data);
 
@@ -643,7 +642,7 @@ public class CalcPanelSwt extends Dialog {
 				resetMovablePoints();
 				calculated = false;
 				updateResultLabel("");
-				updateCalcButtonText(GraphFunctionsFrame.Translate("calcframe.calculate"));
+				updateCalcButtonText(GraphFunctionsFrame.localize("calcframe.calculate"));
 			}
 		});
 	}
@@ -672,7 +671,7 @@ public class CalcPanelSwt extends Dialog {
 
 	private void addLimits(Composite calcPanel) {
 		Label label = new Label(calcPanel, SWT.NONE);
-		label.setText(GraphFunctionsFrame.Translate("calcframe.lowerlimit") + ": ");
+		label.setText(GraphFunctionsFrame.localize("calcframe.lowerlimit") + ": ");
 		GridData data = new GridData(SWT.RIGHT, SWT.BEGINNING, true, false);
 		label.setLayoutData(data);
 
@@ -694,20 +693,20 @@ public class CalcPanelSwt extends Dialog {
 				if (calculated) {
 					calculated = false;
 					updateResultLabel("");
-					updateCalcButtonText(GraphFunctionsFrame.Translate("calcframe.calculate"));
+					updateCalcButtonText(GraphFunctionsFrame.localize("calcframe.calculate"));
 					resetMovablePoints();
 				}
 
 				double value = x1.getSelection() / Math.pow(10, 4);
 				int index = Integer.parseInt(funcList.getText().substring(1)) - 1;
 				Function f = (Function) functions[index];
-				GraphFunctionsFrame.gframe.SetMovableVisualPointLocationByLabel(GraphFunctionsFrame.Translate("calcframe.lowerlimit"), new PointXY(value, f.Calc(value)));
+				GraphFunctionsFrame.gframe.SetMovableVisualPointLocationByLabel(GraphFunctionsFrame.localize("calcframe.lowerlimit"), new PointXY(value, f.Calc(value)));
 
 			}
 		});
 
 		label = new Label(calcPanel, SWT.NONE);
-		label.setText(GraphFunctionsFrame.Translate("calcframe.upperlimit") + ": ");
+		label.setText(GraphFunctionsFrame.localize("calcframe.upperlimit") + ": ");
 		data = new GridData(SWT.RIGHT, SWT.BEGINNING, true, false);
 		label.setLayoutData(data);
 
@@ -729,14 +728,14 @@ public class CalcPanelSwt extends Dialog {
 				if (calculated) {
 					calculated = false;
 					updateResultLabel("");
-					updateCalcButtonText(GraphFunctionsFrame.Translate("calcframe.calculate"));
+					updateCalcButtonText(GraphFunctionsFrame.localize("calcframe.calculate"));
 					resetMovablePoints();
 				}
 
 				double value = x2.getSelection() / Math.pow(10, 4);
 				int index = Integer.parseInt(funcList.getText().substring(1)) - 1;
 				Function f = (Function) functions[index];
-				GraphFunctionsFrame.gframe.SetMovableVisualPointLocationByLabel(GraphFunctionsFrame.Translate("calcframe.upperlimit"), new PointXY(value, f.Calc(value)));
+				GraphFunctionsFrame.gframe.SetMovableVisualPointLocationByLabel(GraphFunctionsFrame.localize("calcframe.upperlimit"), new PointXY(value, f.Calc(value)));
 
 			}
 		});
@@ -761,8 +760,8 @@ public class CalcPanelSwt extends Dialog {
 		int funcindex = Integer.parseInt(funcList.getText().substring(1)) - 1;
 		Function f = (Function) functions[funcindex];
 
-		lowerLimitPoint = new VisualPoint(new PointXY(lowx, f.Calc(lowx)), funcindex, true, false, GraphFunctionsFrame.Translate("calcframe.lowerlimit"));
-		upperLimitPoint = new VisualPoint(new PointXY(upx, f.Calc(upx)), funcindex, true, false, GraphFunctionsFrame.Translate("calcframe.upperlimit"));
+		lowerLimitPoint = new VisualPoint(new PointXY(lowx, f.Calc(lowx)), funcindex, true, false, GraphFunctionsFrame.localize("calcframe.lowerlimit"));
+		upperLimitPoint = new VisualPoint(new PointXY(upx, f.Calc(upx)), funcindex, true, false, GraphFunctionsFrame.localize("calcframe.upperlimit"));
 		GraphFunctionsFrame.gframe.AddVisualPoint(lowerLimitPoint);
 		GraphFunctionsFrame.gframe.AddVisualPoint(upperLimitPoint);
 
@@ -784,7 +783,7 @@ public class CalcPanelSwt extends Dialog {
 
 				calculated = false;
 				updateResultLabel("");
-				updateCalcButtonText(GraphFunctionsFrame.Translate("calcframe.calculate"));
+				updateCalcButtonText(GraphFunctionsFrame.localize("calcframe.calculate"));
 
 			}
 		});
@@ -804,7 +803,7 @@ public class CalcPanelSwt extends Dialog {
 
 				calculated = false;
 				updateResultLabel("");
-				updateCalcButtonText(GraphFunctionsFrame.Translate("calcframe.calculate"));
+				updateCalcButtonText(GraphFunctionsFrame.localize("calcframe.calculate"));
 			}
 		});
 
@@ -833,8 +832,8 @@ public class CalcPanelSwt extends Dialog {
 		int funcindex = Integer.parseInt(funcList.getText().substring(1)) - 1;
 		Function f = (Function) functions[funcindex];
 
-		lowerLimitPoint = new VisualPoint(new PointXY(lowx, f.Calc(lowx)), funcindex, true, false, GraphFunctionsFrame.Translate("calcframe.lowerlimit"));
-		upperLimitPoint = new VisualPoint(new PointXY(upx, f.Calc(upx)), funcindex, true, false, GraphFunctionsFrame.Translate("calcframe.upperlimit"));
+		lowerLimitPoint = new VisualPoint(new PointXY(lowx, f.Calc(lowx)), funcindex, true, false, GraphFunctionsFrame.localize("calcframe.lowerlimit"));
+		upperLimitPoint = new VisualPoint(new PointXY(upx, f.Calc(upx)), funcindex, true, false, GraphFunctionsFrame.localize("calcframe.upperlimit"));
 		GraphFunctionsFrame.gframe.AddVisualPoint(lowerLimitPoint);
 		GraphFunctionsFrame.gframe.AddVisualPoint(upperLimitPoint);
 		GraphFunctionsFrame.gframe.SetFillLowerLimit(lowerLimitPoint.getPoint().getX());
@@ -861,7 +860,7 @@ public class CalcPanelSwt extends Dialog {
 					calculated = false;
 					updateResultLabel("");
 					resetMovablePoints();
-					updateCalcButtonText(GraphFunctionsFrame.Translate("calcframe.calculate"));
+					updateCalcButtonText(GraphFunctionsFrame.localize("calcframe.calculate"));
 				}
 			}
 		});
@@ -883,7 +882,7 @@ public class CalcPanelSwt extends Dialog {
 					calculated = false;
 					updateResultLabel("");
 					resetMovablePoints();
-					updateCalcButtonText(GraphFunctionsFrame.Translate("calcframe.calculate"));
+					updateCalcButtonText(GraphFunctionsFrame.localize("calcframe.calculate"));
 				}
 			}
 		});
@@ -893,7 +892,7 @@ public class CalcPanelSwt extends Dialog {
 		// new Label(calcPanel, SWT.NONE).setLayoutData(new GridData(SWT.RIGHT,
 		// SWT.BEGINNING, true, false));
 		calcButton = new Button(calcPanel, SWT.PUSH);
-		calcButton.setText(GraphFunctionsFrame.Translate("calcframe.calculate"));
+		calcButton.setText(GraphFunctionsFrame.localize("calcframe.calculate"));
 		GridData data = new GridData(SWT.CENTER, SWT.TOP, true, true);
 		// data.minimumHeight = 20;
 		// data.verticalIndent = 2;
@@ -906,7 +905,7 @@ public class CalcPanelSwt extends Dialog {
 				else {
 					resetMovablePoints();
 					updateResultLabel("");
-					calcButton.setText(GraphFunctionsFrame.Translate("calcframe.calculate"));
+					calcButton.setText(GraphFunctionsFrame.localize("calcframe.calculate"));
 					calculated = false;
 				}
 			}
@@ -915,7 +914,7 @@ public class CalcPanelSwt extends Dialog {
 
 	private void addCloseButton(Composite calcPanel) {
 		Button closeButton = new Button(calcPanel, SWT.PUSH);
-		closeButton.setText(GraphFunctionsFrame.Translate("buttons.close"));
+		closeButton.setText(GraphFunctionsFrame.localize("buttons.close"));
 		GridData data = new GridData(SWT.RIGHT, SWT.TOP, true, true);
 		closeButton.setLayoutData(data);
 		closeButton.addSelectionListener(new SelectionAdapter() {
@@ -982,30 +981,30 @@ public class CalcPanelSwt extends Dialog {
 		switch (calcType) {
 		case FUNC_VALUE:
 		case PAR_VALUE:
-			calcPanel.setText(GraphFunctionsFrame.Translate("calcframe.calculate") + ": " + GraphFunctionsFrame.Translate("calc.value"));
+			calcPanel.setText(GraphFunctionsFrame.localize("calcframe.calculate") + ": " + GraphFunctionsFrame.localize("calc.value"));
 			addFuncList(itemComp, false);
 			addXorT(itemComp);
 			break;
 		case FUNC_ZERO:
-			calcPanel.setText(GraphFunctionsFrame.Translate("calcframe.calculate") + ": " + GraphFunctionsFrame.Translate("calc.zero"));
+			calcPanel.setText(GraphFunctionsFrame.localize("calcframe.calculate") + ": " + GraphFunctionsFrame.localize("calc.zero"));
 			addFuncList(itemComp, false);
 			addLimits(itemComp);
 			initMovablePoints();
 			break;
 		case FUNC_MINIMUM:
-			calcPanel.setText(GraphFunctionsFrame.Translate("calcframe.calculate") + ": " + GraphFunctionsFrame.Translate("calc.min"));
+			calcPanel.setText(GraphFunctionsFrame.localize("calcframe.calculate") + ": " + GraphFunctionsFrame.localize("calc.min"));
 			addFuncList(itemComp, false);
 			addLimits(itemComp);
 			initMovablePoints();
 			break;
 		case FUNC_MAXIMUM:
-			calcPanel.setText(GraphFunctionsFrame.Translate("calcframe.calculate") + ": " + GraphFunctionsFrame.Translate("calc.max"));
+			calcPanel.setText(GraphFunctionsFrame.localize("calcframe.calculate") + ": " + GraphFunctionsFrame.localize("calc.max"));
 			addFuncList(itemComp, false);
 			addLimits(itemComp);
 			initMovablePoints();
 			break;
 		case FUNC_INTERSECT:
-			calcPanel.setText(GraphFunctionsFrame.Translate("calcframe.calculate") + ": " + GraphFunctionsFrame.Translate("calc.intersect"));
+			calcPanel.setText(GraphFunctionsFrame.localize("calcframe.calculate") + ": " + GraphFunctionsFrame.localize("calc.intersect"));
 			addFuncList(itemComp, true);
 			addFuncList2(itemComp);
 			addLimits(itemComp);
@@ -1013,22 +1012,22 @@ public class CalcPanelSwt extends Dialog {
 			break;
 		case FUNC_DYDX:
 		case PAR_DYDX:
-			calcPanel.setText(GraphFunctionsFrame.Translate("calcframe.calculate") + ": " + GraphFunctionsFrame.Translate("calc.deriv"));
+			calcPanel.setText(GraphFunctionsFrame.localize("calcframe.calculate") + ": " + GraphFunctionsFrame.localize("calc.deriv"));
 			addFuncList(itemComp, false);
 			addXorT(itemComp);
 			break;
 		case PAR_DYDT:
-			calcPanel.setText(GraphFunctionsFrame.Translate("calcframe.calculate") + ": " + GraphFunctionsFrame.Translate("calc.dydt"));
+			calcPanel.setText(GraphFunctionsFrame.localize("calcframe.calculate") + ": " + GraphFunctionsFrame.localize("calc.dydt"));
 			addFuncList(itemComp, false);
 			addXorT(itemComp);
 			break;
 		case PAR_DXDT:
-			calcPanel.setText(GraphFunctionsFrame.Translate("calcframe.calculate") + ": " + GraphFunctionsFrame.Translate("calc.dxdt"));
+			calcPanel.setText(GraphFunctionsFrame.localize("calcframe.calculate") + ": " + GraphFunctionsFrame.localize("calc.dxdt"));
 			addFuncList(itemComp, false);
 			addXorT(itemComp);
 			break;
 		case FUNC_INTEGRAL:
-			calcPanel.setText(String.format("%s: %cf(x)dx", GraphFunctionsFrame.Translate("calcframe.calculate"), MathChars.Integral.getCode()));
+			calcPanel.setText(String.format("%s: %cf(x)dx", GraphFunctionsFrame.localize("calcframe.calculate"), MathChars.Integral.getCode()));
 			addFuncList(itemComp, false);
 			addLimits(itemComp);
 			initMovablePointsIntegral();
