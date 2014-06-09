@@ -7,8 +7,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -343,8 +346,8 @@ public class GraphAboutDialog extends Dialog implements SelectionListener {
 
 	private static String getLicenseText() {
 		try {
-			URL url = GraphAboutDialog.class.getResource("/res/LICENSE.md");
-			BufferedReader br = new BufferedReader(new FileReader(new File(url.toURI())));
+			InputStream is = GraphAboutDialog.class.getResourceAsStream("/res/LICENSE.md");
+			BufferedReader br = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8"))); 
 
 			String license = "", line = "";
 			while ((line = br.readLine()) != null) {
