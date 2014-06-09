@@ -106,7 +106,7 @@ about.title=About %s
 about.description=
 about.credits=Credits
 about.license=License
-about.buildinfo=Build by %s on %s
+about.buildinfo=Built by %s on %s
 
 tooltip.changefunctioncolor=Click to change the color of function %c%d
 tooltip.changefunctioncolor.par=Click to change the color or Tmin/Tmax of function P%d

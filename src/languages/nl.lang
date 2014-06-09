@@ -103,7 +103,6 @@ about.title=Over %s
 about.description=Een wiskundig programma om functiegrafieken\n te plotten en berekeningen uit te voeren.
 about.credits=Met dank aan
 about.license=Licentie
-#about.buildinfo=Gebouwd door %s op %d %s %d %d:%d:%d
 about.buildinfo=Gebouwd door %s op %s
 
 tooltip.changefunctioncolor=Klik om de kleur van functie %c%d te veranderen
