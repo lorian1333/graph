@@ -336,6 +336,12 @@ public class WindowSettingsPanelSwt extends Dialog {
 						settings_par.setXmin(xMin.getSelection() / Math.pow(10, 4));
 						xMax.setMinimum(xMin.getSelection()+(int)Math.pow(10, 4));
 						swtFrame.updateWindowSettings_par(settings_par);
+						if(settings_par.autoCalcY())
+						{
+							settings_par = (WindowSettingsParameter) GraphFunctionsFrame.gparam.getWindowSettings();
+							yMin.setSelection((int) (settings_par.getYmin() * Math.pow(10, 4)));
+							yMax.setSelection((int) (settings_par.getYmin() * Math.pow(10, 4)));
+						}
 					}
 				});
 				xMax = addSpinner(comp, "Xmax:", settings_par.getXmax());
@@ -345,6 +351,12 @@ public class WindowSettingsPanelSwt extends Dialog {
 						settings_par.setXmax(xMax.getSelection() / Math.pow(10, 4));
 						xMin.setMaximum(xMax.getSelection()-(int)Math.pow(10, 4));
 						swtFrame.updateWindowSettings_par(settings_par);
+						if(settings_par.autoCalcY())
+						{
+							settings_par = (WindowSettingsParameter) GraphFunctionsFrame.gparam.getWindowSettings();
+							yMin.setSelection((int) (settings_par.getYmin() * Math.pow(10, 4)));
+							yMax.setSelection((int) (settings_par.getYmin() * Math.pow(10, 4)));
+						}
 					}
 				});
 				yMin = addSpinner(comp, "Ymin:", settings_par.getYmin());
