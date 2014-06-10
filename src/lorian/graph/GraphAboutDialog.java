@@ -318,7 +318,7 @@ public class GraphAboutDialog extends Dialog implements SelectionListener {
 					SWT.RIGHT_TO_LEFT);
 			closeButtonComp.setLayoutData(new GridData(SWT.LEFT, SWT.BOTTOM,
 					true, false));
-			closeButtonComp.setLayout(new GridLayout(7, true));
+			closeButtonComp.setLayout(new GridLayout(1, true));
 
 			Button closeButton = new Button(closeButtonComp, SWT.PUSH);
 			closeButton.setText(buttonname_spacer + GraphFunctionsFrame.localize("buttons.close") + buttonname_spacer);
