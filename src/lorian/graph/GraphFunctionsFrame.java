@@ -63,7 +63,7 @@ import org.eclipse.swt.widgets.Shell;
 public class GraphFunctionsFrame extends JFrame implements ActionListener, KeyListener, MouseListener, WindowListener {
 	private static final long serialVersionUID = -1090268654275240501L;
 	public static final String appname = "Graph";
-	public static final String version = "1.8.2 Beta";
+	public static final String version = "1.8.3 Beta";
 	public static final int version_year = 2014;
 	
 	
