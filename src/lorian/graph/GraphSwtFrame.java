@@ -69,6 +69,7 @@ public class GraphSwtFrame implements SelectionListener {
 	protected Point WindowSize = new Point(1257, 859);
 	// protected Point WindowSizeSmall = new Point(1004, 685);
 
+	private MenuItem calcMenu;
 	
 	private final Color[] defaultColors = { new Color(null, 37, 119, 255), new Color(null, 255, 0, 0), new Color(null, 255, 0, 255), new Color(null, 0, 225, 255), new Color(null, 0, 255, 90), new Color(null, 255, 255, 0), new Color(null, 255, 120, 0) };
 
@@ -181,6 +182,7 @@ public class GraphSwtFrame implements SelectionListener {
 		shell = new Shell(display, shellflags);
 
 		initIcons();
+		initMenu();
 		initUI();
 
 		updateTitle();
@@ -348,17 +350,14 @@ public class GraphSwtFrame implements SelectionListener {
 	private void initUI() {
 		switch (currentMode) {
 		case MODE_FUNC:
-			initMenu();
 			initUI_funcmode();
 			UIinitted_func = true;
 			break;
 		case MODE_3DFUNC:
-			initMenu();
 			initUI_func3dmode();
 			UIinitted_3dfunc = true;
 			break;
 		case MODE_PARAMETER:
-			initMenu();
 			initUI_parmode();
 			UIinitted_par = true;
 			break;
@@ -1176,21 +1175,10 @@ public class GraphSwtFrame implements SelectionListener {
 		}
 		menuItem.setMenu(fileMenu);
 
-		menuItem = new MenuItem(menuBar, SWT.CASCADE);
-		menuItem.setText(GraphFunctionsFrame.funcframe.MenuStrings[1]);
-		switch (currentMode) {
-		case MODE_FUNC:
-			menuItem.setMenu(getMenu(GraphFunctionsFrame.funcframe.calcMenuStrings_func));
-			break;
-		case MODE_3DFUNC:
-			menuItem.setMenu(getMenu(GraphFunctionsFrame.funcframe.calcMenuStrings_3dfunc));
-			break;
-		case MODE_PARAMETER:
-			menuItem.setMenu(getMenu(GraphFunctionsFrame.funcframe.calcMenuStrings_par));
-			break;
-		default:
-			break;
-		}
+		calcMenu = new MenuItem(menuBar, SWT.CASCADE);
+		calcMenu.setText(GraphFunctionsFrame.funcframe.MenuStrings[1]);
+		initCalcMenu();
+		
 		menuItem = new MenuItem(menuBar, SWT.CASCADE);
 		menuItem.setText(GraphFunctionsFrame.funcframe.MenuStrings[2]);
 		
@@ -1220,7 +1208,22 @@ public class GraphSwtFrame implements SelectionListener {
 		shell.setMenuBar(menuBar);
 
 	}
-
+	private void initCalcMenu()
+	{
+		switch (currentMode) {
+		case MODE_FUNC:
+			calcMenu.setMenu(getMenu(GraphFunctionsFrame.funcframe.calcMenuStrings_func));
+			break;
+		case MODE_3DFUNC:
+			calcMenu.setMenu(getMenu(GraphFunctionsFrame.funcframe.calcMenuStrings_3dfunc));
+			break;
+		case MODE_PARAMETER:
+			calcMenu.setMenu(getMenu(GraphFunctionsFrame.funcframe.calcMenuStrings_par));
+			break;
+		default:
+			break;
+		}
+	}
 	private void initIcons() {
 		int[] iconSizes = { 16, 22, 24, 32, 36, 48, 64, 72, 96, 128, 192, 256 };
 
@@ -1475,8 +1478,10 @@ public class GraphSwtFrame implements SelectionListener {
 
 		
 		for(Control c: shell.getChildren())
-			c.dispose();
+			c.dispose();	
+		
 		initUI();
+		initCalcMenu();
 		
 		shell.layout();
 		
