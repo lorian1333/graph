@@ -166,8 +166,9 @@ public class GraphAboutDialog extends Dialog implements SelectionListener {
 		build_info.setFont(small);
 		Calendar built_date = getBuiltDate();
 		SimpleDateFormat format = new SimpleDateFormat("dd MMMMM yyyy HH:mm:ss", GraphFunctionsFrame.getCurrentLocale());
-
-		build_info.setText(String.format(GraphFunctionsFrame.localize("about.buildinfo"), getManifestAttributeValue("Built-By"), format.format(built_date.getTime())));
+		
+		String date = format.format(built_date.getTime());
+		build_info.setText(String.format(GraphFunctionsFrame.localize("about.buildinfo"), getManifestAttributeValue("Built-By"), date));
 		build_info.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, true, false));
 		}
 		catch(IllegalArgumentException e)
@@ -379,7 +380,7 @@ public class GraphAboutDialog extends Dialog implements SelectionListener {
 		String[] tmp = builtdate.split(" ");
 		String[] date_split = tmp[0].split("-");
 		String[] time_split = tmp[1].split(":");
-		return new GregorianCalendar(Integer.parseInt(date_split[2]), Integer.parseInt(date_split[1]), Integer.parseInt(date_split[0]), Integer.parseInt(time_split[0]), Integer.parseInt(time_split[1]), Integer.parseInt(time_split[2]));
+		return new GregorianCalendar(Integer.parseInt(date_split[2]), Integer.parseInt(date_split[1])-1, Integer.parseInt(date_split[0]), Integer.parseInt(time_split[0]), Integer.parseInt(time_split[1]), Integer.parseInt(time_split[2]));
 	}
 
 	@Override
